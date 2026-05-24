@@ -140,7 +140,17 @@
         .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
         h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
         h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 2rem; }
+        h3 { font-size: 1.35rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--accent); }
         p { line-height: 1.7; color: var(--text-main); margin-bottom: 1.25rem; }
+        ul, ol { line-height: 1.7; margin-bottom: 1.25rem; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+        code { background: var(--bg-hover); padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #f43f5e; }
+        body.light-theme code { color: #be123c; }
+        .sub-text { font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: -4px; margin-bottom: 12px; font-style: italic; }
+
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95rem; }
+        th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+        th { background-color: var(--bg-sidebar); font-weight: 600; }
 
         /* Right Table of Contents Pane */
         .right-sidebar { width: 220px; padding: 40px 24px; font-size: 0.85rem; border-left: 1px solid var(--border); overflow-y: auto; }
@@ -178,13 +188,45 @@
     </div>
 
     <script>
-        // Static Site Structure
+        // Static Site Structure With New Configured Guide Pages
         const siteData = {
             pages: [
                 { id: "info", title: "Information", category: "General", content: "<h1>Information Hub</h1><p>Welcome to the official <strong>ALT10fd0f. Tutorial</strong> workspace. Choose any system module configuration from the sidebar left hierarchy to view targeted implementation examples and configuration structures.</p>" },
                 
                 // Basic Commands
-                { id: "say", title: "Say", category: "Basic Commands", content: "<h1>Say Command</h1><p>Documentation details for custom message broadcasting layouts.</p>" },
+                { 
+                    id: "say", 
+                    title: "Say", 
+                    category: "Basic Commands", 
+                    content: `<h1>Say Command</h1>
+                    <p>To make your bot say any message you'd like please follow what I have down below.</p>
+                    
+                    <h2>Basic Setup For The Command</h2>
+                    
+                    <h3>Step 1</h3>
+                    <p><em>The argument block</em></p>
+                    <ul>
+                        <li>Get an argument block from the <strong>Option Blocks</strong> section.</li>
+                        <li>Connect it to the top of your command block.</li>
+                        <li>Set the argument type to text.</li>
+                        <li>Then set the argument to be required.</li>
+                    </ul>
+
+                    <h3>Step 2</h3>
+                    <p><em>Sending the message</em></p>
+                    <ul>
+                        <li>Grab a "create response message" block and attach it directly under the command block. (This will be the response message saying that the message has been sent)</li>
+                        <li>Type in the text box the following sentence "<code>We've sent the message.</code>". (Able to be whatever you'd like.)</li>
+                        <li>Make the response private by scrolling down till you see the switch, Then click it.</li>
+                        <li>Put a "create channel message" block under the response one.</li>
+                        <li>Put <code>{{channel.id}}</code> in the target channel section.</li>
+                        <li>Put <code>{{arg('message')}}</code> in the text part of the channel message.</li>
+                        <li>Turn on role pings from the switch underneath.</li>
+                    </ul>
+
+                    <p>And boom, Save your command and your ready to go. This is a currently working message command for any bot of your liking. Keep in mind though, this command has no rank lock meaning that any user can use this command.</p>
+                    <p><strong>Recommend putting a rank lock on it</strong></p>` 
+                },
                 { id: "dm", title: "DM", category: "Basic Commands", content: "<h1>DM Command</h1><p>Configuration rules mapping localized direct user warning parameters.</p>" },
                 { id: "user-info", title: "User Info", category: "Basic Commands", content: "<h1>User Info</h1><p>Data structures outputting data markers registered to target objects.</p>" },
                 { id: "modal-form", title: "Modal/Form", category: "Basic Commands", content: "<h1>Modal/Form</h1><p>UI block parameters managing client interactive fields.</p>" },
@@ -192,7 +234,86 @@
                 
                 // Fun Commands
                 { id: "clicker-game", title: "Clicker Game", category: "Fun Commands", content: "<h1>Clicker Game</h1><p>State logic loops processing client event triggers dynamically.</p>" },
-                { id: "calculator-command", title: "Calculator Command", category: "Fun Commands", content: "<h1>Calculator Command</h1><p>Computational syntax evaluations processing raw input strings.</p>" },
+                { 
+                    id: "calculator-command", 
+                    title: "Calculator Command", 
+                    category: "Fun Commands", 
+                    content: `<h1>Calculator Command</h1>
+                    <p>To create a calculator command please follow step by step to create a working calculator command.</p>
+                    <p><strong>Blocks involved in command</strong></p>
+                    <ul>
+                        <li>Arguments (3)</li>
+                        <li>Comparison Condition (1)</li>
+                        <li>Calculate Value (4)</li>
+                        <li>Response Message (4)</li>
+                    </ul>
+
+                    <h2>Step One.</h2>
+                    <span class="sub-text">Arguments.</span>
+                    <ul>
+                        <li>Add in three arguments.</li>
+                        <li>Name them <code>number_one</code>, <code>operation</code>, <code>number_two</code> and set the number ones a number argument.</li>
+                        <li>Attach them to the top of the command.</li>
+                    </ul>
+
+                    <p><strong>Operation Argument.</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Multiplication</td>
+                                <td><code>*</code></td>
+                            </tr>
+                            <tr>
+                                <td>Division</td>
+                                <td><code>/</code></td>
+                            </tr>
+                            <tr>
+                                <td>Subtraction</td>
+                                <td><code>-</code></td>
+                            </tr>
+                            <tr>
+                                <td>Addition</td>
+                                <td><code>+</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Step Two.</h2>
+                    <span class="sub-text">Comparison Condition</span>
+                    <ul>
+                        <li>Bring in a comparison condition.</li>
+                        <li>Add in three new <strong>match condition</strong> blocks by clicking the <strong>+</strong> on the block.</li>
+                        <li>Set the base value to be <code>{{arg('operation')}}</code>.</li>
+                        <li>Go to the match condition parts and add in a different value for each.</li>
+                        <li>Set the comparison mode to be <strong>Contains.</strong></li>
+                    </ul>
+
+                    <h2>Step Three.</h2>
+                    <span class="sub-text">Calculate Value.</span>
+                    <ul>
+                        <li>Add four calculate value blocks under each match condition.</li>
+                    </ul>
+                    <p>Add <strong>one</strong> of these in each of these in the on that matches the operation you have in the match condition above.</p>
+                    <ul>
+                        <li><code>arg('number_one') / arg('number_two')</code> - Division (/)</li>
+                        <li><code>arg('number_one') * arg('number_two')</code> - Multiplication (*)</li>
+                        <li><code>arg('number_one') - arg('number_two')</code> - Subtraction (-)</li>
+                        <li><code>arg('number_one') + arg('number_two')</code> - Addition (+)</li>
+                    </ul>
+
+                    <h2>Step Four.</h2>
+                    <span class="sub-text">Response Message.</span>
+                    <ul>
+                        <li>Add in a response message block under each calculate value block.</li>
+                        <li>Click on the <strong>(X)</strong> and add in the variable to the correct calculate value block by scrolling to the bottom.</li>
+                    </ul>`
+                },
                 { id: "discord-mod-panel", title: "Discord Mod Panel", category: "Fun Commands", content: "<h1>Discord Mod Panel</h1><p>Moderation layout views tracking server environment restrictions.</p>" },
                 { id: "password-setup", title: "Password Setup", category: "Fun Commands", content: "<h1>Password Setup</h1><p>String validation mechanics controlling access checkpoints.</p>" },
 
@@ -203,7 +324,47 @@
                 { id: "erlc-session-management", title: "ER:LC Session Management", category: "Important Commands", content: "<h1>ER:LC Session Management</h1><p>System tools processing custom log parameters for active servers.</p>" },
 
                 // API's
-                { id: "member-count", title: "Member Count", category: "API's", content: "<h1>Member Count</h1><p>API endpoints indexing server volume totals cleanly.</p>" },
+                { 
+                    id: "member-count", 
+                    title: "Member Count", 
+                    category: "API's", 
+                    content: `<h1>Member Count</h1>
+                    <p><em>Within this showcase I will teach you how to create a member count setup within kite using API. This can be used within welcomers or commands for your choosing.</em></p>
+                    <ul>
+                        <li>Start by adding your API block into your builder and set a temporary variable name as <code>api</code>.</li>
+                        <li>Set the API block to <strong><code>Get</code></strong>.</li>
+                        <li>Set the request link to be <code>https://discord.com/api/v10/guilds/{{guild.id}}?with_counts=true</code></li>
+                        <li>Set the headers to be:</li>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Authorization</strong></td>
+                                <td><code>Bot [Your bot token!]</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Content-Type</strong></td>
+                                <td><code>application/json</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p><em>And there you go! You've got your member count set and ready to go.</em></p>
+                    
+                    <ul>
+                        <li><code>{{fromJSON(var('api').body()).approximate_member_count}}</code> - Total Member Count</li>
+                        <li><code>{{fromJSON(var('api').body()).approximate_presence_count}}</code> - Member Online Count</li>
+                        <span class="sub-text">Presence Intent Must be on.</span>
+                        <li><code>{{fromJSON(var('api').body()).premium_subscription_count}}</code> - Will show the amount of boost the server has.</li>
+                    </ul>`
+                },
                 { id: "erlc-api-v2", title: "ER:LC API V2", category: "API's", content: "<h1>ER:LC API V2</h1><p>Advanced routing examples interacting with server state protocols.</p>" },
                 { id: "ticket-transcripts", title: "Ticket Transcripts", category: "API's", content: "<h1>Ticket Transcripts</h1><p>Methods exporting text channel structures into historical document files.</p>" },
                 { id: "roblox-user-lookup", title: "Roblox User Lookup", category: "API's", content: "<h1>Roblox User Lookup</h1><p>Call parameters checking user registration arrays by string identifier signatures.</p>" },
