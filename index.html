@@ -3,11 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Website</title>
+    <title>Professional Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>Welcome to my brand new website hosted on GitHub Pages.</p>
+
+    <button id="themeToggle" class="theme-toggle-btn">
+        <span id="toggleIcon">🌙</span> <span id="toggleText">Dark Mode</span>
+    </button>
+
+    <main class="container">
+        <h1>Hello, World!</h1>
+        <p>Welcome to a clean, professional template running natively on GitHub Pages.</p>
+        <button class="cta-btn">Get Started</button>
+    </main>
+
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
+
+        themeToggleBtn.addEventListener('click', () => {
+            // Toggles the .dark-theme class on the body element
+            document.body.classList.toggle('dark-theme');
+            
+            // Checks if dark theme is currently active to update button elements
+            if (document.body.classList.contains('dark-theme')) {
+                toggleIcon.textContent = '☀️';
+                toggleText.textContent = 'Light Mode';
+            } else {
+                toggleIcon.textContent = '🌙';
+                toggleText.textContent = 'Dark Mode';
+            }
+        });
+    </script>
+
 </body>
 </html>
