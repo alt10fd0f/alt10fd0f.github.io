@@ -1,0 +1,39 @@
+/* Clean up the default browser spacing and set a modern font */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto; /* Centers the website content on the screen */
+}
+
+/* Make headings pop */
+h1 {
+    color: #0d6efd; /* A sleek modern blue */
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Style paragraphs */
+p {
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+/* Style buttons to look clickable and modern */
+button {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px; /* Smooth rounded corners */
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background-color: #0b5ed7; /* Darkens slightly when hovered */
+}
