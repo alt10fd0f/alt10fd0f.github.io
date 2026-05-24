@@ -145,6 +145,7 @@
         ul, ol { line-height: 1.7; margin-bottom: 1.25rem; padding-left: 24px; }
         li { margin-bottom: 6px; }
         code { background: var(--bg-hover); padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #f43f5e; }
+        pre { background: var(--bg-sidebar); border: 1px solid var(--border); padding: 14px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 0.9rem; margin: 16px 0; }
         body.light-theme code { color: #be123c; }
         .sub-text { font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: -4px; margin-bottom: 12px; font-style: italic; }
 
@@ -188,7 +189,7 @@
     </div>
 
     <script>
-        // Static Site Structure With New Configured Guide Pages
+        // Static Site Structure Mapping Individual Guide Documentation Pages
         const siteData = {
             pages: [
                 { id: "info", title: "Information", category: "General", content: "<h1>Information Hub</h1><p>Welcome to the official <strong>ALT10fd0f. Tutorial</strong> workspace. Choose any system module configuration from the sidebar left hierarchy to view targeted implementation examples and configuration structures.</p>" },
@@ -320,7 +321,99 @@
                 // Important Commands
                 { id: "ticket-setup", title: "Ticket Setup", category: "Important Commands", content: "<h1>Ticket Setup</h1><p>Procedures initiating isolated text support threads.</p>" },
                 { id: "application-setup", title: "Application Setup", category: "Important Commands", content: "<h1>Application Setup</h1><p>Forms pipelines routing staff submission records across active webhooks.</p>" },
-                { id: "roblox-verification", title: "Roblox Verification", category: "Important Commands", content: "<h1>Roblox Verification</h1><p>Step-by-step documentation detailing account verification rules.</p>" },
+                { 
+                    id: "roblox-verification", 
+                    title: "Roblox Verification", 
+                    category: "Important Commands", 
+                    content: `<h1>Roblox Verification</h1>
+                    <p><em>Within this showcase I will teach you how to build a setup that'll have the users first enter their roblox username, and then change their description to match the number output given to then verifiy.</em></p>
+                    
+                    <ul>
+                        <li>Add a create channel message with a button labeled <strong>Verify</strong>. <span class="sub-text">*** DO NOT USE MESSAGE TEMPLATES ***</span></li>
+                        <li>Under the button add a modal and set to the following settings:</li>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr><th>Property</th><th>Setting / Target Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Type</strong></td><td><code>Short</code></td></tr>
+                            <tr><td><strong>Identifier</strong></td><td><code>username</code></td></tr>
+                            <tr><td><strong>Label</strong></td><td><code>Roblox Username</code></td></tr>
+                            <tr><td><strong>Placeholder</strong></td><td><code>Please enter your roblox username (Case Sensitive)</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <ul>
+                        <li>Under that, add an API block.</li>
+                        <li>Go and log into <a href="https://www.cookie-api.com/" target="_blank" style="color:var(--accent);">Cookie API</a> and log in.</li>
+                        <li>Go to the sidebar and look for the section called API keys, and then click on the green <strong>"+ Create Key"</strong> button and then copy the key it gives you.</li>
+                        <li>Go to your API block and set to the following settings:</li>
+                    </ul>
+
+                    <ul>
+                        <li>HTTPS Method: <strong>Get</strong></li>
+                        <li>URL: <code>https://api.cookie-api.com/api/roblox/user?username={{input('username')}}</code></li>
+                        <li>Headers:</li>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr><th>Header Key</th><th>Value Definition</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Authorization</strong></td><td><code>[Your cookie API key!]</code></td></tr>
+                            <tr><td><strong>username</strong></td><td><code>{{input('username')}}</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <ul>
+                        <li>Set the temporary value of the API block to be <code>api</code>.</li>
+                        <li>Add a comparison condition under the API block and set to the following settings:</li>
+                    </ul>
+
+                    <p><strong>Base Value</strong> - <code>{{fromJSON(var('api').body()).userid}}</code></p>
+                    <p>Under the else side have a message saying...</p>
+                    <pre><em>The account your trying to verify as doesnt exist. Please try the following.</em>\n\n- Ensure spelling is correct.\n- Ensure the account exist.</pre>
+
+                    <p><strong>Match Condition</strong></p>
+                    <ul>
+                        <li>Comparison Mode - <em>Greater than or equal to</em></li>
+                        <li>Value - <code>1</code></li>
+                    </ul>
+
+                    <ul>
+                        <li>Under the match condition add a RNG and set to the following settings:</li>
+                        <ul>
+                            <li>Min - <code>100</code></li>
+                            <li>Max - <code>999</code></li>
+                        </ul>
+                        <span class="sub-text">Set the temporary value of the RNG to be "RNG".</span>
+                        
+                        <li>Under the RNG add a calculate value block and copy and paste in the following:</li>
+                    </ul>
+                    <pre>{\n "rng1": [YOUR RNG VARIABLE],\n "user": input('username')\n}</pre>
+                    <span class="sub-text">Set the temporary value to be "data"</span>
+
+                    <ul>
+                        <li>Add a create response message below with the following data:</li>
+                    </ul>
+                    <pre>You are attempting to verify as **{{fromJSON(var('api').body()).username}}**.\n\nTo verify please go to your profile and complete these following steps.\n\n- Copy and paste the code \`{{var('rng')}}\` into your description.\n\n- Click the confirm button below to confirm that your description has been changed.</pre>
+
+                    <ul>
+                        <li>Add a button underneath with a duplicate API block from before.</li>
+                        <li>Add a comparison condition below set to the following information:</li>
+                        <ul>
+                            <li><strong>Base Value</strong> - <code>{{fromJSON(var('api').body()).description}}</code></li>
+                            <li><strong>Match Condition</strong> - <em>Contains</em>, <code>{{var('data').rng1}}</code>.</li>
+                        </ul>
+                        <li>Under the match condition add a response message saying "<code>You've been verified</code>".</li>
+                        <li>Under the else side add a response message saying "<code>You've either incorrectly inputted the code or this is not your account.</code>"</li>
+                    </ul>
+
+                    <p>***There you go! You've created a roblox verification setup. I hope this showcase has been helpful enough for you all. Below is the listed sharecode with my API data removed, you will need to input your own API code.***</p>`
+                },
                 { id: "erlc-session-management", title: "ER:LC Session Management", category: "Important Commands", content: "<h1>ER:LC Session Management</h1><p>System tools processing custom log parameters for active servers.</p>" },
 
                 // API's
@@ -366,8 +459,101 @@
                     </ul>`
                 },
                 { id: "erlc-api-v2", title: "ER:LC API V2", category: "API's", content: "<h1>ER:LC API V2</h1><p>Advanced routing examples interacting with server state protocols.</p>" },
-                { id: "ticket-transcripts", title: "Ticket Transcripts", category: "API's", content: "<h1>Ticket Transcripts</h1><p>Methods exporting text channel structures into historical document files.</p>" },
-                { id: "roblox-user-lookup", title: "Roblox User Lookup", category: "API's", content: "<h1>Roblox User Lookup</h1><p>Call parameters checking user registration arrays by string identifier signatures.</p>" },
+                { 
+                    id: "ticket-transcripts", 
+                    title: "Ticket Transcripts", 
+                    category: "API's", 
+                    content: `<h1>Ticket Transcripts</h1>
+                    <p><em>Within this showcase I will teach you how to build transcripts with <a href="https://www.cookie-api.com/" target="_blank" style="color:var(--accent);">cookie API</a>.</em></p>
+                    <p><strong>Within parts of setting this up you will need your bot token and a API key. <span class="sub-text">*** DO NOT SHARE THESE WHEN ASKING FOR SUPPORT. ***</span></strong></p>
+
+                    <ul>
+                        <li>Start off by heading to the <a href="https://www.cookie-api.com/" target="_blank" style="color:var(--accent);">cookie API site</a>.</li>
+                        <li>Sign into the site, and go to the sidebar section called <em>API Keys</em>.</li>
+                        <li>Create a new API key via the big green button labeled "<strong>+ Create Key</strong>".</li>
+                        <li>Click the copy button to copy your API key, then head back to the kite command with the API block.</li>
+                    </ul>
+
+                    <p><em>Set the API block to the following settings:</em></p>
+                    <ul>
+                        <li>HTTPS Method: <strong>Post</strong></li>
+                        <li>URL: <code>https://api.cookie-api.com/api/transcript?channel_id={{channel.id}}</code></li>
+                        <li>Headers: <strong><code>Authorization |  [Your cookie API key!]</code></strong></li>
+                    </ul>
+
+                    <ul>
+                        <li>Turn on the JSON body via the switch below.</li>
+                        <li>Click on the purple <strong>+</strong> button and copy and paste the following into it, "<code>title</code>".</li>
+                        <li>Then, hover your mouse above the right hand side of what you've just entered. And click the purple pencil looking button. Enter whatever you'd like.</li>
+                        <li>Go back up to the purple <strong>+</strong> button again, copy and paste the following "<code>bot_token</code>".</li>
+                        <li>Then, hover your mouse to above the right hand side of what you've just entered. And click the purple pencil looking button and enter your bot's token from the discord developer portal.</li>
+                        <span class="sub-text">Note: If you regenerate your key you'll have to re-add it to your kite bot.</span>
+                        <li>Set the temporary variable of the block to be <code>api</code>. And use <code>{{fromJSON(var('api').body()).url}}</code> to get the URL from block.</li>
+                    </ul>
+
+                    <p>And there you go! You've created an API transcript system. It's recommended that you have a 5-10 second wait block below it to give it any needed time to process.</p>`
+                },
+                { 
+                    id: "roblox-user-lookup", 
+                    title: "Roblox User Lookup", 
+                    category: "API's", 
+                    content: `<h1>Roblox User Lookup</h1>
+                    <p><em>Within this showcase I will teach you how to create a roblox lookup command that you can add to your bots. This command will be using things like API, so make sure to follow along very closely.</em></p>
+                    
+                    <ul>
+                        <li>Start off by going and adding a defer response block underneath of your command.</li>
+                        <li>Add an API block under that.</li>
+                        <li>Then, add an argument above the command set to the following settings:</li>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr><th>Property</th><th>Setting Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Argument Name</strong></td><td><code>rblx_username</code></td></tr>
+                            <tr><td><strong>Description</strong></td><td><code>The username of the roblox account.</code></td></tr>
+                            <tr><td><strong>Type</strong></td><td><em>Text</em></td></tr>
+                            <tr><td><strong>Argument required</strong></td><td><em>Yes.</em></td></tr>
+                        </tbody>
+                    </table>
+
+                    <ul>
+                        <li>Go and log into <a href="https://www.cookie-api.com/" target="_blank" style="color:var(--accent);">Cookie API</a> and log in.</li>
+                        <li>Go to the sidebar and look for the section called API keys, and then click on the green <strong>"+ Create Key"</strong> button and then copy the key it gives you.</li>
+                        <li>Go to your API block and set to the following settings:</li>
+                        <ul>
+                            <li>HTTPS Method: <strong>Get</strong></li>
+                            <li>URL: <code>https://api.cookie-api.com/api/roblox/user?username={{arg('rblx_username')}}</code></li>
+                            <li>Headers:</li>
+                        </ul>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr><th>Key</th><th>Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Authorization</strong></td><td><code>[Your cookie API key!]</code></td></tr>
+                            <tr><td><strong>username</strong></td><td><code>{{arg('rblx_username')}}</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <ul>
+                        <li>Set the temporary value of the API block to be <code>api</code>.</li>
+                    </ul>
+
+                    <p><strong>Listed below are the ways to get the certain information:</strong></p>
+                    <ul>
+                        <li><code>{{fromJSON(var('api').body()).username}}</code> - <em>Will output the roblox username</em></li>
+                        <li><code>https://www.roblox.com/users/{{fromJSON(var('api').body()).userid}}/profile</code> - <em>Will output a link to the users profile.</em></li>
+                        <li><code>{{fromJSON(var('api').body()).userid}}</code> - <em>Will output the user's ID.</em></li>
+                        <li><code>{{ fromJSON(var('api').body()).has_verified_badge ? "User is verified.." : "User is not verified." }}</code> - <em>Will output a different response depending on if the user has the verified badge.</em></li>
+                        <li><code>{{ fromJSON(var('api').body()).is_banned ? "User is banned." : "User is not banned." }}</code> - <em>Will output a different response based on if the user is banned from roblox or not.</em></li>
+                        <li><code>{{fromJSON(var('api').body()).description}}</code> - <em>Will output the user's roblox description.</em></li>
+                        <li><code>{{fromJSON(var('api').body()).user_avatar_picture}}</code> - <em>Will get the avatar picture of the roblox avatar.</em></li>
+                    </ul>`
+                },
                 { id: "roblox-verification-api", title: "Roblox Verification", category: "API's", content: "<h1>Roblox Verification API</h1><p>Data links linking tokens safely across integrated services channels.</p>" }
             ]
         };
