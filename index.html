@@ -3,40 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>pronak. Tutorial</title>
+    <style>
+        /* ==========================================================================
+           1. CORE STYLES & VARIABLES (Dark Theme Slate)
+           ========================================================================== */
+        :root {
+            --bg-main: #121214;
+            --bg-sidebar: #18181c;
+            --bg-hover: #232329;
+            --text-main: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --accent: #2dd4bf; /* Mint/Teal color from your screenshot */
+            --border: #27272a;
+            --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ==========================================================================
+           2. TOP NAVIGATION BAR
+           ========================================================================== */
+        header {
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            height: 60px;
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logo-icon {
+            color: var(--accent);
+        }
+
+        .logo-sub {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.95rem;
+            margin-left: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           3. THREE-COLUMN LAYOUT
+           ========================================================================== */
+        .wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar Navigation */
+        .left-sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 24px 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            background-color: rgba(45, 212, 191, 0.08);
+            font-weight: 600;
+        }
+
+        .nested {
+            padding-left: 24px;
+            font-size: 0.88rem;
+        }
+
+        .sidebar-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin: 16px 0 6px 12px;
+            font-weight: 700;
+        }
+
+        /* Center Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 40px 48px;
+            overflow-y: auto;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .breadcrumbs {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 2rem;
+        }
+
+        p {
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-bottom: 1.25rem;
+        }
+
+        .highlight-box {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* Right Sidebar (In-page TOC) */
+        .right-sidebar {
+            width: 220px;
+            padding: 40px 24px;
+            font-size: 0.85rem;
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .toc-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .toc-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: var(--text-muted);
+        }
+
+        .toc-links a:hover {
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           4. ADMIN PANEL & LOGIN INTERFACE
+           ========================================================================== */
+        .admin-login-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 320px;
+            margin: 40px auto;
+            background: var(--bg-sidebar);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .admin-input {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .admin-btn {
+            background: var(--accent);
+            color: #121214;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-btn:hover {
+            opacity: 0.9;
+        }
+
+        .error-msg {
+            color: #f87171;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .dashboard-panel {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
-    <button id="themeToggle" class="theme-toggle-btn">
-        <span id="toggleIcon">🌙</span> <span id="toggleText">Dark Mode</span>
-    </button>
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">🤖</span> pronak. <span class="logo-sub">Tutorial</span>
+        </div>
+        <div class="nav-links">
+            <a href="#">GitHub ↗</a>
+            <span>🌙</span>
+        </div>
+    </header>
 
-    <main class="container">
-        <h1>Hello, World!</h1>
-        <p>Welcome to a clean, professional template running natively on GitHub Pages.</p>
-        <button class="cta-btn">Get Started</button>
-    </main>
+    <div class="wrapper">
+        <aside class="left-sidebar">
+            <div class="nav-item active" onclick="switchTab('intro')">Intro</div>
+            <div class="nav-item" onclick="switchTab('cooldowns')">Command Cooldowns</div>
+            
+            <div class="sidebar-category">Economy System</div>
+            <div class="nav-item nested" onclick="switchTab('admin-cmds')">Admin Commands</div>
+            <div class="nav-item nested" onclick="switchTab('modify-pts')">Modify Points</div>
+            <div class="nav-item nested" onclick="switchTab('add-item')">Add Item</div>
+            <div class="nav-item nested" onclick="switchTab('edit-item')">Edit Item</div>
+            <div class="nav-item nested" onclick="switchTab('remove-item')">Remove Item</div>
+            <div class="nav-item" onclick="switchTab('balance')">Balance</div>
+            <div class="nav-item" onclick="switchTab('leaderboard')">Leaderboard</div>
+            
+            <div class="sidebar-category">Systems</div>
+            <div class="nav-item" onclick="switchTab('leveling')">Leveling System <span>›</span></div>
+            <div class="nav-item" onclick="switchTab('afk')">AFK System <span>›</span></div>
+
+            <div class="sidebar-category">Management</div>
+            <div class="nav-item" style="color: #fda4af;" onclick="switchTab('admin-panel')">🔒 Admin Dashboard</div>
+        </aside>
+
+        <main class="main-content" id="content-pane">
+            <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Intro</div>
+            <h1>Intro</h1>
+            <p>This page is maintained and written by <strong>pronak. / Ronak</strong>. This tutorial page was created to help users create complex and advanced commands with their Kite custom bots.</p>
+            <p>Before getting started, it is recommended that you read the below given headings.</p>
+            
+            <h2>Usage/Credits</h2>
+            <p>I do not require credits if you're using the commands from this page in your server.</p>
+            <p><strong>But</strong> for people who make bots for a fee, if you're using any commands from this page, I would ask you to <strong>not charge</strong> people for these commands or claim them as your work.</p>
+            
+            <div class="highlight-box">
+                Similarly, I would want server-owners to be aware of people who ask you to pay fees for "making an economy bot", etc. because all they are doing is copy-pasting stuff from this website.
+            </div>
+
+            <h2>Block IDs/Names</h2>
+            <p>Documentation details for specific code-blocks and expressions go here...</p>
+        </main>
+
+        <aside class="right-sidebar" id="toc-pane">
+            <div class="toc-title">On This Page</div>
+            <div class="toc-links">
+                <a href="#">Usage/Credits</a>
+                <a href="#">Block IDs/Names</a>
+                <a href="#">Copying codeblocks</a>
+                <a href="#">Suggestions</a>
+                <a href="#">Support</a>
+            </div>
+        </aside>
+    </div>
 
     <script>
-        const themeToggleBtn = document.getElementById('themeToggle');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const toggleText = document.getElementById('toggleText');
+        function switchTab(tabName) {
+            // Manage Active Class highlighting on Sidebar
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
 
-        themeToggleBtn.addEventListener('click', () => {
-            // Toggles the .dark-theme class on the body element
-            document.body.classList.toggle('dark-theme');
-            
-            // Checks if dark theme is currently active to update button elements
-            if (document.body.classList.contains('dark-theme')) {
-                toggleIcon.textContent = '☀️';
-                toggleText.textContent = 'Light Mode';
+            const pane = document.getElementById('content-pane');
+            const toc = document.getElementById('toc-pane');
+            toc.style.display = "block"; // Show TOC by default
+
+            // Switch layout content dynamically based on selection
+            if (tabName === 'intro') {
+                pane.innerHTML = `
+                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Intro</div>
+                    <h1>Intro</h1>
+                    <p>This page is maintained and written by <strong>pronak. / Ronak</strong>. This tutorial page was created to help users create complex and advanced commands with their Kite custom bots.</p>
+                    <p>Before getting started, it is recommended that you read the below given headings.</p>
+                    <h2>Usage/Credits</h2>
+                    <p>I do not require credits if you're using the commands from this page in your server.</p>
+                    <p><strong>But</strong> for people who make bots for a fee, if you're using any commands from this page, I would ask you to <strong>not charge</strong> people for these commands or claim them as your work.</p>
+                    <div class="highlight-box">Similarly, I would want server-owners to be aware of people who ask you to pay fees for "making an economy bot", etc. because all they are doing is copy-pasting stuff from this website.</div>
+                    <h2>Block IDs/Names</h2>
+                    <p>Documentation details for specific code-blocks and expressions go here...</p>
+                `;
+            } else if (tabName === 'cooldowns') {
+                pane.innerHTML = `
+                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Cooldowns</div>
+                    <h1>Command Cooldowns</h1>
+                    <p>Configure internal pacing constraints to prevent webhook abuse or runtime performance degradation.</p>
+                `;
+            } else if (tabName === 'admin-panel') {
+                toc.style.display = "none"; // Hide TOC on login page
+                pane.innerHTML = `
+                    <div class="breadcrumbs">🔒 &nbsp;›&nbsp; Restricted Gateway</div>
+                    <h1>Admin Authentication</h1>
+                    <p>Enter your authorization code to modify static parameters or review localized platform state structures.</p>
+                    <div class="admin-login-container">
+                        <label for="pass">Security Passkey</label>
+                        <input type="password" id="pass" class="admin-input" placeholder="••••••">
+                        <div class="error-msg" id="login-err">Invalid token signature. Access Denied.</div>
+                        <button class="admin-btn" onclick="checkAuth()">Authenticate</button>
+                    </div>
+                `;
             } else {
-                toggleIcon.textContent = '🌙';
-                toggleText.textContent = 'Dark Mode';
+                pane.innerHTML = `
+                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Subsystem</div>
+                    <h1>${tabName.toUpperCase().replace('-', ' ')}</h1>
+                    <p>Sub-module container setup. Edit this text block inside the index.html file to input individual command document structures.</p>
+                `;
             }
-        });
-    </script>
+        }
 
+        function checkAuth() {
+            const inputPass = document.getElementById('pass').value;
+            const error = document.getElementById('login-err');
+            const pane = document.getElementById('content-pane');
+
+            // The code you requested
+            if (inputPass === '229363') {
+                pane.innerHTML = `
+                    <div class="breadcrumbs">🛠️ &nbsp;›&nbsp; Systems Control</div>
+                    <h1>Control Dashboard <span class="badge">Session Valid</span></h1>
+                    <p>Welcome back. Below are your localized mock admin configurations.</p>
+                    
+                    <div class="dashboard-panel">
+                        <h3>Site Automation State</h3>
+                        <p>Current Node Context: <code>Static Gateway (GitHub Pages)</code></p>
+                        <hr style="border-color: var(--border); margin: 16px 0;">
+                        <button class="admin-btn" style="background: #ef4444; color: white;" onclick="alert('Note: To change live text values permanently, update your file directly inside GitHub!')">Clear Cached Logs</button>
+                    </div>
+                `;
+            } else {
+                error.style.display = "block";
+            }
+        }
+    </script>
 </body>
 </html>
