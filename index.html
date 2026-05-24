@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALT's Showcases</title>
+    <title>pronak. Tutorial</title>
+    <link id="favicon" rel="icon" type="image/x-icon" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=32&h=32&fit=crop">
+    
     <style>
-        /* ==========================================================================
-           1. CORE STYLES & VARIABLES (Dark Theme Slate)
-           ========================================================================== */
         :root {
             --bg-main: #121214;
             --bg-sidebar: #18181c;
             --bg-hover: #232329;
             --text-main: #e4e4e7;
             --text-muted: #a1a1aa;
-            --accent: #2dd4bf; /* Mint/Teal color from your screenshot */
+            --accent: #2dd4bf;
             --border: #27272a;
             --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
@@ -31,14 +30,6 @@
             overflow: hidden;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* ==========================================================================
-           2. TOP NAVIGATION BAR
-           ========================================================================== */
         header {
             background-color: var(--bg-sidebar);
             border-bottom: 1px solid var(--border);
@@ -50,47 +41,14 @@
             z-index: 10;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
+        .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; }
+        .logo-icon { color: var(--accent); }
+        .logo-sub { color: var(--text-muted); font-weight: 400; font-size: 0.95rem; margin-left: 4px; }
+        .nav-links { display: flex; align-items: center; gap: 20px; font-size: 0.9rem; color: var(--text-muted); }
+        
+        .wrapper { display: flex; flex: 1; overflow: hidden; }
 
-        .logo-icon {
-            color: var(--accent);
-        }
-
-        .logo-sub {
-            color: var(--text-muted);
-            font-weight: 400;
-            font-size: 0.95rem;
-            margin-left: 4px;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .nav-links a:hover {
-            color: var(--text-main);
-        }
-
-        /* ==========================================================================
-           3. THREE-COLUMN LAYOUT
-           ========================================================================== */
-        .wrapper {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* Left Sidebar Navigation */
+        /* Left Sidebar Layout */
         .left-sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -113,310 +71,311 @@
             align-items: center;
         }
 
-        .nav-item:hover {
-            background-color: var(--bg-hover);
-            color: var(--text-main);
-        }
+        .nav-item:hover { background-color: var(--bg-hover); color: var(--text-main); }
+        .nav-item.active { color: var(--accent); background-color: rgba(45, 212, 191, 0.08); font-weight: 600; }
+        .sidebar-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-main); margin: 16px 0 6px 12px; font-weight: 700; }
 
-        .nav-item.active {
-            color: var(--accent);
-            background-color: rgba(45, 212, 191, 0.08);
-            font-weight: 600;
-        }
+        /* Content window styling */
+        .main-content { flex: 1; padding: 40px 48px; overflow-y: auto; max-width: 800px; margin: 0 auto; width: 100%; }
+        .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
+        h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+        h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 2rem; }
+        p { line-height: 1.7; color: var(--text-main); margin-bottom: 1.25rem; }
 
-        .nested {
-            padding-left: 24px;
-            font-size: 0.88rem;
-        }
-
-        .sidebar-category {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin: 16px 0 6px 12px;
-            font-weight: 700;
-        }
-
-        /* Center Main Content Area */
-        .main-content {
-            flex: 1;
-            padding: 40px 48px;
-            overflow-y: auto;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .breadcrumbs {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        h2 {
-            font-size: 1.75rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
-            margin-top: 2rem;
-        }
-
-        p {
-            line-height: 1.7;
-            color: var(--text-main);
-            margin-bottom: 1.25rem;
-        }
-
-        .highlight-box {
-            background-color: rgba(255, 255, 255, 0.02);
-            border-left: 4px solid var(--accent);
-            padding: 16px;
-            border-radius: 0 8px 8px 0;
-            margin: 20px 0;
-            font-style: italic;
-            color: var(--text-muted);
-        }
-
-        /* Right Sidebar (In-page TOC) */
-        .right-sidebar {
-            width: 220px;
-            padding: 40px 24px;
-            font-size: 0.85rem;
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-        }
-
-        .toc-title {
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-        }
-
-        .toc-links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            color: var(--text-muted);
-        }
-
-        .toc-links a:hover {
-            color: var(--text-main);
-        }
-
-        /* ==========================================================================
-           4. ADMIN PANEL & LOGIN INTERFACE
-           ========================================================================== */
-        .admin-login-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-width: 320px;
-            margin: 40px auto;
-            background: var(--bg-sidebar);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .admin-input {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            padding: 10px;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .admin-btn {
-            background: var(--accent);
-            color: #121214;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .admin-btn:hover {
-            opacity: 0.9;
-        }
-
-        .error-msg {
-            color: #f87171;
-            font-size: 0.85rem;
-            display: none;
-        }
-
-        .dashboard-panel {
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 20px;
-        }
-
-        .badge {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        /* Form Controls for Admin CMS Dashboard */
+        .admin-box { background: var(--bg-sidebar); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        input, textarea, select { background: var(--bg-main); border: 1px solid var(--border); padding: 10px; border-radius: 6px; color: #fff; font-size: 0.95rem; font-family: inherit; }
+        textarea { resize: vertical; min-height: 100px; }
+        .btn { background: var(--accent); color: #121214; border: none; padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-block; }
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: #ef4444; color: white; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-area">
-            <span class="logo-icon">🤖</span> ALT10fd0f. <span class="logo-sub">Tutorial</span>
-        </div>
-        <div class="nav-links">
-            <a href="#">GitHub ↗</a>
-            <span>🌙</span>
-        </div>
+        <div class="logo-area"><span class="logo-icon">🤖</span> pronak. <span class="logo-sub">Tutorial</span></div>
+        <div class="nav-links"><a href="#">GitHub ↗</a><span>🌙</span></div>
     </header>
 
     <div class="wrapper">
-        <aside class="left-sidebar">
-            <div class="nav-item active" onclick="switchTab('intro')">Intro</div>
-            <div class="nav-item" onclick="switchTab('cooldowns')">Command Cooldowns</div>
-            
-            <div class="sidebar-category">Economy System</div>
-            <div class="nav-item nested" onclick="switchTab('admin-cmds')">Say Command.</div>
-            <div class="nav-item nested" onclick="switchTab('modify-pts')">DM Command.</div>
-            <div class="nav-item nested" onclick="switchTab('add-item')">Calculator.</div>
-            <div class="nav-item nested" onclick="switchTab('edit-item')">User Info.</div>
-            <div class="nav-item nested" onclick="switchTab('remove-item')">Modal/Form Setup</div>
-            <div class="nav-item" onclick="switchTab('balance')">Clicker Game</div>
-            <div class="nav-item" onclick="switchTab('leaderboard')">Prefix Commands</div>
-            <div class="nav-item" oneclick
-            
-            <div class="sidebar-category">Systems</div>
-            <div class="nav-item" onclick="switchTab('leveling')">Leveling System <span>›</span></div>
-            <div class="nav-item" onclick="switchTab('afk')">AFK System <span>›</span></div>
+        <aside class="left-sidebar" id="sidebar-menu"></aside>
 
-            <div class="sidebar-category">Management</div>
-            <div class="nav-item" style="color: #fda4af;" onclick="switchTab('admin-panel')">🔒 Admin Dashboard</div>
-        </aside>
-
-        <main class="main-content" id="content-pane">
-            <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Intro</div>
-            <h1>Intro</h1>
-            <p>This page is maintained and written by <strong>ALT10fd0f</strong>. This tutorial page was created to help users create complex and advanced commands with their Kite custom bots.</p>
-            <p>Before getting started, it is recommended that you read the below given headings.</p>
-            
-            <h2>Usage/Credits</h2>
-            <p>I do not require credits if you're using the commands from this page in your server.</p>
-            <p><strong>But</strong> for people who make bots for a fee, if you're using any commands from this page, I would ask you to <strong>not charge</strong> people for these commands or claim them as your work.</p>
-            
-            <div class="highlight-box">
-                Similarly, I would want server-owners to be aware of people who ask you to pay fees for "making an economy bot", etc. because all they are doing is copy-pasting stuff from this website.
-            </div>
-
-            <h2>Block IDs/Names</h2>
-            <p>Documentation details for specific code-blocks and expressions go here...</p>
-        </main>
-
-        <aside class="right-sidebar" id="toc-pane">
-            <div class="toc-title">On This Page</div>
-            <div class="toc-links">
-                <a href="#">Usage/Credits</a>
-                <a href="#">Block IDs/Names</a>
-                <a href="#">Copying codeblocks</a>
-                <a href="#">Suggestions</a>
-                <a href="#">Support</a>
-            </div>
-        </aside>
+        <main class="main-content" id="content-pane"></main>
     </div>
 
     <script>
-        function switchTab(tabName) {
-            // Manage Active Class highlighting on Sidebar
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+        // Explicit layout arrays configured per your precise updates
+        const defaultSiteData = {
+            faviconUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=32&h=32&fit=crop",
+            pages: [
+                // Basic Commands Category
+                { id: "say", title: "Say", category: "Basic Commands", content: "<h1>Say Command</h1><p>Documentation for the layout mechanics of runtime phrase processing outputs.</p>" },
+                { id: "dm", title: "DM", category: "Basic Commands", content: "<h1>DM Command</h1><p>Documentation regarding localized direct notification endpoints.</p>" },
+                { id: "user-info", title: "User Info", category: "Basic Commands", content: "<h1>User Info</h1><p>Documentation for looking up tracking markers assigned to profile objects.</p>" },
+                { id: "modal-form", title: "Modal/Form", category: "Basic Commands", content: "<h1>Modal/Form</h1><p>Documentation regarding complex layout blocks and data fields.</p>" },
+                { id: "prefix-commands", title: "Prefix Commands", category: "Basic Commands", content: "<h1>Prefix Commands</h1><p>Documentation for legacy structural syntax checks within automation setups.</p>" },
+                
+                // Fun Commands Category
+                { id: "clicker-game", title: "Clicker Game", category: "Fun Commands", content: "<h1>Clicker Game</h1><p>Configuration rules tracking incremental integer loops based on client events.</p>" },
+                { id: "calculator-command", title: "Calculator Command", category: "Fun Commands", content: "<h1>Calculator Command</h1><p>Execution properties handling computational string parsing algorithms.</p>" },
+                { id: "discord-mod-panel", title: "Discord Mod Panel", category: "Fun Commands", content: "<h1>Discord Mod Panel</h1><p>Documentation detailing standard community administration utilities.</p>" },
+                { id: "password-setup", title: "Password Setup", category: "Fun Commands", content: "<h1>Password Setup</h1><p>Procedures mapping basic challenge tokens for user interactions.</p>" },
 
+                // Important Commands Category
+                { id: "ticket-setup", title: "Ticket Setup", category: "Important Commands", content: "<h1>Ticket Setup</h1><p>Configuration guides for building interactive channel intakes.</p>" },
+                { id: "application-setup", title: "Application Setup", category: "Important Commands", content: "<h1>Application Setup</h1><p>Step-by-step instructions processing text responses across automated tracking hooks.</p>" },
+                { id: "roblox-verification", title: "Roblox Verification", category: "Important Commands", content: "<h1>Roblox Verification</h1><p>Detailed verification instructions detailing data parsing for web platforms.</p>" },
+                { id: "erlc-session-management", title: "ER:LC Session Management", category: "Important Commands", content: "<h1>ER:LC Session Management</h1><p>System configurations mapping custom log payloads for server management tracks.</p>" },
+
+                // API's Category
+                { id: "member-count", title: "Member Count", category: "API's", content: "<h1>Member Count</h1><p>Endpoint setups reporting contextual data streams representing current group parameters.</p>" },
+                { id: "erlc-api-v2", title: "ER:LC API V2", category: "API's", content: "<h1>ER:LC API V2</h1><p>Documentation detailing interaction signatures with the global server automation interface.</p>" },
+                { id: "ticket-transcripts", title: "Ticket Transcripts", category: "API's", content: "<h1>Ticket Transcripts</h1><p>Methods indexing history records to structured text outputs.</p>" },
+                { id: "roblox-user-lookup", title: "Roblox User Lookup", category: "API's", content: "<h1>Roblox User Lookup</h1><p>Dynamic call lookups evaluating target profile identities via web platform signatures.</p>" },
+                { id: "roblox-verification-api", title: "Roblox Verification", category: "API's", content: "<h1>Roblox Verification API</h1><p>API implementation mappings matching verification tokens across active networks.</p>" }
+            ]
+        };
+
+        // Initialize state variables
+        let siteData = JSON.parse(localStorage.getItem('pronak_cms_data')) || defaultSiteData;
+        let currentTab = 'say'; // Open to 'Say' by default instead of 'Intro'
+        let isAuthenticated = false;
+
+        function saveToStorage() {
+            localStorage.setItem('pronak_cms_data', JSON.stringify(siteData));
+            applyFavicon();
+        }
+
+        function applyFavicon() {
+            document.getElementById('favicon').href = siteData.faviconUrl || "";
+        }
+
+        function forceResetToDefaults() {
+            if(confirm("Are you sure you want to restore the layout to your new clean template? This clears browser session modifications.")) {
+                localStorage.removeItem('pronak_cms_data');
+                siteData = JSON.parse(JSON.stringify(defaultSiteData));
+                currentTab = 'say';
+                saveToStorage();
+                loadPage('say');
+            }
+        }
+
+        // Generate Left Navigation Tree Structure
+        function renderSidebar() {
+            const sidebar = document.getElementById('sidebar-menu');
+            sidebar.innerHTML = '';
+
+            const categories = {};
+            siteData.pages.forEach(page => {
+                if (!categories[page.category]) categories[page.category] = [];
+                categories[page.category].push(page);
+            });
+
+            for (const category in categories) {
+                if (category !== "None") {
+                    const catHeader = document.createElement('div');
+                    catHeader.className = 'sidebar-category';
+                    catHeader.innerText = category;
+                    sidebar.appendChild(catHeader);
+                }
+
+                categories[category].forEach(page => {
+                    const item = document.createElement('div');
+                    item.className = `nav-item ${currentTab === page.id ? 'active' : ''}`;
+                    item.innerText = page.title;
+                    item.onclick = () => loadPage(page.id);
+                    sidebar.appendChild(item);
+                });
+            }
+
+            // Append static Management Link
+            const adminItem = document.createElement('div');
+            adminItem.className = `nav-item ${currentTab === 'admin-dashboard' ? 'active' : ''}`;
+            adminItem.style.color = '#fda4af';
+            adminItem.innerHTML = '🔒 Admin Dashboard';
+            adminItem.onclick = () => loadPage('admin-dashboard');
+            sidebar.appendChild(adminItem);
+        }
+
+        // Swaps Content Panels dynamically
+        function loadPage(id) {
+            currentTab = id;
+            renderSidebar();
             const pane = document.getElementById('content-pane');
-            const toc = document.getElementById('toc-pane');
-            toc.style.display = "block"; // Show TOC by default
 
-            // Switch layout content dynamically based on selection
-            if (tabName === 'intro') {
+            if (id === 'admin-dashboard') {
+                renderAdminDashboard(pane);
+                return;
+            }
+
+            const page = siteData.pages.find(p => p.id === id);
+            if (page) {
                 pane.innerHTML = `
-                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Intro</div>
-                    <h1>Intro</h1>
-                    <p>This page is maintained and written by <strong>pronak. / Ronak</strong>. This tutorial page was created to help users create complex and advanced commands with their Kite custom bots.</p>
-                    <p>Before getting started, it is recommended that you read the below given headings.</p>
-                    <h2>Usage/Credits</h2>
-                    <p>I do not require credits if you're using the commands from this page in your server.</p>
-                    <p><strong>But</strong> for people who make bots for a fee, if you're using any commands from this page, I would ask you to <strong>not charge</strong> people for these commands or claim them as your work.</p>
-                    <div class="highlight-box">Similarly, I would want server-owners to be aware of people who ask you to pay fees for "making an economy bot", etc. because all they are doing is copy-pasting stuff from this website.</div>
-                    <h2>Block IDs/Names</h2>
-                    <p>Documentation details for specific code-blocks and expressions go here...</p>
+                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; ${page.category} &nbsp;›&nbsp; ${page.title}</div>
+                    ${page.content}
                 `;
-            } else if (tabName === 'cooldowns') {
-                pane.innerHTML = `
-                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Cooldowns</div>
-                    <h1>Command Cooldowns</h1>
-                    <p>Configure internal pacing constraints to prevent webhook abuse or runtime performance degradation.</p>
-                `;
-            } else if (tabName === 'admin-panel') {
-                toc.style.display = "none"; // Hide TOC on login page
-                pane.innerHTML = `
+            }
+        }
+
+        // Renders Authentication or Dashboard panel
+        function renderAdminDashboard(target) {
+            if (!isAuthenticated) {
+                target.innerHTML = `
                     <div class="breadcrumbs">🔒 &nbsp;›&nbsp; Restricted Gateway</div>
                     <h1>Admin Authentication</h1>
-                    <p>Enter your authorization code to modify static parameters or review localized platform state structures.</p>
-                    <div class="admin-login-container">
-                        <label for="pass">Security Passkey</label>
-                        <input type="password" id="pass" class="admin-input" placeholder="••••••">
-                        <div class="error-msg" id="login-err">Invalid token signature. Access Denied.</div>
-                        <button class="admin-btn" onclick="checkAuth()">Authenticate</button>
+                    <div class="admin-box" style="max-width: 350px; margin: 0 auto;">
+                        <div class="form-group">
+                            <label>Security Passkey</label>
+                            <input type="password" id="admin-pass" placeholder="••••••">
+                        </div>
+                        <button class="btn" onclick="verifyLogin()">Authenticate</button>
                     </div>
                 `;
             } else {
-                pane.innerHTML = `
-                    <div class="breadcrumbs">🏠 &nbsp;›&nbsp; Subsystem</div>
-                    <h1>${tabName.toUpperCase().replace('-', ' ')}</h1>
-                    <p>Sub-module container setup. Edit this text block inside the index.html file to input individual command document structures.</p>
-                `;
-            }
-        }
+                let pageOptions = siteData.pages.map(p => `<option value="${p.id}">${p.title} (${p.category})</option>`).join('');
 
-        function checkAuth() {
-            const inputPass = document.getElementById('pass').value;
-            const error = document.getElementById('login-err');
-            const pane = document.getElementById('content-pane');
-
-            // The code you requested
-            if (inputPass === '229363') {
-                pane.innerHTML = `
+                target.innerHTML = `
                     <div class="breadcrumbs">🛠️ &nbsp;›&nbsp; Systems Control</div>
-                    <h1>Control Dashboard <span class="badge">Session Valid</span></h1>
-                    <p>Welcome back. Below are your localized mock admin configurations.</p>
-                    
-                    <div class="dashboard-panel">
-                        <h3>Site Automation State</h3>
-                        <p>Current Node Context: <code>Static Gateway (GitHub Pages)</code></p>
-                        <hr style="border-color: var(--border); margin: 16px 0;">
-                        <button class="admin-btn" style="background: #ef4444; color: white;" onclick="alert('Note: To change live text values permanently, update your file directly inside GitHub!')">Clear Cached Logs</button>
+                    <h1>CMS Dashboard</h1>
+                    <p style="color: #4ade80;">✓ Session Verified. Edits save instantly to local environment cache.</p>
+
+                    <div class="admin-box">
+                        <h3>Global Settings</h3>
+                        <div class="form-group">
+                            <label>Favicon Image URL</label>
+                            <input type="text" id="fav-input" value="${siteData.faviconUrl || ''}" placeholder="https://example.com/icon.png">
+                        </div>
+                        <button class="btn" onclick="updateFavicon()">Update Favicon</button>
+                        <button class="btn btn-danger" style="margin-left: 8px;" onclick="forceResetToDefaults()">Reset to Default Layout</button>
+                    </div>
+
+                    <div class="admin-box">
+                        <h3>Create New Page Structure</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Page Title</label>
+                                <input type="text" id="new-title" placeholder="e.g., Leveling System">
+                            </div>
+                            <div class="form-group">
+                                <label>Category Placement</label>
+                                <input type="text" id="new-cat" placeholder="e.g., Basic Commands">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Page Content (HTML Allowed)</label>
+                            <textarea id="new-content" placeholder="<h1>Heading</h1><p>Your content text...</p>"></textarea>
+                        </div>
+                        <button class="btn" onclick="createNewPage()">Publish Page</button>
+                    </div>
+
+                    <div class="admin-box">
+                        <h3>Modify / Delete Target Modules</h3>
+                        <div class="form-group">
+                            <label>Select Target Page</label>
+                            <select id="edit-select" onchange="populateEditor(this.value)">
+                                <option value="">-- Choose a page to edit --</option>
+                                ${pageOptions}
+                            </select>
+                        </div>
+                        <div id="editor-fields" style="display:none;">
+                            <div class="form-group">
+                                <label>Edit Title</label>
+                                <input type="text" id="edit-title">
+                            </div>
+                            <div class="form-group">
+                                <label>Edit Content</label>
+                                <textarea id="edit-content"></textarea>
+                            </div>
+                            <button class="btn" onclick="savePageEdit()">Save Document Modifications</button>
+                            <button class="btn btn-danger" style="margin-left:8px;" onclick="deletePage()">Delete Page</button>
+                        </div>
                     </div>
                 `;
-            } else {
-                error.style.display = "block";
             }
         }
+
+        function verifyLogin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === '229363') {
+                isAuthenticated = true;
+                loadPage('admin-dashboard');
+            } else {
+                alert('Invalid Token Signature.');
+            }
+        }
+
+        function updateFavicon() {
+            siteData.faviconUrl = document.getElementById('fav-input').value;
+            saveToStorage();
+            alert('Favicon updated successfully!');
+        }
+
+        function createNewPage() {
+            const title = document.getElementById('new-title').value.trim();
+            const category = document.getElementById('new-cat').value.trim() || "None";
+            const content = document.getElementById('new-content').value.trim();
+
+            if (!title || !content) {
+                alert('Please enter a title and content.');
+                return;
+            }
+
+            const id = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            
+            if (siteData.pages.some(p => p.id === id)) {
+                alert('A page with a matching title signature already exists.');
+                return;
+            }
+
+            siteData.pages.push({ id, title, category, content });
+            saveToStorage();
+            loadPage(id);
+        }
+
+        function populateEditor(pageId) {
+            const fields = document.getElementById('editor-fields');
+            if (!pageId) { fields.style.display = 'none'; return; }
+
+            const page = siteData.pages.find(p => p.id === pageId);
+            if (page) {
+                fields.style.display = 'block';
+                document.getElementById('edit-title').value = page.title;
+                document.getElementById('edit-content').value = page.content;
+            }
+        }
+
+        function savePageEdit() {
+            const pageId = document.getElementById('edit-select').value;
+            const page = siteData.pages.find(p => p.id === pageId);
+            if (page) {
+                page.title = document.getElementById('edit-title').value.trim();
+                page.content = document.getElementById('edit-content').value;
+                saveToStorage();
+                loadPage(page.id);
+            }
+        }
+
+        function deletePage() {
+            const pageId = document.getElementById('edit-select').value;
+            if (confirm('Are you absolutely certain you want to remove this module container?')) {
+                siteData.pages = siteData.pages.filter(p => p.id !== pageId);
+                saveToStorage();
+                loadPage(siteData.pages[0]?.id || 'admin-dashboard');
+            }
+        }
+
+        // Initialize Lifecycle View State
+        applyFavicon();
+        
+        // If user already had data stored, make sure their landing tab points to an existing page item
+        if (!siteData.pages.some(p => p.id === currentTab)) {
+            currentTab = siteData.pages[0]?.id || 'admin-dashboard';
+        }
+        loadPage(currentTab);
     </script>
 </body>
 </html>
