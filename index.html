@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSRP</title>
+    <title>FSRP Staff Portal</title>
     <link rel="icon" type="image/png" href="https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png?ex=6a145131&is=6a12ffb1&hm=ebe43bb8b9b27d986936bf11cc1b12bdf8133d8aef9f9255ae6d90d04a942617&animated=true">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,16 +28,8 @@
                      alt="FSRP Logo" class="h-9 w-9 rounded-full border border-amber-500/30 shadow-lg shadow-amber-500/10">
                 <div>
                     <span class="text-sm font-semibold tracking-wider text-amber-500">FLORIDA STATE RP</span>
-                    <p class="text-xs font-medium text-slate-400" id="portal-sub-title">Staff Documentation Portal</p>
+                    <p class="text-xs font-medium text-slate-400">Staff Documentation Portal</p>
                 </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <button id="adminBtn" onclick="openLoginModal()" class="flex items-center gap-2 rounded-lg bg-amber-500/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all">
-                    <i class="fa-solid fa-lock pr-1"></i> Admin Portal
-                </button>
-                <button id="logoutBtn" onclick="logoutAdmin()" class="hidden flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all">
-                    <i class="fa-solid fa-right-from-bracket"></i> Exit Admin Terminal
-                </button>
             </div>
         </div>
     </header>
@@ -46,9 +38,9 @@
         <div class="flex flex-col lg:flex-row gap-8 py-8">
             
             <aside class="w-full lg:w-64 lg:shrink-0 lg:sticky lg:top-24 h-fit">
-                <nav class="space-y-1 rounded-xl border border-slate-800 bg-[#0f1524] p-4 shadow-xl" id="sidebarNav">
+                <nav class="space-y-1 rounded-xl border border-slate-800 bg-[#0f1524] p-4 shadow-xl">
                     
-                    <div id="handbookLinks" class="space-y-1">
+                    <div class="space-y-1">
                         <p class="px-3 text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Navigation</p>
                         
                         <button onclick="switchTab('home')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-slate-800 text-white transition-all text-left" id="btn-home">
@@ -110,18 +102,11 @@
                         </div>
                     </div>
 
-                    <div id="adminLinks" class="hidden space-y-1">
-                        <p class="px-3 text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Management Terminal</p>
-                        <button onclick="switchAdminTab('overview')" class="admin-tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-slate-800 text-white transition-all text-left" id="admin-btn-overview"><i class="fa-solid fa-chart-pie text-amber-500 w-5"></i> Overview Stats</button>
-                        <button onclick="switchAdminTab('roster')" class="admin-tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left" id="admin-btn-roster"><i class="fa-solid fa-users text-amber-500 w-5"></i> Manage Roster</button>
-                        <button onclick="switchAdminTab('loas')" class="admin-tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left" id="admin-btn-loas"><i class="fa-solid fa-calendar-minus text-amber-500 w-5"></i> LOA Requests <span class="ml-auto bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 rounded-full font-bold">2</span></button>
-                    </div>
                 </nav>
             </aside>
 
-            <main class="flex-1 min-w-0 space-y-12 pb-16">
-                
-                <div id="handbookView" class="space-y-12 max-w-3xl">
+            <main class="flex-1 min-w-0 pb-16">
+                <div class="max-w-3xl">
                     
                     <div id="tab-home" class="page-content space-y-6">
                         <div class="border-b border-slate-800 pb-6">
@@ -131,7 +116,7 @@
                         <p class="text-slate-300 leading-relaxed">Welcome to the official **Florida State Roleplay (FSRP)** Staff Portal. This centralized documentation directory contains core structural parameters, execution rules, and regulatory terms of service binding all active administrators.</p>
                         <div class="p-5 rounded-xl border border-slate-800 bg-gradient-to-br from-[#0f1524] to-[#131b30]">
                             <h3 class="text-white font-bold mb-2"><i class="fa-solid fa-circle-info text-amber-500 mr-2"></i> System Orientation Notice</h3>
-                            <p class="text-xs text-slate-400">Navigate via the secure structural dynamic menu panel on the left layout viewport to pull real-time policy sheets or verification directives.</p>
+                            <p class="text-xs text-slate-400">Navigate via the layout viewport on the left side to instantly jump between sections without scrolling the entire sheet.</p>
                         </div>
                     </div>
 
@@ -142,7 +127,7 @@
 
                     <div id="tab-tos" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Terms Of Service</h2>
-                        <p class="text-slate-300 text-sm">By holding an active administrative rank within Florida State Roleplay, you legally and conditionally agree to protect absolute proprietary data integrity. Unauthorized external leaks of documentation results in an immutable network blacklist.</p>
+                        <p class="text-slate-300 text-sm">By holding an active administrative rank within Florida State Roleplay, you conditionally agree to protect absolute proprietary data integrity. Unauthorized external leaks of documentation results in an immutable network blacklist.</p>
                     </div>
 
                     <div id="tab-rules-discord" class="page-content hidden space-y-4">
@@ -198,10 +183,10 @@
 
                     <div id="tab-mh-commands" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">M-H Commands Reference</h2>
-                        <p class="text-slate-300 font-mono text-xs p-4 bg-slate-900 rounded-lg border border-slate-800">
-                            :m [message] - Dispatches main configuration global announcements.<br>
-                            :h [player] [reason] - Logs an administrative help inquiry flag.
-                        </p>
+                        <div class="text-slate-300 font-mono text-xs p-4 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
+                            <p><span class="text-amber-400">:m [message]</span> - Dispatches main configuration global announcements.</p>
+                            <p><span class="text-amber-400">:h [player] [reason]</span> - Logs an administrative help inquiry flag.</p>
+                        </div>
                     </div>
 
                     <div id="tab-melonly-commands" class="page-content hidden space-y-4">
@@ -217,93 +202,26 @@
                     <div id="tab-ingame-commands" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">In-Game Commands</h2>
                         <p class="text-slate-300 text-sm">Standard system console directives binding authorized field modules:</p>
-                        <p class="font-mono text-xs text-slate-400">/logs &bull; /spectate [id] &bull; /tp [id] &bull; /bring [id] &bull; /warn [id]</p>
+                        <p class="font-mono text-xs text-amber-400 bg-slate-900 p-4 rounded-lg border border-slate-800">/logs &bull; /spectate [id] &bull; /tp [id] &bull; /bring [id] &bull; /warn [id]</p>
                     </div>
 
                     <div id="tab-wl-cars" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted Vehicular Assets</h2>
-                        <p class="text-slate-300 text-sm">The following premium performance tracking vehicles are restricted to Tier 3+ custom administrative response units and specialized LEO divisions only.</p>
+                        <p class="text-slate-300 text-sm">The following performance tracking vehicles are restricted to specialized custom administrative response units and verified division rosters only.</p>
                     </div>
 
                     <div id="tab-wl-uniforms" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted Uniform Assets</h2>
-                        <p class="text-slate-300 text-sm">Authorized uniform ID arrays matching clothing designs for Department parameters must match standard asset codes exactly.</p>
+                        <p class="text-slate-300 text-sm">Authorized uniform ID arrays matching custom clothing templates for server departments.</p>
                     </div>
 
                     <div id="tab-wl-departments" class="page-content hidden space-y-4">
                         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted State Agencies</h2>
-                        <p class="text-slate-300 text-sm">Verified operational frameworks governing Florida Highway Patrol (FHP), Liberty County Sheriff's Office (LCSO), and local Fire Rescue systems.</p>
+                        <p class="text-slate-300 text-sm">Verified operational frameworks governing Florida Highway Patrol (FHP), Liberty County Sheriff's Office (LCSO), and local Fire Rescue setups.</p>
                     </div>
 
                 </div>
-
-                <div id="adminView" class="hidden space-y-8 w-full">
-                    <div class="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
-                            <h1 class="text-3xl font-extrabold tracking-tight text-amber-500">HQ Administration Panel</h1>
-                            <p class="text-slate-400 text-sm mt-1">High-tier operational adjustments & data verification controls.</p>
-                        </div>
-                        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase px-3 py-1.5 rounded-lg flex items-center gap-2">
-                            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> Terminal Secure
-                        </div>
-                    </div>
-
-                    <div id="adminTab-overview" class="admin-page-content space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="rounded-xl border border-slate-800 bg-[#0f1524] p-5"><p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Active Staff</p><p class="text-3xl font-bold text-white mt-2">42</p></div>
-                            <div class="rounded-xl border border-slate-800 bg-[#0f1524] p-5"><p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Active LOAs</p><p class="text-3xl font-bold text-amber-500 mt-2">2</p></div>
-                            <div class="rounded-xl border border-slate-800 bg-[#0f1524] p-5"><p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Database Checks</p><p class="text-3xl font-bold text-emerald-400 mt-2">Pass</p></div>
-                        </div>
-                        <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 font-mono text-xs text-slate-400 space-y-1">
-                            <p class="text-slate-300 font-bold mb-1">[SECURITY AUDIT FEED]</p>
-                            <p>&bull; Session initialized cleanly. Token FSRPADMIN5345 matched hash parameters.</p>
-                        </div>
-                    </div>
-
-                    <div id="adminTab-roster" class="admin-page-content hidden space-y-4">
-                        <h3 class="text-lg font-bold text-white">Roster Directory Management</h3>
-                        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-[#0f1524]">
-                            <table class="w-full text-left text-sm text-slate-300">
-                                <thead class="bg-slate-900/50 text-xs font-bold uppercase text-slate-400 border-b border-slate-800">
-                                    <tr><th class="px-6 py-4">Identity</th><th class="px-6 py-4">Designation</th><th class="px-6 py-4">Action</th></tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800 text-xs">
-                                    <tr><td class="px-6 py-4 text-white font-medium">Officer_Jack</td><td class="px-6 py-4"><span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-xs">Tier 2 Admin</span></td><td class="px-6 py-4"><button class="text-red-400 hover:underline">Suspend</button></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="adminTab-loas" class="admin-page-content hidden space-y-4">
-                        <h3 class="text-lg font-bold text-white">Pending Leave Request Queues</h3>
-                        <div class="p-4 rounded-xl border border-slate-800 bg-[#0f1524] flex justify-between items-center">
-                            <div><p class="text-sm font-bold text-white">Admin_Kyle</p><p class="text-xs text-slate-400">Reason: Academic Examinations</p></div>
-                            <button class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1 rounded">Approve</button>
-                        </div>
-                    </div>
-
-                </div>
-
             </main>
-        </div>
-    </div>
-
-    <div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0f1524] p-6 shadow-2xl relative">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-all"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <div class="text-center space-y-2 mb-6">
-                <div class="mx-auto h-12 w-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 text-xl"><i class="fa-solid fa-shield-halved"></i></div>
-                <h3 class="text-lg font-bold text-white">Administrative Verification</h3>
-                <p class="text-xs text-slate-400">Access restricted to authorized high-tier FSRP Executives.</p>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Security Password</label>
-                    <input type="password" id="adminPasswordInput" placeholder="••••••••••••" class="w-full rounded-lg bg-slate-900 border border-slate-800 p-3 text-sm text-center text-white font-mono tracking-widest focus:outline-none focus:border-amber-500 transition-all">
-                </div>
-                <p id="loginError" class="hidden text-xs text-red-400 text-center font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Invalid Access Token Credentials.</p>
-                <button onclick="verifyAdminCredentials()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm uppercase tracking-wider py-3 rounded-lg transition-all">Unlock Terminal</button>
-            </div>
         </div>
     </div>
 
@@ -312,10 +230,8 @@
     </footer>
 
     <script>
-        const MASTER_GATE_TOKEN = "FSRPADMIN5345";
-
         // Tab Switching Architecture Logic (Prevents Page Scrolling)
-        刻function switchTab(tabId) {
+        function switchTab(tabId) {
             // Hide all standard handbook views
             const views = document.querySelectorAll('.page-content');
             views.forEach(v => v.classList.add('hidden'));
@@ -351,80 +267,6 @@
                 arrow.classList.remove('rotate-180');
             }
         }
-
-        // Admin Terminal Security Validation Processes
-        function openLoginModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
-            document.getElementById('adminPasswordInput').focus();
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('loginError').classList.add('hidden');
-            document.getElementById('adminPasswordInput').value = '';
-        }
-
-        function verifyAdminCredentials() {
-            const inputField = document.getElementById('adminPasswordInput');
-            const errorText = document.getElementById('loginError');
-
-            if (inputField.value === MASTER_GATE_TOKEN) {
-                closeLoginModal();
-                
-                // Absolute structural interface shift
-                document.getElementById('handbookView').classList.add('hidden');
-                document.getElementById('handbookLinks').classList.add('hidden');
-                document.getElementById('adminBtn').classList.add('hidden');
-                
-                document.getElementById('adminView').classList.remove('hidden');
-                document.getElementById('adminLinks').classList.remove('hidden');
-                document.getElementById('logoutBtn').classList.remove('hidden');
-                
-                document.getElementById('portal-sub-title').innerText = "Command Control Terminal";
-                switchAdminTab('overview');
-            } else {
-                errorText.classList.remove('hidden');
-                inputField.value = '';
-                inputField.focus();
-            }
-        }
-
-        function logoutAdmin() {
-            document.getElementById('adminView').classList.add('hidden');
-            document.getElementById('adminLinks').classList.add('hidden');
-            document.getElementById('logoutBtn').classList.add('hidden');
-            
-            document.getElementById('handbookView').classList.remove('hidden');
-            document.getElementById('handbookLinks').classList.remove('hidden');
-            document.getElementById('adminBtn').classList.remove('hidden');
-            
-            document.getElementById('portal-sub-title').innerText = "Staff Documentation Portal";
-            switchTab('home');
-        }
-
-        function switchAdminTab(adminTabId) {
-            const subTabs = document.querySelectorAll('.admin-page-content');
-            subTabs.forEach(st => st.classList.add('hidden'));
-
-            const subTabBtns = document.querySelectorAll('.admin-tab-btn');
-            subTabBtns.forEach(stb => {
-                stb.classList.remove('bg-slate-800', 'text-white');
-                stb.classList.add('text-slate-400', 'hover:bg-slate-800');
-            });
-
-            document.getElementById(`adminTab-${adminTabId}`).classList.remove('hidden');
-            
-            const activeAdminBtn = document.getElementById(`admin-btn-${adminTabId}`);
-            if (activeAdminBtn) {
-                activeAdminBtn.classList.remove('text-slate-400', 'hover:bg-slate-800');
-                activeAdminBtn.classList.add('bg-slate-800', 'text-white');
-            }
-        }
-
-        // Catch Keyboard Enter Signals
-        document.getElementById('adminPasswordInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { verifyAdminCredentials(); }
-        });
     </script>
 </body>
 </html>
