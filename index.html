@@ -3,276 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSRP Staff Portal</title>
-    <link rel="icon" type="image/png" href="https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png?ex=6a145131&is=6a12ffb1&hm=ebe43bb8b9b27d986936bf11cc1b12bdf8133d8aef9f9255ae6d90d04a942617&animated=true">
+    <title>Staff Portal | Perimeter Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        
-        /* Hard-coded backup styling to protect UI initialization before Tailwind parses */
-        .secure-gate-bg { background-color: #0b0f19 !important; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; position: fixed; inset: 0; z-index: 9999; }
-        .secure-card { background-color: #0f1524 !important; border: 1px solid #1e293b !important; border-radius: 1rem; padding: 2.5rem; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .logo-lockdown { width: 110px !important; height: 110px !important; object-fit: contain !important; margin: 0 auto 1.5rem auto !important; border-radius: 9999px; border: 2px solid rgba(245, 158, 11, 0.2); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+        }
+        .secure-card {
+            background: linear-gradient(145deg, #111827, #0f172a);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 28rem;
+            text-align: center;
+        }
     </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-200 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+<body class="text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-    <div id="authGate" class="secure-gate-bg">
-        <div class="secure-card space-y-6">
-            <img src="https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png?ex=6a145131&is=6a12ffb1&hm=ebe43bb8b9b27d986936bf11cc1b12bdf8133d8aef9f9255ae6d90d04a942617&animated=true" 
-                 alt="FSRP Logo" class="logo-lockdown shadow-2xl shadow-amber-500/10">
-            
+    <div id="authGate" class="flex-1 flex items-center justify-center p-4">
+        <div class="secure-card shadow-2xl space-y-6">
+            <div class="mx-auto w-16 h-16 bg-indigo-600/10 rounded-2xl flex items-center justify-center border border-indigo-500/20 text-indigo-400 text-2xl shadow-inner">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
             <div class="space-y-2">
-                <h2 class="text-2xl font-extrabold tracking-tight text-white">FSRP Staff Portal</h2>
-                <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">This directory holds internal administrative policies. Please confirm your identity using Discord to continue.</p>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">Staff Handbook Portal</h1>
+                <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">
+                    Authentication required. Please sign in with your official community account to verify credentials.
+                </p>
             </div>
-
             <div class="pt-2">
-                <button onclick="redirectToDiscord()" class="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-xs uppercase tracking-widest py-3.5 px-4 rounded-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-lg shadow-indigo-500/20">
-                    <i class="fa-brands fa-discord text-base"></i> Verify Account
+                <button onclick="redirectToDiscord()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest py-3.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98]">
+                    <i class="fa-brands fa-discord text-base"></i>
+                    <span>Authenticate via Discord</span>
                 </button>
-            </div>
-
-            <div class="pt-4 border-t border-slate-800/60 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                <i class="fa-solid fa-shield-halved text-amber-500/60"></i> Encrypted Session Verification
             </div>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden">
-        <header class="sticky top-0 z-40 w-full border-b border-slate-800 bg-[#0b0f19]/80 backdrop-blur-md">
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center gap-3">
-                    <img src="https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png?ex=6a145131&is=6a12ffb1&hm=ebe43bb8b9b27d986936bf11cc1b12bdf8133d8aef9f9255ae6d90d04a942617&animated=true" 
-                         alt="FSRP Logo" class="h-9 w-9 rounded-full border border-amber-500/30">
+    <div id="mainApp" class="hidden flex-1 flex flex-col md:flex-row min-h-screen w-full">
+        <aside class="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 p-6 flex flex-col justify-between">
+            <div class="space-y-6">
+                <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
+                    <div class="w-8 h-8 bg-indigo-600/20 rounded-lg flex items-center justify-center border border-indigo-500/30 text-indigo-400">
+                        <i class="fa-solid fa-folder-closed"></i>
+                    </div>
                     <div>
-                        <span class="text-sm font-semibold tracking-wider text-amber-500">FLORIDA STATE RP</span>
-                        <div class="flex items-center gap-1.5 text-xs font-medium text-slate-400">
-                            <span id="userBadge" class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                            <p id="userWelcome">Session Initialized...</p>
-                        </div>
+                        <h2 class="text-sm font-bold text-white tracking-wide">Staff Manuals</h2>
+                        <p class="text-[10px] text-slate-500 font-medium" id="userWelcome">Authorized: Loading...</p>
                     </div>
                 </div>
-                <button onclick="logout()" class="text-xs text-slate-400 hover:text-red-400 font-bold uppercase tracking-wider bg-slate-800/40 border border-slate-800/80 px-3 py-2 rounded-lg transition-all">
-                    Disconnect
-                </button>
-            </div>
-        </header>
 
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row gap-8 py-8">
-                
-                <aside class="w-full lg:w-64 lg:shrink-0 lg:sticky lg:top-24 h-fit">
-                    <nav class="space-y-1 rounded-xl border border-slate-800 bg-[#0f1524] p-4 shadow-xl">
-                        <div class="space-y-1">
-                            <p class="px-3 text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Navigation</p>
-                            
-                            <button onclick="switchTab('home')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-slate-800 text-white transition-all text-left" id="btn-home">
-                                <i class="fa-solid fa-house text-amber-500 w-5"></i> Home
-                            </button>
-                            
-                            <button onclick="switchTab('staff-info')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-staff-info">
-                                <i class="fa-solid fa-address-card text-amber-500 w-5"></i> Staff Information
-                            </button>
-                            
-                            <button onclick="switchTab('tos')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-tos">
-                                <i class="fa-solid fa-file-contract text-amber-500 w-5"></i> Staff Terms Of Service
-                            </button>
-
-                            <button onclick="switchTab('rules-discord')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-rules-discord">
-                                <i class="fa-brands fa-discord text-amber-500 w-5"></i> Staff Rules (Discord)
-                            </button>
-
-                            <button onclick="switchTab('rules-game')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-rules-game">
-                                <i class="fa-solid fa-gamepad text-amber-500 w-5"></i> Staff Rules (In-Game)
-                            </button>
-
-                            <button onclick="switchTab('ranks')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-ranks">
-                                <i class="fa-solid fa-sitemap text-amber-500 w-5"></i> Staff Team Ranks
-                            </button>
-
-                            <button onclick="switchTab('promotions')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-promotions">
-                                <i class="fa-solid fa-angles-up text-amber-500 w-5"></i> Promotions
-                            </button>
-
-                            <button onclick="switchTab('infractions')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-infractions">
-                                <i class="fa-solid fa-gavel text-amber-500 w-5"></i> Infractions
-                            </button>
-
-                            <p class="pt-4 px-3 text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Systems & Assets</p>
-
-                            <button onclick="switchTab('mh-commands')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-mh-commands">
-                                <i class="fa-solid fa-terminal text-amber-500 w-5"></i> M-H Commands
-                            </button>
-
-                            <button onclick="switchTab('melonly-commands')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-melonly-commands">
-                                <i class="fa-solid fa-cube text-amber-500 w-5"></i> Melonly Commands
-                            </button>
-
-                            <button onclick="switchTab('ingame-commands')" class="tab-btn w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left" id="btn-ingame-commands">
-                                <i class="fa-solid fa-sliders text-amber-500 w-5"></i> In-Game Commands
-                            </button>
-
-                            <div class="pt-2">
-                                <button onclick="toggleDropdown()" class="w-full flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all text-left">
-                                    <span class="flex items-center gap-2"><i class="fa-solid fa-layer-group text-amber-500 w-5"></i> Whitelisted Items</span>
-                                    <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" id="dropdownArrow"></i>
-                                </button>
-                                <div id="whitelistDropdown" class="hidden pl-6 mt-1 space-y-1 border-l border-slate-800 ml-5">
-                                    <button onclick="switchTab('wl-cars')" class="tab-btn w-full text-left rounded-md px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white block" id="btn-wl-cars">Whitelisted Cars</button>
-                                    <button onclick="switchTab('wl-uniforms')" class="tab-btn w-full text-left rounded-md px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white block" id="btn-wl-uniforms">Whitelisted Uniforms</button>
-                                    <button onclick="switchTab('wl-departments')" class="tab-btn w-full text-left rounded-md px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white block" id="btn-wl-departments">Whitelisted Departments</button>
-                                </div>
+                <nav class="space-y-1">
+                    <button id="btn-home" onclick="switchTab('home')" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 bg-slate-800 text-white">
+                        <i class="fa-solid fa-house w-4 text-center"></i>
+                        <span>Dashboard Overview</span>
+                    </button>
+                    <button id="btn-rules" onclick="switchTab('rules')" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200">
+                        <i class="fa-solid fa-gavel w-4 text-center"></i>
+                        <span>Code of Conduct</span>
+                    </button>
+                    
+                    <div class="space-y-1">
+                        <button onclick="toggleDropdown()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa-solid fa-list-check w-4 text-center"></i>
+                                <span>Roster & Database</span>
                             </div>
-                        </div>
-                    </nav>
-                </aside>
-
-                <main class="flex-1 min-w-0 pb-16">
-                    <div class="max-w-3xl">
-                        <div id="tab-home" class="page-content space-y-6">
-                            <div class="border-b border-slate-800 pb-6">
-                                <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Florida State Roleplay</h1>
-                                <p class="mt-2 text-lg text-slate-400">Official Staff Handbook & Operational Policy Manual</p>
-                            </div>
-                            <p class="text-slate-300 leading-relaxed">Welcome to the official **Florida State Roleplay (FSRP)** Staff Portal. This centralized documentation directory contains core structural parameters, execution rules, and regulatory terms of service binding all active administrators.</p>
-                            <div class="p-5 rounded-xl border border-slate-800 bg-gradient-to-br from-[#0f1524] to-[#131b30]">
-                                <h3 class="text-white font-bold mb-2"><i class="fa-solid fa-circle-info text-amber-500 mr-2"></i> System Orientation Notice</h3>
-                                <p class="text-xs text-slate-400">Navigate via the layout viewport on the left side to instantly jump between sections without scrolling the entire sheet.</p>
-                            </div>
-                        </div>
-
-                        <div id="tab-staff-info" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Information</h2>
-                            <p class="text-slate-300 text-sm">Active administration duties mandate exemplary professionalism. Staff are expected to remain objective during ticket handlings, maintaining standard community boundaries at all times without bias.</p>
-                        </div>
-
-                        <div id="tab-tos" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Terms Of Service</h2>
-                            <p class="text-slate-300 text-sm">By holding an active administrative rank within Florida State Roleplay, you conditionally agree to protect absolute proprietary data integrity. Unauthorized external leaks of documentation results in an immutable network blacklist.</p>
-                        </div>
-
-                        <div id="tab-rules-discord" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Rules (Discord)</h2>
-                            <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside marker:text-amber-500">
-                                <li>Staff text channels must strictly display mature, non-toxic behavior.</li>
-                                <li>Do not tag high management positions unless critical system breaches occur.</li>
-                                <li>Ticket claims must be completed within 15 minutes of initial acquisition.</li>
-                            </ul>
-                        </div>
-
-                        <div id="tab-rules-game" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Rules (In-Game)</h2>
-                            <p class="text-slate-300 text-sm">Absolute enforcement parameters are monitored continuously. Utilizing permission tokens (noclip, build tools, admin logs panels) to gain distinct competitive advantages inside public ER:LC server sectors yields immediate rank suspension.</p>
-                        </div>
-
-                        <div id="tab-ranks" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Staff Team Ranks</h2>
-                            <div class="overflow-x-auto rounded-xl border border-slate-800 bg-[#0f1524]">
-                                <table class="w-full text-left text-sm text-slate-300">
-                                    <thead class="bg-slate-900/50 text-xs font-bold uppercase text-slate-400 border-b border-slate-800">
-                                        <tr><th class="px-6 py-4">Structural Tier</th><th class="px-6 py-4">Designation</th></tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-800 text-xs">
-                                        <tr><td class="px-6 py-4 font-bold text-amber-500">Tier 1</td><td class="px-6 py-4 text-white">Trial Moderator / Server Moderator</td></tr>
-                                        <tr><td class="px-6 py-4 font-bold text-amber-500">Tier 2</td><td class="px-6 py-4 text-white">Server Administrator</td></tr>
-                                        <tr><td class="px-6 py-4 font-bold text-amber-500">Tier 3</td><td class="px-6 py-4 text-white">Staff Management Directive</td></tr>
-                                        <tr><td class="px-6 py-4 font-bold text-amber-500">Tier 4</td><td class="px-6 py-4 text-white">Executive Director / Board Founder</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div id="tab-promotions" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Promotions</h2>
-                            <p class="text-slate-300 text-sm">Promotions are mathematically processed at the conclusion of weekly operational cycles. Elevating ranks dictates consistent quota compliance, high ticket resolution fidelity, and flawless disciplinary standing.</p>
-                        </div>
-
-                        <div id="tab-infractions" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Infractions Matrix</h2>
-                            <div class="overflow-x-auto rounded-xl border border-slate-800 bg-[#0f1524]">
-                                <table class="w-full text-left text-sm text-slate-300">
-                                    <thead class="bg-slate-900/50 text-xs font-bold uppercase text-slate-400 border-b border-slate-800">
-                                        <tr><th class="px-6 py-4">Violation Type</th><th class="px-6 py-4">Initial Action</th><th class="px-6 py-4">Secondary Action</th></tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-800 text-xs">
-                                        <tr><td class="px-6 py-4 font-medium text-white">RDM / VDM / FailRP</td><td class="px-6 py-4 text-yellow-400 font-semibold">Formal Warning</td><td class="px-6 py-4 text-slate-300">24 Hour Temporary Ban</td></tr>
-                                        <tr><td class="px-6 py-4 font-medium text-white">Combat Logging Logouts</td><td class="px-6 py-4 text-slate-300">48 Hour Ban</td><td class="px-6 py-4 text-red-400 font-semibold">Permanent System Eviction</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div id="tab-mh-commands" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">M-H Commands Reference</h2>
-                            <div class="text-slate-300 font-mono text-xs p-4 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
-                                <p><span class="text-amber-400">:m [message]</span> - Dispatches main configuration global announcements.</p>
-                                <p><span class="text-amber-400">:h [player] [reason]</span> - Logs an administrative help inquiry flag.</p>
-                            </div>
-                        </div>
-
-                        <div id="tab-melonly-commands" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Melonly API Commands</h2>
-                            <p class="text-slate-300 text-sm">Utilize the Melonly ER:LC database interface execution parameters inside designated Discord channels:</p>
-                            <div class="space-y-1 font-mono text-xs bg-slate-900 p-4 rounded-lg border border-slate-800 text-amber-400">
-                                <p>;kick [user] [reason] - Executes server extraction logic.</p>
-                                <p>;ban [user] [duration] [reason] - Commits systemic layout restriction.</p>
-                                <p>;viewlogs [user] - Queries the unified player historical metric array.</p>
-                            </div>
-                        </div>
-
-                        <div id="tab-ingame-commands" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">In-Game Commands</h2>
-                            <p class="text-slate-300 text-sm">Standard system console directives binding authorized field modules:</p>
-                            <p class="font-mono text-xs text-amber-400 bg-slate-900 p-4 rounded-lg border border-slate-800">/logs &bull; /spectate [id] &bull; /tp [id] &bull; /bring [id] &bull; /warn [id]</p>
-                        </div>
-
-                        <div id="tab-wl-cars" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted Vehicular Assets</h2>
-                            <p class="text-slate-300 text-sm">The following performance tracking vehicles are restricted to specialized custom administrative response units and verified division rosters only.</p>
-                        </div>
-
-                        <div id="tab-wl-uniforms" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted Uniform Assets</h2>
-                            <p class="text-slate-300 text-sm">Authorized uniform ID arrays matching custom clothing templates for server departments.</p>
-                        </div>
-
-                        <div id="tab-wl-departments" class="page-content hidden space-y-4">
-                            <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Whitelisted State Agencies</h2>
-                            <p class="text-slate-300 text-sm">Verified operational frameworks governing Florida Highway Patrol (FHP), Liberty County Sheriff's Office (LCSO), and local Fire Rescue setups.</p>
+                            <i id="dropdownArrow" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200"></i>
+                        </button>
+                        <div id="whitelistDropdown" class="hidden pl-6 space-y-1 transition-all duration-200">
+                            <button id="btn-whitelist" onclick="switchTab('whitelist')" class="w-full text-left px-4 py-2 rounded-lg text-[11px] font-medium text-slate-400 hover:text-slate-200 block">
+                                • Active Roster List
+                            </button>
                         </div>
                     </div>
-                </main>
+                </nav>
             </div>
-        </div>
+
+            <div class="pt-4 border-t border-slate-800 mt-6 md:mt-0">
+                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-850 hover:bg-red-950/30 border border-slate-800 hover:border-red-900/30 rounded-xl text-xs font-medium text-slate-400 hover:text-red-400 transition-all duration-200">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>De-authorize Session</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-10 max-w-4xl">
+            <section id="tab-home" class="page-content space-y-6">
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-extrabold tracking-tight text-white">Welcome to Headquarters</h1>
+                    <p class="text-sm text-slate-400">Select an operational handbook module from the sidebar navigation menu to begin review.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                    <div class="bg-slate-900/50 border border-slate-800/80 p-5 rounded-2xl space-y-3">
+                        <div class="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center text-sm"><i class="fa-solid fa-circle-check"></i></div>
+                        <h3 class="text-sm font-bold text-white">System Integrity Normal</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Your account roles have been parsed securely via the Cloudflare edge network. Active sessions remain cached locally for 24 hours.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-rules" class="page-content space-y-4 hidden">
+                <h1 class="text-2xl font-extrabold text-white tracking-tight">Code of Conduct & Guidelines</h1>
+                <p class="text-xs text-slate-400 leading-relaxed">Placeholder for community operational code regulations, disciplinary logs, and standardized protocol policies.</p>
+            </section>
+
+            <section id="tab-whitelist" class="page-content space-y-4 hidden">
+                <h1 class="text-2xl font-extrabold text-white tracking-tight">Active Roster Access Whitelist</h1>
+                <p class="text-xs text-slate-400 leading-relaxed">Internal database module logs. Access to database manipulation requires secondary clearance elevations.</p>
+            </section>
+        </main>
     </div>
 
-    <footer class="border-t border-slate-800 bg-[#090d16] py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Florida State Roleplay. All rights reserved. Proprietary Staff Documentation.</p>
-    </footer>
 
     <script>
+        // 🖥️ PUBLIC FRONTEND CORE CONFIGURATION
         const CLIENT_ID = '1508284859200573572'; 
         const REDIRECT_URI = encodeURIComponent('https://alt10fd0f.github.io/alt10fd0f.github.io/'); 
-        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-'; 
 
-        // 🚫 ADD YOUR BLACKLISTED DISCORD SERVER IDs HERE
-        const BLACKLISTED_GUILDS = [
-            '1408918816943112301', 
-            '1252210073824919584'  
-        ];
+        // 🔗 LIVE SECURE GATEKEEPER SERVICE ROUTE
+        const CLOUDFLARE_PROXY_URL = 'https://fsrpsite.alt10fd0f.workers.dev/';
 
         function redirectToDiscord() {
-            window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&scope=identify+guilds`;
+            window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&scope=identify+guilds+guilds.members.read`;
         }
 
         window.onload = function() {
@@ -281,132 +142,64 @@
 
             if (accessToken) {
                 sessionStorage.setItem('discord_token', accessToken);
-                // Wipes out the hash fragment automatically so the page is pristine
                 window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
             } else {
                 accessToken = sessionStorage.getItem('discord_token');
             }
 
             if (accessToken) {
-                fetchUserData(accessToken);
+                verifySessionThroughProxy(accessToken);
             }
         };
 
-        async function fetchUserData(token) {
+        async function verifySessionThroughProxy(token) {
             try {
-                // 1. Get identity data
-                const userRes = await fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                // Sends token package safely via encrypted body POST handshake
+                const res = await fetch(CLOUDFLARE_PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
                 });
-                if (!userRes.ok) throw new Error('Session Expired');
-                const user = await userRes.json();
 
-                // 2. Get user server list
-                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!guildsRes.ok) throw new Error('Failed to fetch server lists');
-                const guilds = await guildsRes.json();
+                if (!res.ok) throw new Error('Proxy returned an invalid response configuration');
+                const decision = await res.json();
 
-                // 3. Check for a blacklisted guild match
-                const foundBlacklistedGuild = guilds.find(guild => BLACKLISTED_GUILDS.includes(guild.id));
-
-                if (foundBlacklistedGuild) {
-                    // Lock out view
-                    document.getElementById('authGate').innerHTML = `
-                        <div class="secure-card border border-red-500/30 space-y-6 shadow-2xl shadow-red-500/5">
-                            <div class="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-2xl">
-                                <i class="fa-solid fa-user-shield"></i>
-                            </div>
-                            <div class="space-y-2">
-                                <h2 class="text-2xl font-extrabold tracking-tight text-white">Access Denied</h2>
-                                <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">
-                                    Your account has been restricted from entering this portal due to association with a blacklisted community network.
-                                </p>
-                            </div>
-                            <div class="pt-2">
-                                <button onclick="logout()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all">
-                                    Try Another Account
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    logSecurityViolation(user, foundBlacklistedGuild);
-                    return; 
+                if (decision.allowed) {
+                    // 🎉 Unhide Dashboard Protected System Application View
+                    document.getElementById('authGate').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('userWelcome').innerText = `Authorized: ${decision.user.username}`;
+                } else {
+                    // Process explicit rejection UI states based on firewall telemetry return flags
+                    if (decision.reason === "not_in_server") {
+                        handleLockout("Access Denied", "You must be a joined member of our official community Discord server to view internal staff manuals.");
+                    } else if (decision.reason === "missing_role") {
+                        handleLockout("Unauthorized Rank", "Identity found, but your Discord profile accounts lack the specified administration staff role permissions.");
+                    }
                 }
-
-                // 4. Access Approved
-                document.getElementById('authGate').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('userWelcome').innerText = `Authorized: ${user.username}`;
-
-                logVisitToWebhook(user);
-
             } catch (err) {
-                console.error(err);
+                console.error("Authentication Core Fault:", err);
                 logout();
             }
         }
 
-        function logVisitToWebhook(user) {
-            if (sessionStorage.getItem('logged_visit') === 'true') return;
-
-            const avatarUrl = user.avatar 
-                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-                : 'https://cdn.discordapp.com/embed/avatars/0.png';
-
-            const payload = {
-                username: "FSRP Gatekeeper Logs",
-                avatar_url: "https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png",
-                embeds: [{
-                    title: "🟢 Internal Documentation Access Audit",
-                    color: 16753920, 
-                    thumbnail: { url: avatarUrl },
-                    fields: [
-                        { name: "👤 Account Name", value: `**${user.username}**`, inline: true },
-                        { name: "🆔 Discord ID", value: `\`${user.id}\``, inline: true },
-                        { name: "🌐 Global Name", value: `${user.global_name || 'N/A'}`, inline: true },
-                        { name: "🖥️ Browser Platform", value: `\`${navigator.platform}\``, inline: true },
-                        { name: "🕒 Access Timestamp", value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false }
-                    ],
-                    footer: { text: "FSRP Security Pipeline Control" }
-                }]
-            };
-
-            fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-                .then(() => sessionStorage.setItem('logged_visit', 'true'))
-                .catch(err => console.error('Log failure:', err));
-        }
-
-        function logSecurityViolation(user, flaggedGuild) {
-            if (sessionStorage.getItem('logged_violation') === 'true') return;
-
-            const avatarUrl = user.avatar 
-                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-                : 'https://cdn.discordapp.com/embed/avatars/0.png';
-
-            const payload = {
-                username: "FSRP Firewall Alerts",
-                avatar_url: "https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png",
-                embeds: [{
-                    title: "🚨 SECURITY ALERT: Blacklisted User Blocked",
-                    color: 15548997, 
-                    thumbnail: { url: avatarUrl },
-                    description: `A user attempted to open the staff dashboard but was rejected because they are currently a member of a blacklisted server.`,
-                    fields: [
-                        { name: "👤 Account Target", value: `**${user.username}**`, inline: true },
-                        { name: "🆔 User ID", value: `\`${user.id}\``, inline: true },
-                        { name: "💥 Caught Inside Guild", value: `**${flaggedGuild.name}**\n(\`${flaggedGuild.id}\`)`, inline: false },
-                        { name: "🕒 Violation Time", value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false }
-                    ],
-                    footer: { text: "FSRP Automated Intrusion Protection" }
-                }]
-            };
-
-            fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-                .then(() => sessionStorage.setItem('logged_violation', 'true'))
-                .catch(err => console.error('Alert failure:', err));
+        function handleLockout(title, message) {
+            document.getElementById('authGate').innerHTML = `
+                <div class="secure-card border border-red-500/30 space-y-6 shadow-2xl shadow-red-500/5">
+                    <div class="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-2xl">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h2 class="text-2xl font-extrabold tracking-tight text-white">${title}</h2>
+                        <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">${message}</p>
+                    </div>
+                    <div class="pt-2">
+                        <button onclick="logout()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all">
+                            Try Another Account
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         function logout() {
@@ -417,11 +210,13 @@
         function switchTab(tabId) {
             const views = document.querySelectorAll('.page-content');
             views.forEach(v => v.classList.add('hidden'));
-            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            const tabBtns = document.querySelectorAll('nav button');
             tabBtns.forEach(b => {
                 b.classList.remove('bg-slate-800', 'text-white');
                 b.classList.add('text-slate-400', 'hover:bg-slate-800/50');
             });
+            
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`btn-${tabId}`);
             if (activeBtn) {
