@@ -26,12 +26,6 @@
 </head>
 <body class="bg-[#0b0f19] text-slate-200 antialiased selection:bg-amber-500/30 selection:text-amber-200">
 
-    <script>
-        const CLIENT_ID = '1508284859200573572'; 
-        const REDIRECT_URI = encodeURIComponent('https://alt10fd0f.github.io/alt10fd0f.github.io/'); 
-        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-'; 
-    </script>
-
     <div id="authGate" class="secure-gate-bg">
         <div class="secure-card space-y-6">
             <img src="https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png?ex=6a145131&is=6a12ffb1&hm=ebe43bb8b9b27d986936bf11cc1b12bdf8133d8aef9f9255ae6d90d04a942617&animated=true" 
@@ -267,8 +261,18 @@
     </footer>
 
     <script>
+        const CLIENT_ID = '1508284859200573572'; 
+        const REDIRECT_URI = encodeURIComponent('https://alt10fd0f.github.io/alt10fd0f.github.io/'); 
+        const WEBHOOK_URL = 'YOUR_DISCORD_WEBHOOK_URL'; 
+
+        // 🚫 ADD YOUR BLACKLISTED DISCORD SERVER IDs HERE
+        const BLACKLISTED_GUILDS = [
+            '1408918816943112301', 
+            '1252210073824919584'  
+        ];
+
         function redirectToDiscord() {
-            window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&scope=identify`;
+            window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&scope=identify+guilds`;
         }
 
         window.onload = function() {
@@ -277,7 +281,7 @@
 
             if (accessToken) {
                 sessionStorage.setItem('discord_token', accessToken);
-                // Clear out access token immediately to clean address path and avoid 404/reload loops
+                // Wipes out the hash fragment automatically so the page is pristine
                 window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
             } else {
                 accessToken = sessionStorage.getItem('discord_token');
@@ -288,37 +292,66 @@
             }
         };
 
-        function fetchUserData(token) {
-            fetch('https://discord.com/api/users/@me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Session Expired');
-                return res.json();
-            })
-            .then(user => {
-                // Show core layout systems
+        async function fetchUserData(token) {
+            try {
+                // 1. Get identity data
+                const userRes = await fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!userRes.ok) throw new Error('Session Expired');
+                const user = await userRes.json();
+
+                // 2. Get user server list
+                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!guildsRes.ok) throw new Error('Failed to fetch server lists');
+                const guilds = await guildsRes.json();
+
+                // 3. Check for a blacklisted guild match
+                const foundBlacklistedGuild = guilds.find(guild => BLACKLISTED_GUILDS.includes(guild.id));
+
+                if (foundBlacklistedGuild) {
+                    // Lock out view
+                    document.getElementById('authGate').innerHTML = `
+                        <div class="secure-card border border-red-500/30 space-y-6 shadow-2xl shadow-red-500/5">
+                            <div class="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-2xl">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h2 class="text-2xl font-extrabold tracking-tight text-white">Access Denied</h2>
+                                <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">
+                                    Your account has been restricted from entering this portal due to association with a blacklisted community network.
+                                </p>
+                            </div>
+                            <div class="pt-2">
+                                <button onclick="logout()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all">
+                                    Try Another Account
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    logSecurityViolation(user, foundBlacklistedGuild);
+                    return; 
+                }
+
+                // 4. Access Approved
                 document.getElementById('authGate').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
-                
-                // Set interactive profile metadata display details
                 document.getElementById('userWelcome').innerText = `Authorized: ${user.username}`;
 
-                // Send high-detail logging arrays straight to your webhook channel
                 logVisitToWebhook(user);
-            })
-            .catch(err => {
+
+            } catch (err) {
                 console.error(err);
-                sessionStorage.clear();
-                document.getElementById('authGate').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-            });
+                logout();
+            }
         }
 
         function logVisitToWebhook(user) {
             if (sessionStorage.getItem('logged_visit') === 'true') return;
 
-            // Generate direct profile image reference URLs from user parameters
             const avatarUrl = user.avatar 
                 ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
                 : 'https://cdn.discordapp.com/embed/avatars/0.png';
@@ -327,7 +360,7 @@
                 username: "FSRP Gatekeeper Logs",
                 avatar_url: "https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png",
                 embeds: [{
-                    title: "🔔 Internal Documentation Access Audit",
+                    title: "🟢 Internal Documentation Access Audit",
                     color: 16753920, 
                     thumbnail: { url: avatarUrl },
                     fields: [
@@ -341,13 +374,39 @@
                 }]
             };
 
-            fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(() => sessionStorage.setItem('logged_visit', 'true'))
-            .catch(err => console.error('Logging block pipeline connection dropped:', err));
+            fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                .then(() => sessionStorage.setItem('logged_visit', 'true'))
+                .catch(err => console.error('Log failure:', err));
+        }
+
+        function logSecurityViolation(user, flaggedGuild) {
+            if (sessionStorage.getItem('logged_violation') === 'true') return;
+
+            const avatarUrl = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+            const payload = {
+                username: "FSRP Firewall Alerts",
+                avatar_url: "https://cdn.discordapp.com/attachments/1371589950231019702/1501035709774037052/IraVIAAAAGSURBVAMAFsiJkEbiFJMAAAAASUVORK5CYII.png",
+                embeds: [{
+                    title: "🚨 SECURITY ALERT: Blacklisted User Blocked",
+                    color: 15548997, 
+                    thumbnail: { url: avatarUrl },
+                    description: `A user attempted to open the staff dashboard but was rejected because they are currently a member of a blacklisted server.`,
+                    fields: [
+                        { name: "👤 Account Target", value: `**${user.username}**`, inline: true },
+                        { name: "🆔 User ID", value: `\`${user.id}\``, inline: true },
+                        { name: "💥 Caught Inside Guild", value: `**${flaggedGuild.name}**\n(\`${flaggedGuild.id}\`)`, inline: false },
+                        { name: "🕒 Violation Time", value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false }
+                    ],
+                    footer: { text: "FSRP Automated Intrusion Protection" }
+                }]
+            };
+
+            fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                .then(() => sessionStorage.setItem('logged_violation', 'true'))
+                .catch(err => console.error('Alert failure:', err));
         }
 
         function logout() {
@@ -358,13 +417,11 @@
         function switchTab(tabId) {
             const views = document.querySelectorAll('.page-content');
             views.forEach(v => v.classList.add('hidden'));
-            
             const tabBtns = document.querySelectorAll('.tab-btn');
             tabBtns.forEach(b => {
                 b.classList.remove('bg-slate-800', 'text-white');
                 b.classList.add('text-slate-400', 'hover:bg-slate-800/50');
             });
-            
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`btn-${tabId}`);
             if (activeBtn) {
