@@ -153,6 +153,21 @@
         th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
         th { background-color: var(--bg-sidebar); font-weight: 600; }
 
+        /* Custom Interactive Workspace Elements */
+        .workspace-select {
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 6px;
+            width: 100%;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            outline: none;
+            cursor: pointer;
+        }
+
         /* Right Table of Contents Pane */
         .right-sidebar { width: 220px; padding: 40px 24px; font-size: 0.85rem; border-left: 1px solid var(--border); overflow-y: auto; }
         .toc-title { font-weight: 600; margin-bottom: 12px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-muted); }
@@ -319,7 +334,138 @@
                 { id: "password-setup", title: "Password Setup", category: "Fun Commands", content: "<h1>Password Setup</h1><p>String validation mechanics controlling access checkpoints.</p>" },
 
                 // Important Commands
-                { id: "ticket-setup", title: "Ticket Setup", category: "Important Commands", content: "<h1>Ticket Setup</h1><p>Procedures initiating isolated text support threads.</p>" },
+                { 
+                    id: "ticket-setup", 
+                    title: "Ticket Setup", 
+                    category: "Important Commands", 
+                    content: `<h1>Ticket System Configurations</h1>
+                    <p>Select a specific workflow configuration module from the interactive selector below:</p>
+                    
+                    <select class="workspace-select" onchange="document.getElementById('ticket-open-module').style.display = this.value === 'open' ? 'block' : 'none'; document.getElementById('ticket-rename-module').style.display = this.value === 'rename' ? 'block' : 'none'; document.getElementById('ticket-close-module').style.display = this.value === 'close' ? 'block' : 'none';">
+                        <option value="open">Ticket Open Command</option>
+                        <option value="rename">Rename Command</option>
+                        <option value="close">Close Request Command</option>
+                    </select>
+
+                    <div id="ticket-open-module" style="display: block;">
+                        <h2>Ticket Open Command</h2>
+                        <ul>
+                            <li>Add an argument on top of the command and label it <code>reason</code>.</li>
+                            <li>Under the command add a <strong>Create Channel</strong> block and configure to your desired settings. <span class="sub-text">(Setting the topic to <code>{{\` \`}}</code> will allow the ticket topic to stay blank.)</span></li>
+                            <li>Add a private response block underneath saying: <code>{{user}} We've created your ticket.</code></li>
+                            <li>Under the response block add a <strong>Calculate Value</strong> block and copy/paste the following structure:</li>
+                        </ul>
+                        <pre>{\n "user": user\n}</pre>
+                        <ul>
+                            <li>Then underneath, connect a create channel message block and set the target channel to the create channel variable from before.</li>
+                            <li>Add in your ticket message and attach two buttons labeled "<strong>Claim.</strong>" and "<strong>Close.</strong>" <span class="sub-text">*** DO NOT USE MESSAGE TEMPLATES!!! ***</span></li>
+                        </ul>
+
+                        <h3>Claim Button Setup</h3>
+                        <ul>
+                            <li>Add a <strong>Get Stored Variable</strong> block and create a variable labeled <code>ticketclaimeduser</code>, set it to scoped, and define the scope as <code>{{channel.id}}</code>.</li>
+                            <li>Underneath add a comparison condition with the following parameters:</li>
+                            <ul>
+                                <li><strong>Base Value</strong> &rarr; <em>Variable from the get stored variable block above.</em></li>
+                                <li><strong>Match Condition</strong> &rarr; <em>Greater than or equal to</em></li>
+                                <li><strong>Comparison Value</strong> &rarr; <code>1</code></li>
+                            </ul>
+                            <li>Under the match condition branch, add a private response block saying "<code>This ticket has already been claimed</code>".</li>
+                            <li>Under the <strong>Else</strong> side add a set stored variable block referencing the variable from before with the following parameters:</li>
+                            <ul>
+                                <li><strong>Scope</strong> &rarr; <code>{{channel.id}}</code></li>
+                                <li><strong>Operation</strong> &rarr; <em>Increment</em></li>
+                                <li><strong>Value</strong> &rarr; <code>1</code></li>
+                            </ul>
+                            <li>Add a response block underneath and copy and paste the following content:</li>
+                        </ul>
+                        <pre>This ticket has been claimed by {{user}}.\n-# {{var('data').user.mention}}</pre>
+                        <ul>
+                            <li>Add a set stored variable block under and set to a new scoped variable labeled <strong>claimedby</strong> with the settings listed below:</li>
+                            <ul>
+                                <li><strong>Scope</strong> &rarr; <code>{{channel.id}}</code></li>
+                                <li><strong>Operation</strong> &rarr; <em>Overwrite</em></li>
+                                <li><strong>Value</strong> &rarr; <code>{{user.id}}</code></li>
+                            </ul>
+                            <li>Add another set stored variable block below that and set to a new scoped variable labeled <strong>ticketchannels</strong> with the settings listed below:</li>
+                            <ul>
+                                <li><strong>Scope</strong> &rarr; <code>{{channel.id}}</code></li>
+                                <li><strong>Operation</strong> &rarr; <em>Overwrite</em></li>
+                                <li><strong>Value</strong> &rarr; <code>{{channel.id}}</code></li>
+                            </ul>
+                        </ul>
+
+                        <h3>Close Button Setup</h3>
+                        <ul>
+                            <li>Add a <strong>Get Stored Variable</strong> block under set to the <code>claimedby</code> variable with a scope of <code>{{channel.id}}</code>.</li>
+                            <li>Then underneath, add a comparison condition set to the following settings:</li>
+                            <ul>
+                                <li><strong>Base Value</strong> &rarr; <em>Variable from get stored variable block above.</em></li>
+                                <li><strong>Match Condition</strong> &rarr; <em>Contains</em></li>
+                                <li><strong>Comparison Value</strong> &rarr; <code>{{user.id}}</code></li>
+                            </ul>
+                            <li>Under the match condition branch, add a private response message saying: <strong>"Are you sure you'd like to delete this ticket?"</strong> and include two buttons below it saying "<strong>Yes.</strong>" and "<strong>No.</strong>"</li>
+                            <li>Under the "<strong>No</strong>" button click-path, add a private response message saying "<code>Okay, we've canceled the deletion.</code>".</li>
+                            <li>Under the "<strong>Yes</strong>" button click-path, add a response message displaying the following text:</li>
+                        </ul>
+                        <pre>{{user}} has selected to delete the ticket.\n-# Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</pre>
+                        <ul>
+                            <li>Then add a wait block directly under it and set it to <strong>15 seconds</strong>.</li>
+                            <li>Finally, add a delete channel block configured to <code>{{channel.id}}</code>.</li>
+                        </ul>
+                    </div>
+
+                    <div id="ticket-rename-module" style="display: none;">
+                        <h2>Rename Command</h2>
+                        <ul>
+                            <li>Add an argument above the command block labeled <code>name</code>. Set a max character limit threshold of <strong>50</strong>.</li>
+                            <li>Add a <strong>Get Stored Variable</strong> block and set it to the <code>ticketchannels</code> variable with a scope of <code>{{channel.id}}</code>.</li>
+                            <li>Underneath add a comparison condition component configured to the following settings:</li>
+                            <ul>
+                                <li><strong>Base Value</strong> &rarr; <em>Variable from the get stored variable block above.</em></li>
+                                <li><strong>Match Condition</strong> &rarr; <em>Contains</em>, and <code>{{channel.id}}</code></li>
+                            </ul>
+                            <li>Under the <strong>Else</strong> side, add a response message displaying: <strong><code>This channel is not a ticket</code></strong></li>
+                            <li>Under the primary match condition branch, add a get stored variable block targeting the <code>claimedby</code> variable with its scope set to <code>{{channel.id}}</code>.</li>
+                            <li>Directly under that, add a comparison condition component with the following settings:</li>
+                            <ul>
+                                <li><strong>Base Value</strong> &rarr; <code>{{user.id}}</code></li>
+                                <li><strong>Match Condition</strong> &rarr; <em>Contains</em>, <em>Variable from get stored variable block.</em></li>
+                            </ul>
+                            <li>Under this match condition branch, append an <strong>Edit Channel Block</strong> using these exact settings:</li>
+                            <ul>
+                                <li><strong>Targeted Channel</strong> &rarr; <code>{{channel.id}}</code></li>
+                                <li><strong>Name</strong> &rarr; <code>{{arg('name')}}</code></li>
+                                <li><strong>Topic</strong> &rarr; <code>{{" "}}</code></li>
+                            </ul>
+                            <li>Underneath add a response block outputting the message confirmation: <strong><code>We've changed the name of this ticket to \`{{arg('name')}}\`.</code></strong></li>
+                            <li>Under the corresponding <strong>Else</strong> side branch, output a response message saying: <strong><code>You have not claimed this ticket, You're not able to change the name to this.</code></strong></li>
+                        </ul>
+                    </div>
+
+                    <div id="ticket-close-module" style="display: none;">
+                        <h2>Close Request Command</h2>
+                        <ul>
+                            <li>Above the command component block, append an argument labeled <code>reason</code>.</li>
+                            <li>Under the command block, connect a <strong>Get Stored Variable</strong> block configured to look up the <code>ticketchannels</code> variable with a scope of <code>{{channel.id}}</code>.</li>
+                            <li>Directly under that block, add a comparison condition component mapping the following settings:</li>
+                            <ul>
+                                <li><strong>Base Value</strong> &rarr; <em>Variable from block above.</em></li>
+                                <li><strong>Match Condition</strong> &rarr; <em>Contains</em>, <code>{{channel.id}}</code></li>
+                            </ul>
+                            <li>Under the <strong>Else</strong> side execution branch, attach a private response message block containing: <strong><code>This channel is not a ticket</code></strong></li>
+                            <li>Under the primary <strong>Match Condition</strong> branch, add a response block saying: <strong><code>We've sent a close request for this ticket.</code></strong></li>
+                            <li>Then add a create channel message targeting <code>{{channel.id}}</code>.</li>
+                            <li>Add an interactive button to the channel message above labeled: <strong>***Accept Close.***</strong></li>
+                            <li>Under that action block, attach a response block outputting the following message layout content:</li>
+                        </ul>
+                        <pre>{{user}} has accepted the close for this ticket. This Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</pre>
+                        <ul>
+                            <li>Add a wait block set to run for <strong>15 seconds</strong>.</li>
+                            <li>Finally, attach a delete channel block directly below to clear the interface.</li>
+                        </ul>
+                    </div>` 
+                },
                 { id: "application-setup", title: "Application Setup", category: "Important Commands", content: "<h1>Application Setup</h1><p>Forms pipelines routing staff submission records across active webhooks.</p>" },
                 { 
                     id: "roblox-verification", 
