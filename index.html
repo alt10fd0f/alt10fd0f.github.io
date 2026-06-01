@@ -3,237 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Portal | Perimeter Control</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <title>Professional Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* Smooth transitions for theme switching */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .secure-card {
-            background: linear-gradient(145deg, #111827, #0f172a);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 28rem;
-            text-align: center;
+        .theme-transition {
+            transition: all 0.3s ease;
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body id="theme-body" class="bg-[#0a192f] text-slate-200 font-sans antialiased theme-transition">
 
-    <div id="authGate" class="flex-1 flex items-center justify-center p-4">
-        <div class="secure-card shadow-2xl space-y-6">
-            <div class="mx-auto w-16 h-16 bg-indigo-600/10 rounded-2xl flex items-center justify-center border border-indigo-500/20 text-indigo-400 text-2xl shadow-inner">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div class="space-y-2">
-                <h1 class="text-2xl font-extrabold tracking-tight text-white">Staff Handbook Portal</h1>
-                <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">
-                    Authentication required. Please sign in with your official community account to verify credentials.
-                </p>
-            </div>
-            <div class="pt-2">
-                <button onclick="redirectToDiscord()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest py-3.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98]">
-                    <i class="fa-brands fa-discord text-base"></i>
-                    <span>Authenticate via Discord</span>
-                </button>
+    <header class="max-w-5xl mx-auto px-6 py-6 flex justify-between items-center">
+        <div class="text-xl font-bold tracking-tight text-blue-400 id="logo"">Portfolio</div>
+        <nav class="flex items-center space-x-6">
+            <a href="#about" class="hover:text-blue-400 transition text-sm font-medium">About</a>
+            <a href="#projects" class="hover:text-blue-400 transition text-sm font-medium">Projects</a>
+            
+            <button onclick="toggleTheme()" class="p-2 rounded-lg bg-[#112240] hover:bg-[#1d3557] border border-blue-900/50 cursor-pointer transition text-sm font-medium flex items-center gap-2" id="theme-btn">
+                🌙 <span id="theme-text">Dark Mode</span>
+            </button>
+        </nav>
+    </header>
+
+    <section id="about" class="max-w-5xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white" id="hero-title">
+                Hi, I'm a Developer & Designer
+            </h1>
+            <p class="text-lg text-slate-400 mb-8 leading-relaxed id="hero-desc"">
+                I build clean, scalable web applications and specialize in modern front-end design and serverless backend integrations. Welcome to my personal space on the web.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="https://discord.com/users/989152479222579260" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-[#5865F2] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4752C4] transition shadow-lg shadow-indigo-500/20">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.85-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.65-2a75.58,75.58,0,0,0,72.94,0c.85.69,1.74,1.37,2.65,2a68.42,68.42,0,0,1-10.85,5.18,74.37,74.37,0,0,0,6.85,11.11,105.73,105.73,0,0,0,31.05-18.83C129.24,48.25,123.55,25.44,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.87,46,53.87,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.11,46,96.11,53,91,65.69,84.69,65.69Z"/>
+                    </svg>
+                    Discord Profile
+                </a>
+                <a href="#projects" class="inline-block border border-blue-900/80 px-6 py-3 rounded-lg font-medium hover:border-blue-400 text-slate-300 hover:text-white transition" id="sec-btn">
+                    View Work
+                </a>
             </div>
         </div>
-    </div>
-
-    <div id="mainApp" class="hidden flex-1 flex flex-col md:flex-row min-h-screen w-full">
-        <aside class="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 p-6 flex flex-col justify-between">
-            <div class="space-y-6">
-                <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
-                    <div class="w-8 h-8 bg-indigo-600/20 rounded-lg flex items-center justify-center border border-indigo-500/30 text-indigo-400">
-                        <i class="fa-solid fa-folder-closed"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-bold text-white tracking-wide">Staff Manuals</h2>
-                        <p class="text-[10px] text-slate-500 font-medium" id="userWelcome">Authorized: Loading...</p>
-                    </div>
-                </div>
-
-                <nav class="space-y-1">
-                    <button id="btn-home" onclick="switchTab('home')" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 bg-slate-800 text-white">
-                        <i class="fa-solid fa-house w-4 text-center"></i>
-                        <span>Dashboard Overview</span>
-                    </button>
-                    <button id="btn-rules" onclick="switchTab('rules')" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200">
-                        <i class="fa-solid fa-gavel w-4 text-center"></i>
-                        <span>Code of Conduct</span>
-                    </button>
-                    
-                    <div class="space-y-1">
-                        <button onclick="toggleDropdown()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200">
-                            <div class="flex items-center space-x-3">
-                                <i class="fa-solid fa-list-check w-4 text-center"></i>
-                                <span>Roster & Database</span>
-                            </div>
-                            <i id="dropdownArrow" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200"></i>
-                        </button>
-                        <div id="whitelistDropdown" class="hidden pl-6 space-y-1 transition-all duration-200">
-                            <button id="btn-whitelist" onclick="switchTab('whitelist')" class="w-full text-left px-4 py-2 rounded-lg text-[11px] font-medium text-slate-400 hover:text-slate-200 block">
-                                • Active Roster List
-                            </button>
-                        </div>
-                    </div>
-                </nav>
+        <div class="flex justify-center">
+            <div class="w-64 h-64 bg-[#112240] border border-blue-900/50 rounded-2xl flex items-center justify-center text-blue-400 text-sm shadow-xl relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-blue-500/10 before:to-transparent" id="avatar-box">
+                <span class="font-mono text-xs tracking-widest uppercase">[ Developer Profile ]</span>
             </div>
+        </div>
+    </section>
 
-            <div class="pt-4 border-t border-slate-800 mt-6 md:mt-0">
-                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-slate-850 hover:bg-red-950/30 border border-slate-800 hover:border-red-900/30 rounded-xl text-xs font-medium text-slate-400 hover:text-red-400 transition-all duration-200">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>De-authorize Session</span>
-                </button>
+    <section id="projects" class="bg-[#071122] border-t border-b border-blue-950/40 py-24 theme-transition" id="projects-section">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-12 text-center text-white" id="projects-title">Featured Projects</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-[#112240] border border-blue-900/40 rounded-xl p-6 hover:-translate-y-1 transition duration-300 shadow-md" id="card-1">
+                    <h3 class="text-xl font-bold mb-2 text-blue-400">Project One</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">A brief description of the technologies used and the core functionality of the application.</p>
+                    <a href="#" class="text-blue-400 text-sm font-semibold hover:underline inline-flex items-center gap-1">View Source &rarr;</a>
+                </div>
+                <div class="bg-[#112240] border border-blue-900/40 rounded-xl p-6 hover:-translate-y-1 transition duration-300 shadow-md" id="card-2">
+                    <h3 class="text-xl font-bold mb-2 text-blue-400">Project Two</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">A brief description of the technologies used and the core functionality of the application.</p>
+                    <a href="#" class="text-blue-400 text-sm font-semibold hover:underline inline-flex items-center gap-1">View Source &rarr;</a>
+                </div>
+                <div class="bg-[#112240] border border-blue-900/40 rounded-xl p-6 hover:-translate-y-1 transition duration-300 shadow-md" id="card-3">
+                    <h3 class="text-xl font-bold mb-2 text-blue-400">Project Three</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">A brief description of the technologies used and the core functionality of the application.</p>
+                    <a href="#" class="text-blue-400 text-sm font-semibold hover:underline inline-flex items-center gap-1">View Source &rarr;</a>
+                </div>
             </div>
-        </aside>
+        </div>
+    </section>
 
-        <main class="flex-1 p-6 md:p-10 max-w-4xl">
-            <section id="tab-home" class="page-content space-y-6">
-                <div class="space-y-2">
-                    <h1 class="text-3xl font-extrabold tracking-tight text-white">Welcome to Headquarters</h1>
-                    <p class="text-sm text-slate-400">Select an operational handbook module from the sidebar navigation menu to begin review.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                    <div class="bg-slate-900/50 border border-slate-800/80 p-5 rounded-2xl space-y-3">
-                        <div class="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center text-sm"><i class="fa-solid fa-circle-check"></i></div>
-                        <h3 class="text-sm font-bold text-white">System Integrity Normal</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">Your account roles have been parsed securely via the Cloudflare edge network. Active sessions remain cached locally for 24 hours.</p>
-                    </div>
-                </div>
-            </section>
+    <section class="max-w-5xl mx-auto px-6 py-24 text-center">
+        <h2 class="text-3xl font-bold mb-4 text-white" id="contact-title">Let's Connect</h2>
+        <p class="text-slate-400 mb-8 max-w-md mx-auto" id="contact-desc">
+            Whether you want to discuss a project or just say hi, feel free to drop a message.
+        </p>
+        <div class="flex justify-center space-x-8">
+            <a href="#" class="text-slate-400 hover:text-blue-400 transition font-medium">GitHub</a>
+            <a href="#" class="text-slate-400 hover:text-blue-400 transition font-medium">LinkedIn</a>
+            <a href="https://discord.com/users/989152479222579260" target="_blank" class="text-slate-400 hover:text-[#5865F2] transition font-medium">Discord</a>
+        </div>
+    </section>
 
-            <section id="tab-rules" class="page-content space-y-4 hidden">
-                <h1 class="text-2xl font-extrabold text-white tracking-tight">Code of Conduct & Guidelines</h1>
-                <p class="text-xs text-slate-400 leading-relaxed">Placeholder for community operational code regulations, disciplinary logs, and standardized protocol policies.</p>
-            </section>
-
-            <section id="tab-whitelist" class="page-content space-y-4 hidden">
-                <h1 class="text-2xl font-extrabold text-white tracking-tight">Active Roster Access Whitelist</h1>
-                <p class="text-xs text-slate-400 leading-relaxed">Internal database module logs. Access to database manipulation requires secondary clearance elevations.</p>
-            </section>
-        </main>
-    </div>
-
+    <footer class="border-t border-blue-950/40 py-8 text-center text-sm text-slate-500">
+        &copy; 2026 Personal Portfolio. All rights reserved.
+    </footer>
 
     <script>
-        // 🖥️ PUBLIC FRONTEND CORE CONFIGURATION
-        const CLIENT_ID = '1508284859200573572'; 
-        const REDIRECT_URI = encodeURIComponent('https://alt10fd0f.github.io/alt10fd0f.github.io/'); 
+        let isDarkMode = true;
 
-        // 🔗 LIVE SECURE GATEKEEPER SERVICE ROUTE
-        const CLOUDFLARE_PROXY_URL = 'https://fsrpsite.alt10fd0f.workers.dev/';
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            
+            const body = document.getElementById('theme-body');
+            const themeBtn = document.getElementById('theme-btn');
+            const themeText = document.getElementById('theme-text');
+            const projectsSec = document.getElementById('projects');
+            
+            // Text Elements
+            const heroTitle = document.getElementById('hero-title');
+            const heroDesc = document.getElementById('hero-desc');
+            const projectsTitle = document.getElementById('projects-title');
+            const contactTitle = document.getElementById('contact-title');
+            const contactDesc = document.getElementById('contact-desc');
+            
+            // Containers / Cards
+            const avatarBox = document.getElementById('avatar-box');
+            const cards = [document.getElementById('card-1'), document.getElementById('card-2'), document.getElementById('card-3')];
+            const secBtn = document.getElementById('sec-btn');
 
-        function redirectToDiscord() {
-            window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&scope=identify+guilds+guilds.members.read`;
-        }
+            if (isDarkMode) {
+                // Return to Dark Blue Mode
+                body.className = "bg-[#0a192f] text-slate-200 font-sans antialiased theme-transition";
+                projectsSec.className = "bg-[#071122] border-t border-b border-blue-950/40 py-24 theme-transition";
+                themeBtn.className = "p-2 rounded-lg bg-[#112240] hover:bg-[#1d3557] border border-blue-900/50 cursor-pointer transition text-sm font-medium flex items-center gap-2";
+                themeText.innerText = "Dark Mode";
+                themeBtn.innerHTML = "🌙 <span>Dark Mode</span>";
+                
+                heroTitle.className = "text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white";
+                heroDesc.className = "text-lg text-slate-400 mb-8 leading-relaxed";
+                projectsTitle.className = "text-3xl font-bold mb-12 text-center text-white";
+                contactTitle.className = "text-3xl font-bold mb-4 text-white";
+                contactDesc.className = "text-slate-400 mb-8 max-w-md mx-auto";
+                
+                avatarBox.className = "w-64 h-64 bg-[#112240] border border-blue-900/50 rounded-2xl flex items-center justify-center text-blue-400 text-sm shadow-xl relative overflow-hidden";
+                secBtn.className = "inline-block border border-blue-900/80 px-6 py-3 rounded-lg font-medium hover:border-blue-400 text-slate-300 hover:text-white transition";
 
-        window.onload = function() {
-            const fragment = new URLSearchParams(window.location.hash.slice(1));
-            let accessToken = fragment.get('access_token');
-
-            if (accessToken) {
-                sessionStorage.setItem('discord_token', accessToken);
-                window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-            } else {
-                accessToken = sessionStorage.getItem('discord_token');
-            }
-
-            if (accessToken) {
-                verifySessionThroughProxy(accessToken);
-            }
-        };
-
-        async function verifySessionThroughProxy(token) {
-            try {
-                // Sends token package safely via encrypted body POST handshake
-                const res = await fetch(CLOUDFLARE_PROXY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
+                cards.forEach(card => {
+                    card.className = "bg-[#112240] border border-blue-900/40 rounded-xl p-6 hover:-translate-y-1 transition duration-300 shadow-md";
                 });
-
-                if (!res.ok) throw new Error('Proxy returned an invalid response configuration');
-                const decision = await res.json();
-
-                if (decision.allowed) {
-                    // 🎉 Unhide Dashboard Protected System Application View
-                    document.getElementById('authGate').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    document.getElementById('userWelcome').innerText = `Authorized: ${decision.user.username}`;
-                } else {
-                    // Process explicit rejection UI states based on firewall telemetry return flags
-                    if (decision.reason === "not_in_server") {
-                        handleLockout("Access Denied", "You must be a joined member of our official community Discord server to view internal staff manuals.");
-                    } else if (decision.reason === "missing_role") {
-                        handleLockout("Unauthorized Rank", "Identity found, but your Discord profile accounts lack the specified administration staff role permissions.");
-                    }
-                }
-            } catch (err) {
-                console.error("Authentication Core Fault:", err);
-                logout();
-            }
-        }
-
-        function handleLockout(title, message) {
-            document.getElementById('authGate').innerHTML = `
-                <div class="secure-card border border-red-500/30 space-y-6 shadow-2xl shadow-red-500/5">
-                    <div class="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500 text-2xl">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
-                    <div class="space-y-2">
-                        <h2 class="text-2xl font-extrabold tracking-tight text-white">${title}</h2>
-                        <p class="text-xs font-medium text-slate-400 max-w-xs mx-auto leading-relaxed">${message}</p>
-                    </div>
-                    <div class="pt-2">
-                        <button onclick="logout()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all">
-                            Try Another Account
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function logout() {
-            sessionStorage.clear();
-            window.location.reload();
-        }
-
-        function switchTab(tabId) {
-            const views = document.querySelectorAll('.page-content');
-            views.forEach(v => v.classList.add('hidden'));
-            
-            const tabBtns = document.querySelectorAll('nav button');
-            tabBtns.forEach(b => {
-                b.classList.remove('bg-slate-800', 'text-white');
-                b.classList.add('text-slate-400', 'hover:bg-slate-800/50');
-            });
-            
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800/50');
-                activeBtn.classList.add('bg-slate-800', 'text-white');
-            }
-        }
-
-        function toggleDropdown() {
-            const dropdown = document.getElementById('whitelistDropdown');
-            const arrow = document.getElementById('dropdownArrow');
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                arrow.classList.add('rotate-180');
             } else {
-                dropdown.classList.add('hidden');
-                arrow.classList.remove('rotate-180');
+                // Switch to Light Mode
+                body.className = "bg-slate-50 text-slate-800 font-sans antialiased theme-transition";
+                projectsSec.className = "bg-white border-t border-b border-slate-200 py-24 theme-transition";
+                themeBtn.className = "p-2 rounded-lg bg-slate-200 hover:bg-slate-300 border border-slate-300 cursor-pointer transition text-sm font-medium flex items-center gap-2";
+                themeBtn.innerHTML = "☀️ <span>Light Mode</span>";
+                
+                heroTitle.className = "text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-slate-900";
+                heroDesc.className = "text-lg text-slate-600 mb-8 leading-relaxed";
+                projectsTitle.className = "text-3xl font-bold mb-12 text-center text-slate-900";
+                contactTitle.className = "text-3xl font-bold mb-4 text-slate-900";
+                contactDesc.className = "text-slate-600 mb-8 max-w-md mx-auto";
+                
+                avatarBox.className = "w-64 h-64 bg-slate-200 border border-slate-300 rounded-2xl flex items-center justify-center text-slate-500 text-sm shadow-md relative overflow-hidden";
+                secBtn.className = "inline-block border border-slate-300 px-6 py-3 rounded-lg font-medium hover:border-slate-400 text-slate-600 hover:text-slate-900 transition";
+
+                cards.forEach(card => {
+                    card.className = "bg-slate-50 border border-slate-200 rounded-xl p-6 hover:-translate-y-1 transition duration-300 shadow-sm";
+                });
             }
         }
     </script>
