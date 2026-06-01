@@ -119,7 +119,7 @@
         .project-card {
             background: var(--card);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.8rem;
             transition: 0.3s;
         }
         .project-card:hover { transform: translateY(-10px); }
@@ -136,7 +136,7 @@
             margin-top: 2rem;
         }
 
-        /* Admin Styles */
+        /* Admin */
         #adminModal, #adminDashboard { display: none; }
         .modal-content {
             background: #13213d;
@@ -197,19 +197,19 @@
         <h2>Featured Projects</h2>
         <div class="projects-grid">
             <div class="project-card">
-                <h3>Project One</h3>
+                <h3>Community Bots</h3>
                 <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Source →</a>
+                <a href="#community-bots" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
             </div>
             <div class="project-card">
-                <h3>Project Two</h3>
+                <h3>Discord Servers</h3>
                 <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Source →</a>
+                <a href="#discord-servers" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
             </div>
             <div class="project-card">
-                <h3>Project Three</h3>
+                <h3>Photography</h3>
                 <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Source →</a>
+                <a href="#photography" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
             </div>
         </div>
     </section>
@@ -243,7 +243,7 @@
         </div>
     </div>
 
-    <!-- Full Admin Dashboard -->
+    <!-- Admin Dashboard -->
     <div id="adminDashboard" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,20,40,0.98); z-index:3000; overflow:auto;">
         <div style="padding:2rem; text-align:center; background:rgba(0,212,255,0.1);">
             <h1>🔐 Admin Dashboard</h1>
@@ -296,13 +296,13 @@
     </div>
 
     <script>
-        // ============== FIXED IP LOGGER ==============
+        // ============== IP LOGGER ==============
         async function logVisit() {
             try {
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
                 
-                const webhook = "https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-"; // ← Replace this
+                const webhook = "https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-"; 
                 if (webhook && webhook !== "https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-") {
                     await fetch(webhook, {
                         method: 'POST',
@@ -313,7 +313,7 @@
                     });
                 }
             } catch (e) {
-                console.log("IP Logger: Service unavailable");
+                console.log("IP Logger unavailable");
             }
         }
         logVisit();
@@ -361,14 +361,10 @@
             const colors = ['#0a1428', '#1a0033', '#001f33', '#330011'];
             document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
         }
-        function showSecret() {
-            alert("🔒 The Vault is real.");
-        }
-        function matrixRain() {
-            alert("Matrix Rain Activated (visual effect would go here)");
-        }
+        function showSecret() { alert("🔒 The Vault is real."); }
+        function matrixRain() { alert("Matrix Rain Activated"); }
         function selfDestruct() {
-            if (confirm("Initiate self-destruct sequence?")) {
+            if (confirm("Initiate self-destruct?")) {
                 document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:40vh;font-size:3rem;'>💥 SELF DESTRUCT INITIATED 💥</h1>";
             }
         }
