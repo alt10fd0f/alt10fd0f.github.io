@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +12,19 @@
             --accent: #00d4ff;
             --text: #e0f2fe;
         }
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --card: #e2e8f0;
+            --accent: #0077b6;
+            --text: #1e2937;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'Segoe UI', system-ui, sans-serif;
             line-height: 1.6;
+            transition: all 0.4s ease;
         }
         header {
             padding: 1.5rem 5%;
@@ -25,17 +32,51 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        [data-theme="light"] header {
+            background: rgba(248, 250, 252, 0.95);
         }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         h1 { text-align: center; margin: 3rem 0 2rem; color: var(--accent); font-size: 2.8rem; }
         .content {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 5%;
         }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        .gallery img {
+            width: 100%;
+            border-radius: 12px;
+            border: 3px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
         .back-btn {
             display: inline-block;
-            margin: 2rem 5%;
+            margin: 3rem 5%;
             padding: 12px 28px;
             background: var(--accent);
             color: #000;
@@ -48,22 +89,33 @@
 <body>
     <header>
         <div class="logo">ALT's Portfolio</div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">🌙</button>
     </header>
     
     <h1>Community Bots</h1>
     <div class="content">
         <p>Building better community bots, Building a better tomorrow.</p>
-        <p>This section is currently under development. I'll be adding detailed information about my Discord bots, features, and technical stack soon.</p>
+        <p>This section showcases some of my bot interfaces, dashboards, and projects.</p>
         
-        <h2 style="margin-top: 3rem; color: var(--accent);">What I'm Working On:</h2>
-        <ul style="margin-left: 1.5rem; font-size: 1.1rem;">
-            <li>Moderation & Utility Bots</li>
-            <li>Custom Economy Systems</li>
-            <li>AI-powered bots</li>
-            <li>Advanced Ticket Systems</li>
-        </ul>
+        <h2 style="margin: 3rem 0 1.5rem; color: var(--accent);">Project Gallery</h2>
+        <div class="gallery">
+            <img src="https://cdn.discordapp.com/attachments/1459896715728650413/1511550206204711023/image.png?ex=6a20dc54&is=6a1f8ad4&hm=ceb67cfa36976088b66406528a899550385420232c7f844c76c74885ef681121" alt="Bot Preview 1">
+            <img src="https://cdn.discordapp.com/attachments/1459896715728650413/1511550524481077459/image.png?ex=6a20dca0&is=6a1f8b20&hm=57d28fac59e844d94d0a0effe3356cdcac9182b62d1b588221e7748a034e6c89&animated=true" alt="Bot Preview 2">
+            <img src="https://cdn.discordapp.com/attachments/1459896715728650413/1511550651782664353/image.png?ex=6a20dcbe&is=6a1f8b3e&hm=a7052b3a13682bae7a42f5d35d34d789e2fdd000aeb945a4be14a5a0659430cd&animated=true" alt="Bot Preview 3">
+            <img src="https://cdn.discordapp.com/attachments/1459896715728650413/1511550795416473750/image.png?ex=6a20dce0&is=6a1f8b60&hm=708b481433b4ae84b2361817dca598c7235ad62826a87bd2cd2cbb5b480f4254&animated=true" alt="Bot Preview 4">
+        </div>
     </div>
 
     <a href="index.html" class="back-btn">← Return to Portfolio</a>
+
+    <script>
+        // Theme Toggle
+        const toggleBtn = document.getElementById('themeToggle');
+        toggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            toggleBtn.textContent = isDark ? '☀️' : '🌙';
+        });
+    </script>
 </body>
 </html>
