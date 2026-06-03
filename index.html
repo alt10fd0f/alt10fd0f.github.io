@@ -1,373 +1,50 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALT's Portfolio</title>
-    <link rel="icon" type="image/webp" href="https://cdn.discordapp.com/avatars/989152479222579260/bf57f8edf0a122c871646b56d7945834.webp?size=1024">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <title>Project Details | Coming Soon</title>
     <style>
-        :root {
-            --bg: #0a1428;
-            --card: #13213d;
-            --accent: #00d4ff;
-            --text: #e0f2fe;
-        }
-        [data-theme="light"] {
-            --bg: #f8fafc;
-            --card: #e2e8f0;
-            --accent: #0077b6;
-            --text: #1e2937;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            margin: 0;
+            background: #0a1428;
+            color: #e0f2fe;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            transition: all 0.4s ease;
-        }
-
-        header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            padding: 1.2rem 5%;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 20, 40, 0.95);
-            backdrop-filter: blur(12px);
-            z-index: 1000;
-        }
-        [data-theme="light"] header { background: rgba(248, 250, 252, 0.95); }
-
-        .logo { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2.5rem;
-        }
-        .nav-links a { color: var(--text); text-decoration: none; font-weight: 500; }
-        .nav-links a:hover { color: var(--accent); }
-
-        .theme-toggle {
-            background: none;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
             align-items: center;
-            padding: 0 5%;
-            background: linear-gradient(135deg, #0a1428, #1a2a4d);
-            position: relative;
+            height: 100vh;
+            text-align: center;
         }
-        [data-theme="light"] .hero { background: linear-gradient(135deg, #f0f9ff, #bae6fd); }
-
-        .hero-content { max-width: 600px; }
-        .hero h1 { font-size: 3.8rem; line-height: 1.1; margin-bottom: 1rem; }
-        .hero p { font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9; }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+        h1 {
+            font-size: 3rem;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
         }
-        .btn {
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-weight: 600;
+        p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        .back-btn {
+            padding: 12px 28px;
+            background: #00d4ff;
+            color: #000;
             text-decoration: none;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: opacity 0.2s;
         }
-        .btn-primary { background: var(--accent); color: #000; }
-        .btn-secondary { background: transparent; border: 2px solid var(--accent); color: var(--text); }
-
-        .profile-pic {
-            position: absolute;
-            right: 8%;
-            top: 25%;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            border: 6px solid var(--accent);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
-        }
-
-        section { padding: 100px 5%; }
-        h2 { font-size: 2.6rem; text-align: center; margin-bottom: 3rem; color: var(--accent); }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-        .project-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1.8rem;
-            transition: 0.3s;
-        }
-        .project-card:hover { transform: translateY(-10px); }
-
-        .connect {
-            text-align: center;
-            padding: 80px 5%;
-            background: rgba(0,0,0,0.2);
-        }
-        .socials {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        /* Admin */
-        #adminModal, #adminDashboard { display: none; }
-        .modal-content {
-            background: #13213d;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-        }
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
-        }
-        .admin-card {
-            background: rgba(255,255,255,0.08);
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
+        .back-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-
-    <!-- Navigation -->
-    <header>
-        <div class="logo">ALT's Portfolio</div>
-        <div class="nav-links">
-            <a href="#projects">Projects</a>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
-        </div>
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Hi, I'm a Developer</h1>
-            <p>I build clean, reliable web applications and specialize in modern front-end design and seamless backend integrations. Welcome to my personal space on the web.</p>
-            
-            <div class="hero-buttons">
-                <a href="#projects" class="btn btn-primary">View Work</a>
-                <a href="https://discord.com/users/989152479222579260" target="_blank" class="btn" style="background:#5865F2; color:white;">
-                    <i class="fab fa-discord"></i> Discord
-                </a>
-                <a href="https://github.com/alt10fd0f" target="_blank" class="btn" style="background:#333; color:white;">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            </div>
-        </div>
-
-        <!-- Profile Picture -->
-        <img src="https://cdn.discordapp.com/avatars/989152479222579260/bf57f8edf0a122c871646b56d7945834.webp?size=1024" 
-             alt="ALT" class="profile-pic">
-    </section>
-
-    <!-- Featured Projects -->
-    <section id="projects">
-        <h2>Featured Projects</h2>
-        <div class="projects-grid">
-            <div class="project-card">
-                <h3>Community Bots</h3>
-                <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#community-bots" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
-            </div>
-            <div class="project-card">
-                <h3>Discord Servers</h3>
-                <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#discord-servers" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
-            </div>
-            <div class="project-card">
-                <h3>Photography</h3>
-                <p>A brief description of the technologies used and the core functionality of the application.</p>
-                <a href="#photography" style="color: var(--accent); margin-top: 1rem; display: inline-block;">View Project →</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Connect -->
-    <section class="connect">
-        <h2>Let's Connect</h2>
-        <p>Whether you want to discuss a project or just say hi, feel free to drop a message.</p>
-        <div class="socials">
-            <a href="https://discord.com/users/989152479222579260" target="_blank" class="btn" style="background:#5865F2; color:white;">
-                <i class="fab fa-discord"></i> Discord
-            </a>
-            <a href="https://github.com/alt10fd0f" target="_blank" class="btn" style="background:#333; color:white;">
-                <i class="fab fa-github"></i> GitHub
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="text-align:center; padding:3rem; border-top:1px solid rgba(0,212,255,0.2); cursor:pointer;" id="footerTrigger">
-        <p>&copy; 2026 ALT. All Rights Reserved.</p>
-    </footer>
-
-    <!-- Admin Modal -->
-    <div id="adminModal">
-        <div class="modal-content" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
-            <h2>🔐 Admin Access</h2>
-            <input type="password" id="adminPass" placeholder="Enter Password" style="width:100%; padding:12px; margin:15px 0; border-radius:8px;">
-            <button onclick="checkPassword()" class="btn btn-primary" style="width:100%;">Unlock Dashboard</button>
-            <button onclick="closeModal()" style="margin-top:10px; background:none; border:none; color:#aaa;">Cancel</button>
-        </div>
-    </div>
-
-    <!-- Admin Dashboard -->
-    <div id="adminDashboard" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,20,40,0.98); z-index:3000; overflow:auto;">
-        <div style="padding:2rem; text-align:center; background:rgba(0,212,255,0.1);">
-            <h1>🔐 Admin Dashboard</h1>
-            <button onclick="logoutAdmin()" class="btn" style="background:#e74c3c;">Logout</button>
-        </div>
-        <div class="admin-grid">
-            <div class="admin-card">
-                <h3>Toggle Theme</h3>
-                <button onclick="toggleSiteTheme()" class="btn btn-primary">Dark ↔ Light</button>
-            </div>
-            <div class="admin-card">
-                <h3>Visitor Count</h3>
-                <p id="visitorCount">42</p>
-            </div>
-            <div class="admin-card">
-                <h3>Console Message</h3>
-                <input id="consoleMsg" placeholder="Message" style="width:100%; margin:10px 0;">
-                <button onclick="sendConsoleMsg()" class="btn btn-primary">Send</button>
-            </div>
-            <div class="admin-card">
-                <h3>Change Subtitle</h3>
-                <input id="newSubtitle" placeholder="New subtitle" style="width:100%; margin:10px 0;">
-                <button onclick="changeSubtitle()" class="btn btn-primary">Apply</button>
-            </div>
-            <div class="admin-card">
-                <h3>Random Background</h3>
-                <button onclick="randomBackground()" class="btn btn-primary">Change BG</button>
-            </div>
-            <div class="admin-card">
-                <h3>IP Logs</h3>
-                <button onclick="alert('IP Logger is active. Check your Discord webhook.')" class="btn btn-primary">View Logs</button>
-            </div>
-            <div class="admin-card">
-                <h3>Secret Message</h3>
-                <button onclick="showSecret()" class="btn btn-primary">Reveal</button>
-            </div>
-            <div class="admin-card">
-                <h3>Matrix Rain</h3>
-                <button onclick="matrixRain()" class="btn btn-primary">Activate</button>
-            </div>
-            <div class="admin-card">
-                <h3>Self Destruct</h3>
-                <button onclick="selfDestruct()" class="btn" style="background:#c0392b;">Trigger</button>
-            </div>
-            <div class="admin-card">
-                <h3>GitHub Repo</h3>
-                <a href="https://github.com/alt10fd0f" target="_blank" class="btn btn-primary">Open Repo</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ============== IP LOGGER ==============
-        async function logVisit() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                
-                const webhook = "https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-"; 
-                if (webhook && webhook !== "https://discord.com/api/webhooks/1459289585900191886/VbEJjul0hu7dJZIUHPhYil-5BGeEfhl066Uub4zAz63iCFFpLleJiYJGGes6BggxMX0-") {
-                    await fetch(webhook, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            content: `🌐 **New Portfolio Visit**\n**IP:** ${data.ip}\n**Time:** ${new Date().toLocaleString()}\n**User-Agent:** ${navigator.userAgent}`
-                        })
-                    });
-                }
-            } catch (e) {
-                console.log("IP Logger unavailable");
-            }
-        }
-        logVisit();
-
-        // Theme Toggle
-        const toggleBtn = document.getElementById('themeToggle');
-        toggleBtn.addEventListener('click', () => {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            toggleBtn.textContent = isDark ? '☀️' : '🌙';
-        });
-
-        // Admin System
-        document.getElementById('footerTrigger').addEventListener('click', () => {
-            document.getElementById('adminModal').style.display = 'block';
-        });
-
-        function checkPassword() {
-            if (document.getElementById('adminPass').value === "848234") {
-                document.getElementById('adminModal').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-            } else {
-                alert("Incorrect Password");
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('adminModal').style.display = 'none';
-        }
-
-        function logoutAdmin() {
-            document.getElementById('adminDashboard').style.display = 'none';
-        }
-
-        function toggleSiteTheme() { toggleBtn.click(); }
-        function changeSubtitle() {
-            const txt = document.getElementById('newSubtitle').value;
-            if (txt) document.querySelector('.hero p').textContent = txt;
-        }
-        function sendConsoleMsg() {
-            const msg = document.getElementById('consoleMsg').value;
-            if (msg) console.log("%c[ADMIN] " + msg, "color: #00d4ff; font-size: 16px;");
-        }
-        function randomBackground() {
-            const colors = ['#0a1428', '#1a0033', '#001f33', '#330011'];
-            document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
-        }
-        function showSecret() { alert("🔒 The Vault is real."); }
-        function matrixRain() { alert("Matrix Rain Activated"); }
-        function selfDestruct() {
-            if (confirm("Initiate self-destruct?")) {
-                document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:40vh;font-size:3rem;'>💥 SELF DESTRUCT INITIATED 💥</h1>";
-            }
-        }
-    </script>
+    <h1>Coming Soon</h1>
+    <p>This project space is currently under development. Check back later for updates.</p>
+    <a href="index.html" class="back-btn">← Return to Portfolio</a>
 </body>
 </html>
