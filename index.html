@@ -12,20 +12,20 @@
       --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134;
       --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4;
       --border: #3a3b3d; --sidebar-width: 280px; --navbar-height: 60px; --toc-width: 220px;
-      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
     .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1.5rem; }
     .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.1rem; }
-    .navbar-brand .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; display: block; }
+    .navbar-brand .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     .navbar-links a { color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.95rem; }
     .navbar-links a:hover, .navbar-links a.active { color: var(--accent); background: rgba(148, 206, 196, 0.1); }
     .navbar-right { margin-left: auto; }
-    .navbar-right a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 0.35rem 0.6rem; border-radius: 6px; }
+    .navbar-right a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 0.35rem 0.6rem; }
     .layout { display: flex; margin-top: var(--navbar-height); min-height: calc(100vh - var(--navbar-height)); }
-    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); background: var(--bg); border-right: 1px solid var(--border); overflow-y: auto; padding: 1rem 0; z-index: 50; }
+    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); background: var(--bg); border-right: 1px solid var(--border); overflow-y: auto; padding: 1rem 0; }
     .sidebar-item { display: flex; align-items: center; padding: 0.4rem 1.25rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent; }
     .sidebar-item:hover { background: var(--bg-hover); color: var(--text); }
     .sidebar-item.active { background: rgba(148, 206, 196, 0.08); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
@@ -75,7 +75,6 @@
   <div class="layout">
     <aside class="sidebar">
       <a href="index.html" class="sidebar-item active">Intro</a>
-      <a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Basic Commands</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
@@ -87,7 +86,7 @@
           <a href="#password" class="sidebar-item">Password Commands</a>
           <a href="#ranklock" class="sidebar-item">Rank/Role Lock Commands</a>
           <a href="#purge" class="sidebar-item">Purge Command</a>
-          <a href="#reminder" class="sidebar-item">Reminder Command</a>
+          <a href="reminder.html" class="sidebar-item">Reminder Command</a>
           <a href="#counting" class="sidebar-item">Custom Counting</a>
           <a href="#fakequote" class="sidebar-item">Fake Quote Creator</a>
         </div>
@@ -110,6 +109,7 @@
           <a href="#erlc-session" class="sidebar-item">ERLC Session MGMT</a>
           <a href="#application" class="sidebar-item">Application Bot</a>
           <a href="#moderation" class="sidebar-item">Discord Moderation Panel</a>
+          <a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
         </div>
       </div>
       <div class="sidebar-section">
@@ -172,7 +172,7 @@
         <a href="#" class="tutorial-card" id="password"><span class="num">08</span><span class="name">Password Commands</span></a>
         <a href="#" class="tutorial-card" id="ranklock"><span class="num">09</span><span class="name">Rank/Role Lock Commands</span></a>
         <a href="#" class="tutorial-card" id="purge"><span class="num">20</span><span class="name">Purge Command</span></a>
-        <a href="#" class="tutorial-card" id="reminder"><span class="num">25</span><span class="name">Reminder Command</span></a>
+        <a href="reminder.html" class="tutorial-card" id="reminder"><span class="num">25</span><span class="name">Reminder Command</span></a>
         <a href="#" class="tutorial-card" id="counting"><span class="num">19</span><span class="name">Custom Counting</span></a>
         <a href="#" class="tutorial-card" id="fakequote"><span class="num">21</span><span class="name">Fake Quote Creator</span></a>
       </div>
@@ -191,6 +191,7 @@
         <a href="#" class="tutorial-card" id="erlc-session"><span class="num">10</span><span class="name">ERLC Session MGMT panel</span></a>
         <a href="#" class="tutorial-card" id="application"><span class="num">12</span><span class="name">Application Bot (Appy 1-3)</span></a>
         <a href="#" class="tutorial-card" id="moderation"><span class="num">13</span><span class="name">Discord Moderation Panel</span></a>
+        <a href="tickets.html" class="tutorial-card" id="tickets"><span class="num">26</span><span class="name">Tickets With Kite</span></a>
       </div>
       <h3 id="apis" class="category-heading" data-category="apis & integrations">APIs & Integrations</h3>
       <div class="tutorial-grid">
@@ -200,10 +201,6 @@
         <a href="#" class="tutorial-card" id="roblox-verify"><span class="num">16</span><span class="name">Roblox Verification</span></a>
         <a href="#" class="tutorial-card" id="membercount"><span class="num">17</span><span class="name">Member Count API</span></a>
         <a href="#" class="tutorial-card" id="erlc-api"><span class="num">18</span><span class="name">ERLC API V2</span></a>
-      </div>
-      <h3 id="tickets-cat" class="category-heading" data-category="tickets with kite">Tickets With Kite</h3>
-      <div class="tutorial-grid">
-        <a href="tickets.html" class="tutorial-card"><span class="num">✦</span><span class="name">Tickets With Kite — Open, Rename & Close Request</span></a>
       </div>
       <h2 id="suggestions">Suggestions</h2>
       <p>To make suggestions, write in the <strong>#showcase</strong> channel or open an issue on the <a href="https://github.com/ronaksahai/kite-tutorials/issues" style="color: var(--accent);">GitHub Repo</a>.</p>
