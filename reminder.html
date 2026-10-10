@@ -4,54 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reminder Command | ALT10fd0f</title>
-  <meta name="description" content="How to make a Reminder command with Kite.">
+  <meta name="description" content="How to make a reminder command in Kite.">
   <link rel="icon" type="image/png" href="logo.png">
   <meta name="theme-color" content="#94CEC4">
   <style>
     :root {
       --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134;
       --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4;
-      --border: #3a3b3d; --sidebar-width: 280px; --navbar-height: 60px;
+      --border: #3a3b3d; --sidebar-width: 240px; --navbar-height: 60px;
       --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
     body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
-    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1.5rem; }
-    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.1rem; }
-    .navbar-brand .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-    .navbar-links a { color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.95rem; }
-    .navbar-links a:hover, .navbar-links a.active { color: var(--accent); background: rgba(148, 206, 196, 0.1); }
-    .navbar-right { margin-left: auto; }
-    .navbar-right a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 0.35rem 0.6rem; }
-    .layout { display: flex; margin-top: var(--navbar-height); min-height: calc(100vh - var(--navbar-height)); }
-    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); background: var(--bg); border-right: 1px solid var(--border); overflow-y: auto; padding: 1rem 0; }
-    .sidebar-item { display: flex; align-items: center; padding: 0.4rem 1.25rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent; }
-    .sidebar-item:hover { background: var(--bg-hover); color: var(--text); }
-    .sidebar-item.active { background: rgba(148, 206, 196, 0.08); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1rem; }
+    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; }
+    .navbar-brand img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    .navbar-links a { color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; }
+    .layout { display: flex; margin-top: var(--navbar-height); }
+    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); border-right: 1px solid var(--border); padding: 1rem 0; }
+    .sidebar-item { display: block; padding: 0.45rem 1.25rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; }
+    .sidebar-item:hover { color: var(--accent); }
     .main { margin-left: var(--sidebar-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 900px; }
-    .breadcrumb { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.4rem; }
     .breadcrumb a { color: var(--text-muted); text-decoration: none; }
-    h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 1rem; }
-    h2 { font-size: 1.35rem; font-weight: 600; margin: 2rem 0 0.8rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.3rem; margin: 1.8rem 0 0.7rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
     p, li { margin-bottom: 0.55rem; color: var(--text-secondary); }
     strong { color: var(--text); }
-    ul { margin: 0.6rem 0 1rem 1.4rem; }
-    code { background: var(--bg-tertiary); padding: 0.12rem 0.4rem; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #e8b4b8; }
-    pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0.8rem 0 1.2rem; font-size: 0.8rem; line-height: 1.45; }
+    ul { margin: 0.5rem 0 1rem 1.3rem; }
+    code { background: var(--bg-tertiary); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #e8b4b8; }
+    pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0.7rem 0 1.1rem; font-size: 0.82rem; }
     pre code { background: none; padding: 0; color: var(--text-secondary); }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0 1.5rem; }
-    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.9rem; text-decoration: none; transition: all 0.15s; font-family: inherit; }
-    .btn:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-primary { background: rgba(148, 206, 196, 0.15); border-color: var(--accent); color: var(--accent); }
-    .note { background: rgba(148, 206, 196, 0.08); border-left: 4px solid var(--accent); padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin: 1.2rem 0; }
-    .footer { margin-left: var(--sidebar-width); padding: 2rem 2.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; text-align: center; }
-    .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+    .btn { display: inline-flex; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--accent); background: rgba(148, 206, 196, 0.15); color: var(--accent); font-size: 0.9rem; text-decoration: none; margin: 0.6rem 0 1rem; }
     .step-list { list-style: none; margin-left: 0; }
-    .step-list > li { position: relative; padding-left: 1.5rem; margin-bottom: 0.85rem; }
-    .step-list > li::before { content: "•"; position: absolute; left: 0.3rem; color: var(--accent); font-weight: bold; }
+    .step-list > li { position: relative; padding-left: 1.4rem; margin-bottom: 0.75rem; }
+    .step-list > li::before { content: "•"; position: absolute; left: 0.25rem; color: var(--accent); }
+    .footer { margin-left: var(--sidebar-width); padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+    .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+      .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
       .main, .footer { margin-left: 0; }
       .menu-toggle { display: block; }
@@ -61,27 +52,21 @@
 <body>
   <nav class="navbar">
     <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-    <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" class="logo-img" width="28" height="28"><span>ALT10fd0f</span></a>
+    <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a>
     <div class="navbar-links"><a href="index.html">Tutorial</a></div>
-    <div class="navbar-right"><a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a></div>
   </nav>
   <div class="layout">
     <aside class="sidebar">
-      <a href="index.html" class="sidebar-item">Intro</a>
-      <a href="reminder.html" class="sidebar-item active">Reminder Command</a>
-      <a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
+      <a href="index.html" class="sidebar-item">← All Tutorials</a>
     </aside>
     <main class="main">
-      <div class="breadcrumb"><a href="index.html">🏠</a> <span>›</span> <span>Reminder Command</span></div>
+      <div class="breadcrumb"><a href="index.html">🏠</a> › Reminder Command</div>
       <h1>Reminder Command</h1>
       <p><em>Within this showcase I will teach you how to make a reminder command.</em> <strong>No share codes will be listed at all</strong> <em>this is because i said so, and because from my time here i've seen you all become increasingly lazy over simple commands.</em></p>
-      <div class="btn-row">
-        <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1557930816644976723" target="_blank" rel="noopener">Visit Showcase ↗</a>
-      </div>
-      <h2>Setup</h2>
+      <a class="btn" href="https://discord.com/channels/845800518458540083/1557930816644976723" target="_blank" rel="noopener">Visit Showcase ↗</a>
       <ul class="step-list">
         <li>Add the arguments <strong><code>reminder</code></strong> and <strong><code>time</code></strong>. Make both arguments text.</li>
-        <li>Under the command block add a <em>Calculate Value</em> and enter the string of text below. <strong>DO NOT CHANGE ANYTHING</strong>
+        <li>Under the command block add a <strong>Calculate Value</strong> and enter the string of text below. <strong>DO NOT CHANGE ANYTHING</strong>
 <pre><code>let raw = lower(trim(string(arg('time') ?? "0m")));
 let parts = filter(split(raw, " "), trim(#) != "");
 let seconds_list = map(parts, 
@@ -106,32 +91,20 @@ You're being reminded of
         </li>
         <li>Under that, add a <strong>Handle Errors</strong> block (found on the second sidebar).</li>
         <li>On the handle errors side, add a response message that says <code>You've put a time longer than 30 days.</code></li>
-        <li>Under the try block side, add a <strong>Wait</strong> block, then a <strong>DM</strong> block under it.</li>
-        <li>Inside the wait block add <code>{{var('data').seconds}}</code>.</li>
-        <li>In the DM block set the user to <code>{{user}}</code>. And the text to...
+        <li>Under the try blocks side, add a wait block, then a dm block under it.</li>
+        <li>Inside of the wait block add <code>{{var('data').seconds}}</code>.</li>
+        <li>In the dm block set the user to <code>{{user}}</code>. And the text to...
 <pre><code>**This is a reminder you set.**
 You're being reminded of
 > {{arg('reminder')}}</code></pre>
         </li>
       </ul>
-      <div class="note">
-        <p>If you have any problems please ping me in the Discord. Once again, <strong>no share codes will be listed</strong>.</p>
-      </div>
-      <div class="btn-row">
-        <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1557930816644976723" target="_blank" rel="noopener">Visit Showcase ↗</a>
-      </div>
+      <p>If you have any problems please do ping me in the discord, however once again, no share codes will be listed.</p>
     </main>
   </div>
   <footer class="footer">
-    This site is <b>in no way officially affiliated with Kite</b> or its creators.<br>
-    Tutorials made with 💛 by ALT10fd0f.<br><br>
-    <a href="https://discord.gg/zXu5YWqX7c" style="color: var(--accent);">Discord Server</a> ·
-    <a href="https://discord.com/users/989152479222579260" style="color: var(--accent);" target="_blank">Contact on Discord</a>
+    This site is <b>in no way officially affiliated with Kite</b>.<br>
+    Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a>
   </footer>
-  <script>
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      item.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open'));
-    });
-  </script>
 </body>
 </html>
