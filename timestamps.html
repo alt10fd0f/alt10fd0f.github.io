@@ -45,16 +45,16 @@ pre code{background:none;padding:0;color:var(--sec)}
 <p>I've seen quite a few people talking about how to do timestamps in kite and everything. So I'm going to list out all of the timestamps that I'm aware of here.</p>
 <a class="btn" href="https://discord.com/channels/845800518458540083/1456790343302250620" target="_blank" rel="noopener">Visit Showcase ↗</a>
 
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:R></span> <span>→ Will function as a timer and count up from the time it's sent.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:t></span> <span>→ Will display the time like <strong>5:36 PM</strong>.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:T></span> <span>→ Will display the time with seconds <strong>5:36:00</strong>.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:d></span> <span>→ Will display the date like <strong>01/02/2026</strong>.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:D></span> <span>→ Will display the date in long format like <strong>January 2, 2026</strong>.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:f></span> <span>→ Will display both the time and date like <strong>January 2, 2026 5:00 PM</strong>.</span></div>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix()}}:F></span> <span>→ Will display like <strong>Friday, January 2, 2026 5:00 PM</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="R"></span> <span>→ Will function as a timer and count up from the time it's sent.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="t"></span> <span>→ Will display the time like <strong>5:36 PM</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="T"></span> <span>→ Will display the time with seconds <strong>5:36:00</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="d"></span> <span>→ Will display the date like <strong>01/02/2026</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="D"></span> <span>→ Will display the date in long format like <strong>January 2, 2026</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="f"></span> <span>→ Will display both the time and date like <strong>January 2, 2026 5:00 PM</strong>.</span></div>
+<div class="ts-row"><span class="ts-code" data-code="F"></span> <span>→ Will display like <strong>Friday, January 2, 2026 5:00 PM</strong>.</span></div>
 
 <h2>Other Timestamps</h2>
-<pre><code>{{now().In(timezone("America/Chicago")).Format("02/01/2006 03:04 PM")}}</code></pre>
+<pre><code id="tz-code"></code></pre>
 <p>→ Will display the time <strong>02/01/2026 05:43 PM</strong> for the timezone that was inputted.</p>
 <p>Example timezones:</p>
 <pre><code>("America/New_York")
@@ -126,7 +126,7 @@ pre code{background:none;padding:0;color:var(--sec)}
 ("Europe/Lisbon")</code></pre>
 
 <h2>Timestamp Countdown</h2>
-<div class="ts-row"><span class="ts-code"><t:{{now().Unix() + ___}}:R></span></div>
+<div class="ts-row"><span class="ts-code" data-code="countdown"></span></div>
 <p>→ Replace the blank space with the amount of time <em>in seconds</em> to get it to count down to a time like <strong>In 3 Hours</strong>.</p>
 </main>
 </div>
@@ -134,5 +134,28 @@ pre code{background:none;padding:0;color:var(--sec)}
 This site is <b>in no way officially affiliated with Kite</b>.<br>
 Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a>
 </footer>
+<script>
+(function(){
+  var L = String.fromCharCode(60);
+  var R = String.fromCharCode(62);
+  var base = L + 't:{{now().Unix()}}:';
+  var map = {
+    R: base + 'R' + R,
+    t: base + 't' + R,
+    T: base + 'T' + R,
+    d: base + 'd' + R,
+    D: base + 'D' + R,
+    f: base + 'f' + R,
+    F: base + 'F' + R,
+    countdown: L + 't:{{now().Unix() + ___}}:R' + R
+  };
+  document.querySelectorAll('.ts-code[data-code]').forEach(function(el){
+    var k = el.getAttribute('data-code');
+    if (map[k]) el.textContent = map[k];
+  });
+  var tz = document.getElementById('tz-code');
+  if (tz) tz.textContent = '{{now().In(timezone("America/Chicago")).Format("02/01/2006 03:04 PM")}}';
+})();
+</script>
 </body>
 </html>
