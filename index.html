@@ -47,9 +47,6 @@
     .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
     .sidebar-sub.open { max-height: 800px; }
     .sidebar-sub .sidebar-item { padding-left: 2rem; font-size: 0.875rem; }
-    .badge { font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.4rem; font-weight: 600; text-transform: uppercase; }
-    .badge-kite { background: rgba(148, 206, 196, 0.2); color: var(--accent); }
-    .badge-unknown { background: rgba(160, 160, 160, 0.15); color: var(--text-muted); }
     .main { margin-left: var(--sidebar-width); margin-right: var(--toc-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 900px; }
     .breadcrumb { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
     h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 1rem; }
@@ -72,6 +69,40 @@
     .toc a { display: block; color: var(--text-muted); text-decoration: none; padding: 0.3rem 0; border-left: 2px solid transparent; padding-left: 0.75rem; }
     .toc a:hover, .toc a.active { color: var(--accent); border-left-color: var(--accent); }
     .footer { margin-left: var(--sidebar-width); margin-right: var(--toc-width); padding: 2rem 2.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+    .search-wrap {
+      position: relative;
+      margin: 1rem 0 1.5rem;
+      max-width: 420px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-wrap input:focus {
+      border-color: var(--accent);
+    }
+    .search-wrap input::placeholder {
+      color: var(--text-muted);
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .tutorial-card.hidden, .category-heading.hidden, .tutorial-grid.hidden {
+      display: none !important;
+    }
     .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
     @media (max-width: 1100px) { .toc { display: none; } .main, .footer { margin-right: 0; } }
     @media (max-width: 768px) { .sidebar { transform: translateX(-100%); transition: transform 0.25s; } .sidebar.open { transform: translateX(0); } .main, .footer { margin-left: 0; } .menu-toggle { display: block; } .main { padding: 1.5rem 1.25rem 3rem; } h1 { font-size: 1.8rem; } }
@@ -93,50 +124,50 @@
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Basic Commands</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#calculator" class="sidebar-item">Calculator Command <span class="badge badge-unknown">unknown</span></a>
-          <a href="#userinfo" class="sidebar-item">User Info Command <span class="badge badge-unknown">unknown</span></a>
-          <a href="#dm" class="sidebar-item">Dm Command <span class="badge badge-unknown">unknown</span></a>
-          <a href="#say" class="sidebar-item">Say Command <span class="badge badge-kite">Kite</span></a>
-          <a href="#prefix" class="sidebar-item">Prefix Commands <span class="badge badge-unknown">unknown</span></a>
-          <a href="#password" class="sidebar-item">Password Commands <span class="badge badge-unknown">unknown</span></a>
-          <a href="#ranklock" class="sidebar-item">Rank/Role Lock Commands <span class="badge badge-kite">Kite</span></a>
-          <a href="#purge" class="sidebar-item">Purge Command <span class="badge badge-kite">Kite</span></a>
-          <a href="#reminder" class="sidebar-item">Reminder Command <span class="badge badge-kite">Kite</span></a>
-          <a href="#counting" class="sidebar-item">Custom Counting <span class="badge badge-kite">Kite</span></a>
-          <a href="#fakequote" class="sidebar-item">Fake Quote Creator <span class="badge badge-kite">Kite</span></a>
+          <a href="#calculator" class="sidebar-item">Calculator Command</a>
+          <a href="#userinfo" class="sidebar-item">User Info Command</a>
+          <a href="#dm" class="sidebar-item">Dm Command</a>
+          <a href="#say" class="sidebar-item">Say Command</a>
+          <a href="#prefix" class="sidebar-item">Prefix Commands</a>
+          <a href="#password" class="sidebar-item">Password Commands</a>
+          <a href="#ranklock" class="sidebar-item">Rank/Role Lock Commands</a>
+          <a href="#purge" class="sidebar-item">Purge Command</a>
+          <a href="#reminder" class="sidebar-item">Reminder Command</a>
+          <a href="#counting" class="sidebar-item">Custom Counting</a>
+          <a href="#fakequote" class="sidebar-item">Fake Quote Creator</a>
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Games</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#clicker" class="sidebar-item">Clicker Game <span class="badge badge-kite">Kite</span></a>
+          <a href="#clicker" class="sidebar-item">Clicker Game</a>
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Setup Guides</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#modal" class="sidebar-item">Modal / Form Block <span class="badge badge-kite">Kite</span></a>
-          <a href="#buttons" class="sidebar-item">Data for Buttons <span class="badge badge-kite">Kite</span></a>
-          <a href="#dropdown" class="sidebar-item">Dropdown / Select Menu <span class="badge badge-kite">Kite</span></a>
+          <a href="#modal" class="sidebar-item">Modal / Form Block</a>
+          <a href="#buttons" class="sidebar-item">Data for Buttons</a>
+          <a href="#dropdown" class="sidebar-item">Dropdown / Select Menu</a>
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Panels & Systems</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#erlc-session" class="sidebar-item">ERLC Session MGMT <span class="badge badge-unknown">unknown</span></a>
-          <a href="#application" class="sidebar-item">Application Bot <span class="badge badge-kite">Kite</span></a>
-          <a href="#moderation" class="sidebar-item">Discord Moderation Panel <span class="badge badge-kite">Kite</span></a>
+          <a href="#erlc-session" class="sidebar-item">ERLC Session MGMT</a>
+          <a href="#application" class="sidebar-item">Application Bot</a>
+          <a href="#moderation" class="sidebar-item">Discord Moderation Panel</a>
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>APIs & Integrations</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#timestamps" class="sidebar-item">Timestamps with Kite <span class="badge badge-kite">Kite</span></a>
-          <a href="#cookie" class="sidebar-item">Cookie API Transcripts <span class="badge badge-kite">Kite</span></a>
-          <a href="#roblox-lookup" class="sidebar-item">Roblox Account Lookup <span class="badge badge-kite">Kite</span></a>
-          <a href="#roblox-verify" class="sidebar-item">Roblox Verification <span class="badge badge-kite">Kite</span></a>
-          <a href="#membercount" class="sidebar-item">Member Count API <span class="badge badge-kite">Kite</span></a>
-          <a href="#erlc-api" class="sidebar-item">ERLC API V2 <span class="badge badge-kite">Kite</span></a>
+          <a href="#timestamps" class="sidebar-item">Timestamps with Kite</a>
+          <a href="#cookie" class="sidebar-item">Cookie API Transcripts</a>
+          <a href="#roblox-lookup" class="sidebar-item">Roblox Account Lookup</a>
+          <a href="#roblox-verify" class="sidebar-item">Roblox Verification</a>
+          <a href="#membercount" class="sidebar-item">Member Count API</a>
+          <a href="#erlc-api" class="sidebar-item">ERLC API V2</a>
         </div>
       </div>
     </aside>
@@ -172,45 +203,52 @@
       <h2 id="copying">Copying codeblocks / expressions</h2>
       <p>The tutorials often use <strong>Calculate Value</strong> blocks. To copy the expression, hover over the top-right corner of the codeblock and click the clipboard 📋 icon.</p>
       <h2 id="tutorials">Available Tutorials</h2>
-      <p>Items marked with a green <span class="badge badge-kite">Kite</span> badge are confirmed Kite tutorials.</p>
-      <h3 id="basic-commands">Basic Commands</h3>
-      <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="calculator"><span class="num">01</span><span class="name">Calculator Command</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="userinfo"><span class="num">02</span><span class="name">User Info Command</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="dm"><span class="num">03</span><span class="name">Dm Command</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="say"><span class="num">06</span><span class="name">Say Command</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="prefix"><span class="num">07</span><span class="name">Prefix Commands</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="password"><span class="num">08</span><span class="name">Password Commands</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="ranklock"><span class="num">09</span><span class="name">Rank/Role Lock Commands</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="purge"><span class="num">20</span><span class="name">Purge Command</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="reminder"><span class="num">25</span><span class="name">Reminder Command</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="counting"><span class="num">19</span><span class="name">Custom Counting</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="fakequote"><span class="num">21</span><span class="name">Fake Quote Creator</span><span class="badge badge-kite">Kite</span></a>
+      <p>Browse all available Kite tutorials below. Use the search bar to filter by name or category.</p>
+      
+      <div class="search-wrap">
+        <input type="text" id="tutorial-search" placeholder="Search tutorials or categories..." autocomplete="off">
+        <span class="search-icon">🔍</span>
       </div>
-      <h3 id="games">Games</h3>
+      <p id="search-empty" style="display:none; color: var(--text-muted); margin-top: 0.5rem;">No tutorials match your search.</p>
+
+      <h3 id="basic-commands" class="category-heading" data-category="basic commands">Basic Commands</h3>
       <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="clicker"><span class="num">05</span><span class="name">Clicker Game</span><span class="badge badge-kite">Kite</span></a>
+        <a href="#" class="tutorial-card" id="calculator"><span class="num">01</span><span class="name">Calculator Command</span></a>
+        <a href="#" class="tutorial-card" id="userinfo"><span class="num">02</span><span class="name">User Info Command</span></a>
+        <a href="#" class="tutorial-card" id="dm"><span class="num">03</span><span class="name">Dm Command</span></a>
+        <a href="#" class="tutorial-card" id="say"><span class="num">06</span><span class="name">Say Command</span></a>
+        <a href="#" class="tutorial-card" id="prefix"><span class="num">07</span><span class="name">Prefix Commands</span></a>
+        <a href="#" class="tutorial-card" id="password"><span class="num">08</span><span class="name">Password Commands</span></a>
+        <a href="#" class="tutorial-card" id="ranklock"><span class="num">09</span><span class="name">Rank/Role Lock Commands</span></a>
+        <a href="#" class="tutorial-card" id="purge"><span class="num">20</span><span class="name">Purge Command</span></a>
+        <a href="#" class="tutorial-card" id="reminder"><span class="num">25</span><span class="name">Reminder Command</span></a>
+        <a href="#" class="tutorial-card" id="counting"><span class="num">19</span><span class="name">Custom Counting</span></a>
+        <a href="#" class="tutorial-card" id="fakequote"><span class="num">21</span><span class="name">Fake Quote Creator</span></a>
       </div>
-      <h3 id="setup">Setup Guides</h3>
+      <h3 id="games" class="category-heading" data-category="games">Games</h3>
       <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="modal"><span class="num">04</span><span class="name">How to setup a Modal/Form Block</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="buttons"><span class="num">22</span><span class="name">How to set data for buttons</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="dropdown"><span class="num">23</span><span class="name">How to setup dropdown/select menu</span><span class="badge badge-kite">Kite</span></a>
+        <a href="#" class="tutorial-card" id="clicker"><span class="num">05</span><span class="name">Clicker Game</span></a>
       </div>
-      <h3 id="panels">Panels & Systems</h3>
+      <h3 id="setup" class="category-heading" data-category="setup guides">Setup Guides</h3>
       <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="erlc-session"><span class="num">10</span><span class="name">ERLC Session MGMT panel</span><span class="badge badge-unknown">unknown</span></a>
-        <a href="#" class="tutorial-card" id="application"><span class="num">12</span><span class="name">Application Bot (Appy 1-3)</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="moderation"><span class="num">13</span><span class="name">Discord Moderation Panel</span><span class="badge badge-kite">Kite</span></a>
+        <a href="#" class="tutorial-card" id="modal"><span class="num">04</span><span class="name">How to setup a Modal/Form Block</span></a>
+        <a href="#" class="tutorial-card" id="buttons"><span class="num">22</span><span class="name">How to set data for buttons</span></a>
+        <a href="#" class="tutorial-card" id="dropdown"><span class="num">23</span><span class="name">How to setup dropdown/select menu</span></a>
       </div>
-      <h3 id="apis">APIs & Integrations</h3>
+      <h3 id="panels" class="category-heading" data-category="panels & systems">Panels & Systems</h3>
       <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="timestamps"><span class="num">11</span><span class="name">Timestamps with kite</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="cookie"><span class="num">14</span><span class="name">Cookie API Transcripts</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="roblox-lookup"><span class="num">15</span><span class="name">Roblox Account Lookup</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="roblox-verify"><span class="num">16</span><span class="name">Roblox Verification</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="membercount"><span class="num">17</span><span class="name">Member Count API</span><span class="badge badge-kite">Kite</span></a>
-        <a href="#" class="tutorial-card" id="erlc-api"><span class="num">18</span><span class="name">ERLC API V2</span><span class="badge badge-kite">Kite</span></a>
+        <a href="#" class="tutorial-card" id="erlc-session"><span class="num">10</span><span class="name">ERLC Session MGMT panel</span></a>
+        <a href="#" class="tutorial-card" id="application"><span class="num">12</span><span class="name">Application Bot (Appy 1-3)</span></a>
+        <a href="#" class="tutorial-card" id="moderation"><span class="num">13</span><span class="name">Discord Moderation Panel</span></a>
+      </div>
+      <h3 id="apis" class="category-heading" data-category="apis & integrations">APIs & Integrations</h3>
+      <div class="tutorial-grid">
+        <a href="#" class="tutorial-card" id="timestamps"><span class="num">11</span><span class="name">Timestamps with kite</span></a>
+        <a href="#" class="tutorial-card" id="cookie"><span class="num">14</span><span class="name">Cookie API Transcripts</span></a>
+        <a href="#" class="tutorial-card" id="roblox-lookup"><span class="num">15</span><span class="name">Roblox Account Lookup</span></a>
+        <a href="#" class="tutorial-card" id="roblox-verify"><span class="num">16</span><span class="name">Roblox Verification</span></a>
+        <a href="#" class="tutorial-card" id="membercount"><span class="num">17</span><span class="name">Member Count API</span></a>
+        <a href="#" class="tutorial-card" id="erlc-api"><span class="num">18</span><span class="name">ERLC API V2</span></a>
       </div>
       <h2 id="suggestions">Suggestions</h2>
       <p>To make suggestions, write in the <strong>#showcase</strong> channel or open an issue on the <a href="https://github.com/ronaksahai/kite-tutorials/issues" style="color: var(--accent);">GitHub Repo</a>.</p>
@@ -250,6 +288,54 @@
     document.querySelectorAll('.sidebar-item').forEach(item => {
       item.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open'));
     });
+
+    // Tutorial search
+    const searchInput = document.getElementById('tutorial-search');
+    const searchEmpty = document.getElementById('search-empty');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.tutorial-card');
+        const headings = document.querySelectorAll('.category-heading');
+        let anyVisible = false;
+
+        cards.forEach(card => {
+          const name = (card.querySelector('.name')?.textContent || '').toLowerCase();
+          const match = !q || name.includes(q);
+          card.classList.toggle('hidden', !match);
+          if (match) anyVisible = true;
+        });
+
+        headings.forEach(h => {
+          const grid = h.nextElementSibling;
+          if (grid && grid.classList.contains('tutorial-grid')) {
+            const hasVisible = [...grid.querySelectorAll('.tutorial-card')].some(c => !c.classList.contains('hidden'));
+            const catMatch = !q || (h.dataset.category || '').includes(q) || h.textContent.toLowerCase().includes(q);
+            const show = hasVisible || (catMatch && q);
+            h.classList.toggle('hidden', !show && !!q);
+            grid.classList.toggle('hidden', !show && !!q);
+            if (show) anyVisible = true;
+          }
+        });
+
+        if (q) {
+          headings.forEach(h => {
+            const cat = (h.dataset.category || h.textContent || '').toLowerCase();
+            if (cat.includes(q)) {
+              h.classList.remove('hidden');
+              const grid = h.nextElementSibling;
+              if (grid) {
+                grid.classList.remove('hidden');
+                grid.querySelectorAll('.tutorial-card').forEach(c => c.classList.remove('hidden'));
+                anyVisible = true;
+              }
+            }
+          });
+        }
+
+        searchEmpty.style.display = anyVisible || !q ? 'none' : 'block';
+      });
+    }
   </script>
 </body>
 </html>
