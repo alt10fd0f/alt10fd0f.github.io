@@ -1,20 +1,8 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Modal / Form Block | ALT10fd0f</title><link rel="icon" type="image/png" href="logo.png"><style>:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--hover:#303134;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:260px;--nh:60px;--font:system-ui,sans-serif}*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.65}.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100;gap:1rem}.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}.navbar-brand img{width:28px;height:28px;border-radius:50%;object-fit:cover}.layout{display:flex;margin-top:var(--nh)}.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);overflow-y:auto;padding:1rem 0}.sidebar-item{display:block;padding:.4rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem;border-left:3px solid transparent}.sidebar-item:hover{background:var(--hover);color:var(--text)}.sidebar-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(148,206,196,.08)}.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:880px}.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}.breadcrumb a{color:var(--muted);text-decoration:none}h1{font-size:2rem;margin-bottom:1rem}p,li{margin-bottom:.5rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}code{background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}.btn{display:inline-flex;padding:.5rem .95rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:1rem 0}.note{background:rgba(148,206,196,.08);border-left:4px solid var(--accent);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;margin:1.1rem 0}.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.75rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}</style></head><body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Modal / Form Block | ALT10fd0f</title><link rel="icon" href="logo.png" type="image/png"><style>:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:240px;--nh:60px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100}.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}.navbar-brand img{width:28px;height:28px;border-radius:50%}.layout{display:flex;margin-top:var(--nh)}.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);padding:1rem 0}.sidebar-item{display:block;padding:.45rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem}.sidebar-item:hover{color:var(--accent)}.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:900px}.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem}.breadcrumb a{color:var(--muted);text-decoration:none}h1{font-size:2rem;margin-bottom:1rem}p,li{margin-bottom:.55rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}code{background:var(--bg3);padding:.15rem .4rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}.btn{display:inline-flex;padding:.5rem 1rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:.6rem 0 1rem}.note{background:rgba(148,206,196,.08);border-left:4px solid var(--accent);padding:1rem 1.15rem;border-radius:0 8px 8px 0;margin:1.2rem 0}.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.75rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}</style></head><body>
 <nav class="navbar"><button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-<a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a></nav>
-<div class="layout"><aside class="sidebar">
-<a href="index.html" class="sidebar-item">← All Tutorials</a>
-<a href="dropdown.html" class="sidebar-item">Dropdown / Select Menu</a>
-<a href="modal.html" class="sidebar-item active">Modal / Form Block</a>
-<a href="buttons-data.html" class="sidebar-item">Data for Buttons</a>
-<a href="application.html" class="sidebar-item">Application Bot</a>
-<a href="timestamps.html" class="sidebar-item">Timestamps</a>
-<a href="cookie-api.html" class="sidebar-item">Cookie API Transcripts</a>
-<a href="membercount.html" class="sidebar-item">Member Count API</a>
-<a href="fakequote.html" class="sidebar-item">Fake Quote Creator</a>
-<a href="reminder.html" class="sidebar-item">Reminder Command</a>
-<a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
-</aside>
+<a href="index.html" class="navbar-brand"><img src="logo.png" width="28" height="28" alt="logo"><span>ALT10fd0f</span></a></nav>
+<div class="layout"><aside class="sidebar"><a href="index.html" class="sidebar-item">← All Tutorials</a></aside>
 <main class="main">
 <div class="breadcrumb"><a href="index.html">🏠</a> › Modal / Form Block</div>
 <h1>Modal / Form Block</h1>
@@ -22,18 +10,20 @@
 <a class="btn" href="https://discord.com/channels/845800518458540083/1425213482663542877" target="_blank" rel="noopener">Visit Showcase ↗</a>
 <ul class="step-list">
 <li>Create a new command.</li>
-<li>Attach a <strong>Show Modal</strong> block to the bottom of the command.</li>
-<li>Click on the orange button that says <strong>configure modal</strong>.</li>
-<li>Once in, add a title and click <strong>"Add input"</strong>.</li>
-<li>Add in an identifier. Something short and simple, usually one word relating to the question. (This is how you'll get your answers.) <strong>Can not have two of the same identifiers.</strong></li>
-<li>Add a label — this will be the title of the question.</li>
-<li>Add a placeholder — this will be what's inside the question.</li>
+<li>Attach on a Show Modal block to the bottom of the command.</li>
+<li>Click on the orange button that says configure modal.</li>
+<li>Once in, add a title and click "Add input".</li>
+<li>Add in an identifier. Something short and simple, Usually one word relating to the question. (This is how you'll get your answers) <strong>Can not have two of the same identifiers</strong></li>
+<li>Add a label, This will be the title of the question.</li>
+<li>Add a placeholder, This will be whats inside the question.</li>
 <li>Create all the questions you may need.</li>
-<li>Add a create response message. Make it say completed or whatever you'd like.</li>
-<li>Add a create channel message block. Have it send to a channel to collect responses in.</li>
+<li>Add on a create response message.</li>
+<li>Make it say completed or whatever you'd like.</li>
+<li>Add on a create channel message block.</li>
+<li>Have it send to a channel to collect responses in.</li>
 <li>Type into the create channel message <code>{{input('identifier')}}</code>. But replace the word identifier with what you typed into the identifier box above.</li>
 </ul>
-<div class="note"><p>And boom — that is how you create a modal/form block. If there are any questions about it please ping me in general inside the Discord.</p></div>
+<div class="note"><p>And boom, There is how you create a modal/form block. If there are any questions about it please ping me in general inside the discord.</p></div>
 </main></div>
 <footer class="footer">Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a></footer>
 </body></html>
