@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fake Quote Creator | ALT10fd0f</title><link rel="icon" href="logo.png" type="image/png"><style>:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--hover:#303134;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:260px;--nh:60px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100}.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}.navbar-brand img{width:28px;height:28px;border-radius:50%}.layout{display:flex;margin-top:var(--nh)}.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);overflow-y:auto;padding:1rem 0}.sidebar-item{display:block;padding:.4rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem;border-left:3px solid transparent}.sidebar-item:hover{background:var(--hover);color:var(--text)}.sidebar-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(148,206,196,.08)}.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:880px}.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}.breadcrumb a{color:var(--muted);text-decoration:none}h1{font-size:2rem;margin-bottom:1rem}h2{font-size:1.3rem;margin:1.8rem 0 .7rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}p,li{margin-bottom:.5rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}code{background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}pre{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem;overflow-x:auto;margin:.7rem 0;font-size:.8rem}.btn{display:inline-flex;padding:.5rem .95rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:.8rem 0}.note{background:rgba(148,206,196,.08);border-left:4px solid var(--accent);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;margin:1rem 0}.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.7rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}</style></head><body>
+<nav class="navbar"><button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<a href="index.html" class="navbar-brand"><img src="logo.png" width="28" height="28" alt="logo"><span>ALT10fd0f</span></a></nav>
+<div class="layout"><aside class="sidebar">
+<a href="index.html" class="sidebar-item">← All Tutorials</a>
+<a href="dropdown.html" class="sidebar-item">Dropdown / Select Menu</a>
+<a href="modal.html" class="sidebar-item">Modal / Form Block</a>
+<a href="buttons-data.html" class="sidebar-item">Data for Buttons</a>
+<a href="application.html" class="sidebar-item">Application Bot</a>
+<a href="timestamps.html" class="sidebar-item">Timestamps</a>
+<a href="cookie-api.html" class="sidebar-item">Cookie API Transcripts</a>
+<a href="membercount.html" class="sidebar-item">Member Count API</a>
+<a href="fakequote.html" class="sidebar-item active">Fake Quote Creator</a>
+<a href="reminder.html" class="sidebar-item">Reminder Command</a>
+<a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
+</aside><main class="main">
+<div class="breadcrumb"><a href="index.html">🏠</a> › Fake Quote Creator</div>
+<h1>Fake Quote Creator</h1>
+<a class="btn" href="https://discord.com/channels/845800518458540083/1494977924116512809" target="_blank" rel="noopener">Visit Showcase ↗</a>
+<p><em>Fake quote creator using API that matches Appy-style image output.</em></p>
+<div class="note"><p>Users may say anything — be cautious. Do not use for malicious intent.</p></div>
+<h2>Arguments</h2>
+<ul class="step-list">
+<li><code>user</code> — Type: User, Required, Description: The user to quote.</li>
+<li><code>message</code> — Type: Text, Required, Max 100, Description: The message to turn into a quote.</li>
+</ul>
+<h2>Flow</h2>
+<ul class="step-list">
+<li>Defer response under the command.</li>
+<li>API block, temp <code>api</code>:
+<ul>
+<li>Method: Post · URL: <code>https://api.voids.top/quote</code></li>
+<li>Header: Content-Type | application/json</li>
+<li>JSON body keys:
+<pre><code>"text": "{{arg('message')}}"
+"color": "True"
+"author": "{{user.username}}"
+"avatar": "{{arg('user').avatar_url}}"
+"username": "{{arg('user').username}}"
+"watermark": "Make It a Quote#6660"
+"display_name": "{{arg('user').display_name}}"</code></pre>
+</li>
+</ul></li>
+<li>Create response message → embed Image URL: <code>{{fromJSON(var('api').body()).url}}</code></li>
+</ul>
+</main></div>
+<footer class="footer">Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a></footer>
+</body></html>
