@@ -1,1 +1,231 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tickets With Kite | ALT10fd0f</title>
+  <meta name="description" content="Ticket system tutorials for Kite - Open, Rename, and Close Request commands.">
+  <link rel="icon" type="image/png" href="logo.png">
+  <meta name="theme-color" content="#94CEC4">
+  <style>
+    :root {
+      --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134;
+      --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4;
+      --border: #3a3b3d; --sidebar-width: 280px; --navbar-height: 60px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1.5rem; }
+    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.1rem; }
+    .navbar-brand .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    .navbar-links a { color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.95rem; }
+    .navbar-links a:hover, .navbar-links a.active { color: var(--accent); background: rgba(148, 206, 196, 0.1); }
+    .navbar-right { margin-left: auto; }
+    .navbar-right a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 0.35rem 0.6rem; }
+    .layout { display: flex; margin-top: var(--navbar-height); min-height: calc(100vh - var(--navbar-height)); }
+    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); background: var(--bg); border-right: 1px solid var(--border); overflow-y: auto; padding: 1rem 0; }
+    .sidebar-item { display: flex; align-items: center; padding: 0.4rem 1.25rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: var(--bg-hover); color: var(--text); }
+    .sidebar-item.active { background: rgba(148, 206, 196, 0.08); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+    .sidebar-category { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.25rem; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; cursor: pointer; }
+    .sidebar-category .arrow { transition: transform 0.2s; font-size: 0.7rem; opacity: 0.7; }
+    .sidebar-category.open .arrow { transform: rotate(90deg); }
+    .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+    .sidebar-sub.open { max-height: 800px; }
+    .sidebar-sub .sidebar-item { padding-left: 2rem; font-size: 0.875rem; }
+    .main { margin-left: var(--sidebar-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 900px; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 1rem; }
+    h2 { font-size: 1.45rem; font-weight: 600; margin: 2.4rem 0 0.9rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 1.6rem 0 0.7rem; color: var(--accent); }
+    p, li { margin-bottom: 0.55rem; color: var(--text-secondary); }
+    strong { color: var(--text); }
+    ul { margin: 0.6rem 0 1rem 1.4rem; }
+    code { background: var(--bg-tertiary); padding: 0.12rem 0.4rem; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #e8b4b8; }
+    pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0.8rem 0 1.2rem; font-size: 0.82rem; }
+    pre code { background: none; padding: 0; color: var(--text-secondary); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.8rem 0 1.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text); font-size: 0.9rem; cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-primary { background: rgba(148, 206, 196, 0.15); border-color: var(--accent); color: var(--accent); }
+    .btn.copied { border-color: #6bcb77; color: #6bcb77; }
+    .share-block { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+    .share-block h4 { font-size: 1rem; margin-bottom: 0.6rem; color: var(--text); }
+    .code-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+    .footer { margin-left: var(--sidebar-width); padding: 2rem 2.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+    .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+    .step-list { list-style: none; margin-left: 0; }
+    .step-list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.7rem; }
+    .step-list li::before { content: "•"; position: absolute; left: 0.3rem; color: var(--accent); font-weight: bold; }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+      .sidebar.open { transform: translateX(0); }
+      .main, .footer { margin-left: 0; }
+      .menu-toggle { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+    <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" class="logo-img" width="28" height="28"><span>ALT10fd0f</span></a>
+    <div class="navbar-links"><a href="index.html">Tutorial</a></div>
+    <div class="navbar-right"><a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a></div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="index.html" class="sidebar-item">Intro</a>
+      <a href="tickets.html" class="sidebar-item active">Tickets With Kite</a>
+      <div class="sidebar-section">
+        <div class="sidebar-category open" onclick="toggleCategory(this)"><span>On this page</span><span class="arrow">▶</span></div>
+        <div class="sidebar-sub open">
+          <a href="#ticket-open" class="sidebar-item">Ticket Open</a>
+          <a href="#claim-button" class="sidebar-item">Claim Button</a>
+          <a href="#close-button" class="sidebar-item">Close Button</a>
+          <a href="#rename" class="sidebar-item">Rename Command</a>
+          <a href="#close-request" class="sidebar-item">Close Request</a>
+          <a href="#sharecodes" class="sidebar-item">Sharecodes</a>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb"><a href="index.html">🏠</a> <span>›</span> <span>Tickets With Kite</span></div>
+      <h1>Tickets With Kite</h1>
+      <p><em>This will be a difficult showcase for <strong>Three</strong> ticket commands.</em></p>
+      <p>Commands Are...</p>
+      <ul><li>Ticket Open</li><li>Rename</li><li>Close Request</li></ul>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1459352977872781498" target="_blank" rel="noopener">Visit Showcase ↗</a>
+      </div>
+
+      <h2 id="ticket-open">Ticket Open Command</h2>
+      <ul class="step-list">
+        <li>Add an argument on top of the command and label it <code>reason</code>.</li>
+        <li>Under the command add a <strong>Create Channel</strong> block and configure to your desired settings. (Setting the topic to <code>{{` `}}</code> will allow the ticket topic to stay blank.)</li>
+        <li>Add a private response block under saying <code>{{user}} We've created your ticket.</code></li>
+        <li>Under the response block add a <strong>Calculate Value</strong> block and paste:
+<pre><code>{
+ "user": user
+}</code></pre></li>
+        <li>Connect a <strong>Create Channel Message</strong> block and set the target channel to the create channel variable from before.</li>
+        <li>Add your ticket message and two buttons labeled <strong>"Claim."</strong> and <strong>"Close."</strong> <strong>DO NOT USE MESSAGE TEMPLATES!!!</strong></li>
+      </ul>
+
+      <h3 id="claim-button">Claim Button Setup</h3>
+      <ul class="step-list">
+        <li>Add a <strong>Get Stored Variable</strong> labeled <code>ticketclaimeduser</code> (scoped). Scope: <code>{{channel.id}}</code>.</li>
+        <li>Add a comparison condition: Base = that variable, Match = Greater than or equal to, Value = <code>1</code>.</li>
+        <li>Under match: private response <code>This ticket has already been claimed</code>.</li>
+        <li>Under Else: set stored variable — Scope <code>{{channel.id}}</code>, Operation Increment, Value <code>1</code>.</li>
+        <li>Response:
+<pre><code>This ticket has been claimed by {{user}}.
+-# {{var('data').user.mention}}</code></pre></li>
+        <li>Set stored variable <strong>claimedby</strong>: Scope <code>{{channel.id}}</code>, Overwrite, Value <code>{{user.id}}</code>.</li>
+        <li>Set stored variable <strong>ticketchannels</strong>: Scope <code>{{channel.id}}</code>, Overwrite, Value <code>{{channel.id}}</code>.</li>
+      </ul>
+
+      <h3 id="close-button">Close Button</h3>
+      <ul class="step-list">
+        <li>Get Stored Variable <em>claimedby</em>, scope <code>{{channel.id}}</code>.</li>
+        <li>Comparison: Base = that variable, Match = Contains, Value <code>{{user.id}}</code>.</li>
+        <li>Under match: private response <strong>"Are you sure you'd like to delete this ticket?"</strong> with buttons <strong>Yes.</strong> and <strong>No.</strong></li>
+        <li>No → private response <code>Okay, we've canceled the deletion.</code></li>
+        <li>Yes → response:
+<pre><code>{{user}} has selected to delete the ticket.
+-# Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></pre></li>
+        <li>Wait block: 15 seconds.</li>
+        <li>Delete channel block: <code>{{channel.id}}</code>.</li>
+      </ul>
+
+      <hr class="divider">
+
+      <h2 id="rename">Rename Command</h2>
+      <ul class="step-list">
+        <li>Argument <code>name</code>, max length <strong>50</strong>.</li>
+        <li>Get Stored Variable <em>ticketchannels</em>, scope <code>{{channel.id}}</code>.</li>
+        <li>Comparison: Base = variable, Match = Contains <code>{{channel.id}}</code>.</li>
+        <li>Else → response <code>This channel is not a ticket</code>.</li>
+        <li>Match → Get Stored Variable <strong>claimedby</strong>, scope <code>{{channel.id}}</code>.</li>
+        <li>Comparison: Base <code>{{user.id}}</code>, Match = Contains that variable.</li>
+        <li>Match → Edit Channel: Target <code>{{channel.id}}</code>, Name <code>{{arg('name')}}</code>, Topic <code>{{{" "}}}</code>.</li>
+        <li>Response: <code>We've changed the name of this ticket to `{{arg('name')}}`.</code></li>
+        <li>Else → <code>You have not claimed this ticket, You're not able to change the name to this.</code></li>
+      </ul>
+
+      <hr class="divider">
+
+      <h2 id="close-request">Close Request Command</h2>
+      <ul class="step-list">
+        <li>Argument <strong>reason</strong>.</li>
+        <li>Get Stored Variable <em>ticketchannels</em>, scope <code>{{channel.id}}</code>.</li>
+        <li>Comparison: Base = variable, Match = Contains <code>{{channel.id}}</code>.</li>
+        <li>Else → private response <code>This channel is not a ticket</code>.</li>
+        <li>Match → response <code>We've sent a close request for this ticket.</code></li>
+        <li>Create channel message to <code>{{channel.id}}</code> with button <strong>Accept Close.</strong></li>
+        <li>Under button: response <code>{{user}} has accepted the close for this ticket. This Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></li>
+        <li>Wait 15 seconds, then delete channel.</li>
+      </ul>
+
+      <hr class="divider">
+      <p><strong>Thank you all for taking a look at this setup, took me some time to create and all. Pictures and share codes will be listed down below.</strong></p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1459352977872781498" target="_blank" rel="noopener">Visit Showcase ↗</a>
+      </div>
+
+      <h2 id="sharecodes">Sharecodes</h2>
+      <p>Click <strong>Copy Code</strong> to copy the Kite share code, then paste it into Kite to import the flow.</p>
+
+      <div class="share-block">
+        <h4>Close Request</h4>
+        <div class="code-label">Share code: <code>VAJXZP8M</code></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="copyText('VAJXZP8M', this)">Copy Code</button>
+        </div>
+      </div>
+      <div class="share-block">
+        <h4>Ticket Open Command</h4>
+        <div class="code-label">Share code: <code>NTFDANLR</code></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="copyText('NTFDANLR', this)">Copy Code</button>
+        </div>
+      </div>
+      <div class="share-block">
+        <h4>Rename Command</h4>
+        <div class="code-label">Share code: <code>D7ENV787</code></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="copyText('D7ENV787', this)">Copy Code</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="footer">
+    This site is <b>in no way officially affiliated with Kite</b> or its creators.<br>
+    Tutorials made with 💛 by ALT10fd0f.<br><br>
+    <a href="https://discord.gg/zXu5YWqX7c" style="color: var(--accent);">Discord Server</a> ·
+    <a href="https://discord.com/users/989152479222579260" style="color: var(--accent);" target="_blank">Contact on Discord</a>
+  </footer>
+  <script>
+    function toggleCategory(el) {
+      el.classList.toggle('open');
+      const sub = el.nextElementSibling;
+      if (sub) sub.classList.toggle('open');
+    }
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open'));
+    });
+    function flashBtn(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    }
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => flashBtn(btn));
+    }
+  </script>
+</body>
+</html>
