@@ -80,6 +80,7 @@
     <aside class="sidebar">
       <a href="index.html" class="sidebar-item">Intro</a>
       <a href="tickets.html" class="sidebar-item active">Tickets With Kite</a>
+      <a href="reminder.html" class="sidebar-item">Reminder Command</a>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>On this page</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
@@ -101,7 +102,6 @@
       <div class="btn-row">
         <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1459352977872781498" target="_blank" rel="noopener">Visit Showcase ↗</a>
       </div>
-
       <h2 id="ticket-open">Ticket Open Command</h2>
       <ul class="step-list">
         <li>Add an argument on top of the command and label it <code>reason</code>.</li>
@@ -114,7 +114,6 @@
         <li>Connect a <strong>Create Channel Message</strong> block and set the target channel to the create channel variable from before.</li>
         <li>Add your ticket message and two buttons labeled <strong>"Claim."</strong> and <strong>"Close."</strong> <strong>DO NOT USE MESSAGE TEMPLATES!!!</strong></li>
       </ul>
-
       <h3 id="claim-button">Claim Button Setup</h3>
       <ul class="step-list">
         <li>Add a <strong>Get Stored Variable</strong> labeled <code>ticketclaimeduser</code> (scoped). Scope: <code>{{channel.id}}</code>.</li>
@@ -127,7 +126,6 @@
         <li>Set stored variable <strong>claimedby</strong>: Scope <code>{{channel.id}}</code>, Overwrite, Value <code>{{user.id}}</code>.</li>
         <li>Set stored variable <strong>ticketchannels</strong>: Scope <code>{{channel.id}}</code>, Overwrite, Value <code>{{channel.id}}</code>.</li>
       </ul>
-
       <h3 id="close-button">Close Button</h3>
       <ul class="step-list">
         <li>Get Stored Variable <em>claimedby</em>, scope <code>{{channel.id}}</code>.</li>
@@ -140,9 +138,7 @@
         <li>Wait block: 15 seconds.</li>
         <li>Delete channel block: <code>{{channel.id}}</code>.</li>
       </ul>
-
       <hr class="divider">
-
       <h2 id="rename">Rename Command</h2>
       <ul class="step-list">
         <li>Argument <code>name</code>, max length <strong>50</strong>.</li>
@@ -151,13 +147,11 @@
         <li>Else → response <code>This channel is not a ticket</code>.</li>
         <li>Match → Get Stored Variable <strong>claimedby</strong>, scope <code>{{channel.id}}</code>.</li>
         <li>Comparison: Base <code>{{user.id}}</code>, Match = Contains that variable.</li>
-        <li>Match → Edit Channel: Target <code>{{channel.id}}</code>, Name <code>{{arg('name')}}</code>, Topic <code>{{{" "}}}</code>.</li>
+        <li>Match → Edit Channel: Target <code>{{channel.id}}</code>, Name <code>{{arg('name')}}</code>, Topic <code>{{" "}}</code>.</li>
         <li>Response: <code>We've changed the name of this ticket to `{{arg('name')}}`.</code></li>
         <li>Else → <code>You have not claimed this ticket, You're not able to change the name to this.</code></li>
       </ul>
-
       <hr class="divider">
-
       <h2 id="close-request">Close Request Command</h2>
       <ul class="step-list">
         <li>Argument <strong>reason</strong>.</li>
@@ -169,35 +163,32 @@
         <li>Under button: response <code>{{user}} has accepted the close for this ticket. This Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></li>
         <li>Wait 15 seconds, then delete channel.</li>
       </ul>
-
       <hr class="divider">
       <p><strong>Thank you all for taking a look at this setup, took me some time to create and all. Pictures and share codes will be listed down below.</strong></p>
       <div class="btn-row">
         <a class="btn btn-primary" href="https://discord.com/channels/845800518458540083/1459352977872781498" target="_blank" rel="noopener">Visit Showcase ↗</a>
       </div>
-
       <h2 id="sharecodes">Sharecodes</h2>
-      <p>Click <strong>Copy Code</strong> to copy the Kite share code, then paste it into Kite to import the flow.</p>
-
+      <p>Click <strong>Copy Code</strong> to copy the full legacy flow JSON, then paste it into Kite to import.</p>
       <div class="share-block">
         <h4>Close Request</h4>
-        <div class="code-label">Share code: <code>VAJXZP8M</code></div>
+        <div class="code-label">Short code: <code>VAJXZP8M</code></div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="copyText('VAJXZP8M', this)">Copy Code</button>
+          <button class="btn btn-primary" onclick="copyLegacy('legacy-close-request.json', this)">Copy Code</button>
         </div>
       </div>
       <div class="share-block">
         <h4>Ticket Open Command</h4>
-        <div class="code-label">Share code: <code>NTFDANLR</code></div>
+        <div class="code-label">Short code: <code>NTFDANLR</code></div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="copyText('NTFDANLR', this)">Copy Code</button>
+          <button class="btn btn-primary" onclick="copyLegacy('legacy-ticket-open.json', this)">Copy Code</button>
         </div>
       </div>
       <div class="share-block">
         <h4>Rename Command</h4>
-        <div class="code-label">Share code: <code>D7ENV787</code></div>
+        <div class="code-label">Short code: <code>D7ENV787</code></div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="copyText('D7ENV787', this)">Copy Code</button>
+          <button class="btn btn-primary" onclick="copyLegacy('legacy-rename.json', this)">Copy Code</button>
         </div>
       </div>
     </main>
@@ -223,8 +214,16 @@
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
     }
-    function copyText(text, btn) {
-      navigator.clipboard.writeText(text).then(() => flashBtn(btn));
+    async function copyLegacy(file, btn) {
+      try {
+        const res = await fetch(file);
+        const text = await res.text();
+        await navigator.clipboard.writeText(text);
+        flashBtn(btn);
+      } catch (e) {
+        btn.textContent = 'Error';
+        setTimeout(() => { btn.textContent = 'Copy Code'; }, 1500);
+      }
     }
   </script>
 </body>
