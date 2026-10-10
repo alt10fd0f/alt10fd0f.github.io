@@ -1,64 +1,30 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>How to Store Data for Buttons | ALT10fd0f</title><link rel="icon" type="image/png" href="logo.png">
-<style>
-:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--hover:#303134;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:260px;--nh:60px}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
-.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100;gap:1rem}
-.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}
-.navbar-brand img{width:28px;height:28px;border-radius:50%;object-fit:cover}
-.layout{display:flex;margin-top:var(--nh)}
-.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);overflow-y:auto;padding:1rem 0}
-.sidebar-item{display:block;padding:.4rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem;border-left:3px solid transparent}
-.sidebar-item:hover{background:var(--hover);color:var(--text)}
-.sidebar-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(148,206,196,.08)}
-.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:880px}
-.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}.breadcrumb a{color:var(--muted);text-decoration:none}
-h1{font-size:2rem;margin-bottom:1rem}h2{font-size:1.3rem;margin:1.8rem 0 .7rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
-p,li{margin-bottom:.5rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}
-code{background:var(--bg3);padding:.1rem .35rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}
-pre{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem;overflow-x:auto;margin:.7rem 0 1rem;font-size:.8rem}
-pre code{background:none;padding:0;color:var(--sec)}
-.btn{display:inline-flex;padding:.5rem .95rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:.8rem 0}
-.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.7rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}
-.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}
-.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}
-@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}
-</style></head><body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to Store Data for Buttons | ALT10fd0f</title><link rel="icon" href="logo.png" type="image/png"><style>:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:240px;--nh:60px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100}.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}.navbar-brand img{width:28px;height:28px;border-radius:50%}.layout{display:flex;margin-top:var(--nh)}.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);padding:1rem 0}.sidebar-item{display:block;padding:.45rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem}.sidebar-item:hover{color:var(--accent)}.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:900px}.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem}.breadcrumb a{color:var(--muted);text-decoration:none}h1{font-size:2rem;margin-bottom:1rem}h2{font-size:1.35rem;margin:2rem 0 .8rem;padding-bottom:.35rem;border-bottom:1px solid var(--border)}p,li{margin-bottom:.55rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}code{background:var(--bg3);padding:.15rem .4rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}pre{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem;overflow-x:auto;margin:.8rem 0;font-size:.82rem}pre code{background:none;padding:0;color:var(--sec)}.btn{display:inline-flex;padding:.5rem 1rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:.6rem 0 1rem}.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.75rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}</style></head><body>
 <nav class="navbar"><button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-<a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a></nav>
-<div class="layout"><aside class="sidebar">
-<a href="index.html" class="sidebar-item">← All Tutorials</a>
-<a href="dropdown.html" class="sidebar-item">Dropdown / Select Menu</a>
-<a href="modal.html" class="sidebar-item">Modal / Form Block</a>
-<a href="buttons-data.html" class="sidebar-item active">Data for Buttons</a>
-<a href="application.html" class="sidebar-item">Application Bot</a>
-<a href="timestamps.html" class="sidebar-item">Timestamps</a>
-<a href="cookie-api.html" class="sidebar-item">Cookie API Transcripts</a>
-<a href="membercount.html" class="sidebar-item">Member Count API</a>
-<a href="fakequote.html" class="sidebar-item">Fake Quote Creator</a>
-<a href="reminder.html" class="sidebar-item">Reminder Command</a>
-<a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
-</aside>
+<a href="index.html" class="navbar-brand"><img src="logo.png" width="28" height="28" alt="logo"><span>ALT10fd0f</span></a></nav>
+<div class="layout"><aside class="sidebar"><a href="index.html" class="sidebar-item">← All Tutorials</a></aside>
 <main class="main">
 <div class="breadcrumb"><a href="index.html">🏠</a> › How to Store Data for Buttons</div>
 <h1>How to Store Data for Buttons</h1>
+<p>After buttons the bot acts as if it were a new command. Meaning that any previous data will not be stored, things like...</p>
+<ul><li>Argument data</li><li>Original user data</li><li>Or any other information that was previously stored or inputted from the command.</li></ul>
 <a class="btn" href="https://discord.com/channels/845800518458540083/1455645684245074053" target="_blank" rel="noopener">Visit Showcase ↗</a>
-<p>After buttons the bot acts as if it were a new command. Meaning that any previous data will not be stored, things like argument data, original user data, or any other information from the command.</p>
 <h2>How to store the data</h2>
 <ul class="step-list">
-<li>Put a <strong>Calculate Value</strong> block before the buttons.</li>
-<li>Follow the format below:
+<li>Put a calculate value block before the buttons.</li>
+<li>Follow the format below to have your data stored.
 <pre><code>{
  "user": arg('user'),
  "reason": arg('reason')
 }</code></pre>
-This will change with what type of data you're storing.</li>
-<li>Set the temporary value of the calculate value block to be <code>data</code>.</li>
+This will of course change with what type of data your trying to store.</li>
+<li>Set the temporary value of the <strong>calculate value</strong> block to be <code>data</code>.</li>
 </ul>
 <h2>How to get the information stored</h2>
+<p>Type in the following format wherever you are trying to retrieve the information.</p>
 <pre><code>{{var('data').user.id}}
 {{var('data').reason}}</code></pre>
+<p>Once again this will of course change with what your using it for and everything.</p>
 </main></div>
 <footer class="footer">Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a></footer>
 </body></html>
