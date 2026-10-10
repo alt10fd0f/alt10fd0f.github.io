@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dropdown / Select Menu | ALT10fd0f</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <meta name="theme-color" content="#94CEC4">
+  <style>
+    :root { --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134; --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4; --border: #3a3b3d; --sidebar-width: 260px; --navbar-height: 60px; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1.5rem; }
+    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; }
+    .navbar-brand img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    .navbar-links a { color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; }
+    .navbar-links a:hover { color: var(--accent); }
+    .layout { display: flex; margin-top: var(--navbar-height); }
+    .sidebar { position: fixed; top: var(--navbar-height); left: 0; width: var(--sidebar-width); height: calc(100vh - var(--navbar-height)); border-right: 1px solid var(--border); overflow-y: auto; padding: 1rem 0; }
+    .sidebar-item { display: block; padding: 0.4rem 1.25rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; border-left: 3px solid transparent; }
+    .sidebar-item:hover { background: var(--bg-hover); color: var(--text); }
+    .sidebar-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(148,206,196,0.08); }
+    .main { margin-left: var(--sidebar-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 880px; }
+    .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    p, li { margin-bottom: 0.5rem; color: var(--text-secondary); }
+    strong { color: var(--text); }
+    ul { margin: 0.5rem 0 1rem 1.3rem; }
+    code { background: var(--bg-tertiary); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #e8b4b8; }
+    .btn { display: inline-flex; padding: 0.5rem 0.95rem; border-radius: 8px; border: 1px solid var(--accent); background: rgba(148,206,196,0.15); color: var(--accent); font-size: 0.9rem; text-decoration: none; margin: 1rem 0; }
+    .step-list { list-style: none; margin-left: 0; }
+    .step-list > li { position: relative; padding-left: 1.4rem; margin-bottom: 0.75rem; }
+    .step-list > li::before { content: "•"; position: absolute; left: 0.25rem; color: var(--accent); }
+    .footer { margin-left: var(--sidebar-width); padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+    .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; }
+    @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .main, .footer { margin-left: 0; } .menu-toggle { display: block; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+    <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a>
+    <div class="navbar-links"><a href="index.html">Tutorial</a></div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="index.html" class="sidebar-item">← All Tutorials</a>
+      <a href="dropdown.html" class="sidebar-item active">Dropdown / Select Menu</a>
+      <a href="modal.html" class="sidebar-item">Modal / Form Block</a>
+      <a href="buttons-data.html" class="sidebar-item">Data for Buttons</a>
+      <a href="application.html" class="sidebar-item">Application Bot</a>
+      <a href="timestamps.html" class="sidebar-item">Timestamps</a>
+      <a href="cookie-api.html" class="sidebar-item">Cookie API Transcripts</a>
+      <a href="membercount.html" class="sidebar-item">Member Count API</a>
+      <a href="fakequote.html" class="sidebar-item">Fake Quote Creator</a>
+      <a href="reminder.html" class="sidebar-item">Reminder Command</a>
+      <a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
+    </aside>
+    <main class="main">
+      <div class="breadcrumb"><a href="index.html">🏠</a> › Dropdown / Select Menu</div>
+      <h1>Dropdown / Select Menu</h1>
+      <p>This is a relatively easy setup to do.</p>
+      <a class="btn" href="https://discord.com/channels/845800518458540083/1553388508633112662" target="_blank" rel="noopener">Visit Showcase ↗</a>
+      <ul class="step-list">
+        <li>Add a message block with a dropdown/select menu.</li>
+        <li>Type in your value (Normally just a word or two).</li>
+        <li>Add a comparison condition underneath the dropdown with the following settings:
+          <ul>
+            <li><strong>Base Value</strong> → <code>{{interaction.value}}</code></li>
+            <li><strong>Match Condition</strong> → <em>The value you put in earlier.</em></li>
+          </ul>
+        </li>
+        <li>Then, connect your flow under the match condition to dictate what happens after a user selects an option on a dropdown!</li>
+      </ul>
+    </main>
+  </div>
+  <footer class="footer">Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a></footer>
+</body>
+</html>
