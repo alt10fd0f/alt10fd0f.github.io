@@ -54,6 +54,21 @@
     #view-tickets .step-list { list-style: none; margin-left: 0; }
     #view-tickets .step-list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.7rem; }
     #view-tickets .step-list li::before { content: "•"; position: absolute; left: 0.3rem; color: var(--accent); font-weight: bold; }
+    .auth-slot { display: flex; align-items: center; margin-right: 1rem; }
+    .auth-login { display: none; background: #5865F2; color: #fff; border: none; border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .auth-login:hover { background: #4752c4; }
+    .auth-user { display: none; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; }
+    .auth-user img { width: 26px; height: 26px; border-radius: 50%; }
+    .auth-user button { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: 6px; padding: 0.2rem 0.5rem; font-size: 0.75rem; cursor: pointer; font-family: inherit; }
+    .auth-user button:hover { color: var(--accent); border-color: var(--accent); }
+    .auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 300; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .auth-overlay.show { display: flex; }
+    .auth-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; max-width: 420px; width: 100%; text-align: center; }
+    .auth-card h2 { font-size: 1.4rem; margin: 0 0 0.6rem; padding: 0; border: none; }
+    .auth-card p { color: var(--text-secondary); margin-bottom: 1.3rem; font-size: 0.95rem; }
+    .auth-card .auth-login { display: inline-block; width: 100%; padding: 0.7rem 1rem; font-size: 1rem; }
+    .auth-skip { display: inline-block; margin-top: 0.9rem; color: var(--text-muted); font-size: 0.85rem; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
+    .auth-skip:hover { color: var(--text); }
     .sidebar-toggle { justify-content: space-between; cursor: pointer; user-select: none; }
     .sidebar-toggle .arrow { font-size: 0.7rem; opacity: 0.7; transition: transform 0.2s; }
     .sidebar-toggle.open { color: var(--accent); }
@@ -91,11 +106,25 @@
   </style>
 </head>
 <body>
+  <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="auth-card">
+      <h2 id="auth-title">Welcome to Kite Tutorials</h2>
+      <p>Log in with Discord so we know who you are. This only reads your Discord username and avatar, and nothing is stored on a server.</p>
+      <button class="auth-login" id="auth-login-modal" type="button" style="display:inline-block">Login with Discord</button><br>
+      <button class="auth-skip" id="auth-skip" type="button">Not now</button>
+    </div>
+  </div>
   <nav class="navbar">
     <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
     <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28" style="border-radius:50%;object-fit:cover"><span>ALT10fd0f</span></a>
     <div class="navbar-links"><a href="index.html" class="active">Tutorial</a></div>
-    <div class="navbar-right"><a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a></div>
+    <div class="navbar-right" style="display:flex;align-items:center">
+      <div class="auth-slot">
+        <button class="auth-login" id="auth-login-btn" type="button">Login with Discord</button>
+        <div class="auth-user" id="auth-user"><img id="auth-avatar" alt="" width="26" height="26"><span id="auth-name"></span><button id="auth-logout" type="button">Log out</button></div>
+      </div>
+      <a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a>
+    </div>
   </nav>
   <div class="layout">
     <aside class="sidebar">
@@ -346,6 +375,61 @@
     <a href="https://discord.com/users/989152479222579260" style="color:var(--accent)" target="_blank">Contact on Discord</a>
   </footer>
   <script>
+
+    // ---- Discord login (OAuth2 implicit grant, scope: identify) ----
+    // Paste your Discord application's Client ID below. Leave as-is to keep the login prompt switched off.
+    const DISCORD_CLIENT_ID = 'YOUR_CLIENT_ID';
+    // Must exactly match a Redirect URI you added in the Discord developer portal.
+    const DISCORD_REDIRECT_URI = 'https://alt10fd0f.github.io/';
+    const AUTH_KEY = 'discord_auth';
+    const authEnabled = DISCORD_CLIENT_ID && DISCORD_CLIENT_ID !== 'YOUR_CLIENT_ID';
+    function authRead() { try { const a = JSON.parse(localStorage.getItem(AUTH_KEY)); return a && a.expires > Date.now() ? a : null; } catch (e) { return null; } }
+    function authWrite(a) { try { a ? localStorage.setItem(AUTH_KEY, JSON.stringify(a)) : localStorage.removeItem(AUTH_KEY); } catch (e) {} }
+    function discordLogin() {
+      const state = crypto.getRandomValues(new Uint32Array(4)).join('-');
+      try { sessionStorage.setItem('discord_state', state); } catch (e) {}
+      location.href = 'https://discord.com/oauth2/authorize?response_type=token&client_id=' + encodeURIComponent(DISCORD_CLIENT_ID)
+        + '&scope=identify&redirect_uri=' + encodeURIComponent(DISCORD_REDIRECT_URI) + '&state=' + state;
+    }
+    function authRender() {
+      const a = authRead(), loginBtn = document.getElementById('auth-login-btn'), userBox = document.getElementById('auth-user');
+      if (!authEnabled) { loginBtn.style.display = 'none'; userBox.style.display = 'none'; return; }
+      loginBtn.style.display = a ? 'none' : 'inline-block';
+      userBox.style.display = a ? 'flex' : 'none';
+      if (a) {
+        document.getElementById('auth-name').textContent = a.user.global_name || a.user.username;
+        document.getElementById('auth-avatar').src = a.user.avatar
+          ? 'https://cdn.discordapp.com/avatars/' + a.user.id + '/' + a.user.avatar + '.png?size=64'
+          : 'https://cdn.discordapp.com/embed/avatars/' + Number((BigInt(a.user.id) >> 22n) % 6n) + '.png';
+      }
+    }
+    async function authHandleReturn() {
+      const p = new URLSearchParams(location.hash.slice(1));
+      if (!p.get('access_token')) return;
+      const token = p.get('access_token'), expires = Number(p.get('expires_in') || 0) * 1000;
+      let ok = false; try { ok = p.get('state') && p.get('state') === sessionStorage.getItem('discord_state'); sessionStorage.removeItem('discord_state'); } catch (e) {}
+      history.replaceState(null, '', location.pathname + location.search);
+      if (!ok) return;
+      try {
+        const r = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
+        if (!r.ok) return;
+        authWrite({ token, expires: Date.now() + expires, user: await r.json() });
+      } catch (e) {}
+    }
+    (async function authInit() {
+      if (!authEnabled) return;
+      await authHandleReturn();
+      authRender();
+      document.getElementById('auth-login-btn').addEventListener('click', discordLogin);
+      document.getElementById('auth-login-modal').addEventListener('click', discordLogin);
+      document.getElementById('auth-logout').addEventListener('click', () => { authWrite(null); authRender(); });
+      const overlay = document.getElementById('auth-overlay');
+      const hideOverlay = () => { overlay.classList.remove('show'); try { sessionStorage.setItem('discord_prompt_dismissed', '1'); } catch (e) {} };
+      document.getElementById('auth-skip').addEventListener('click', hideOverlay);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') hideOverlay(); });
+      let dismissed = false; try { dismissed = sessionStorage.getItem('discord_prompt_dismissed') === '1'; } catch (e) {}
+      if (!authRead() && !dismissed) overlay.classList.add('show');
+    })();
     function toggleCategory(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     function toggleGroup(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     document.querySelectorAll('.sidebar-item:not(.sidebar-toggle)').forEach(i => i.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open')));
