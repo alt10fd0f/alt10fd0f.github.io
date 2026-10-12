@@ -30,6 +30,13 @@
     .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.25s; }
     .sidebar-sub.open { max-height: 800px; }
     .sidebar-sub .sidebar-item { padding-left: 2rem; font-size: 0.875rem; }
+    .sidebar-toggle { justify-content: space-between; cursor: pointer; user-select: none; }
+    .sidebar-toggle .arrow { font-size: 0.7rem; opacity: 0.7; transition: transform 0.2s; }
+    .sidebar-toggle.open { color: var(--accent); }
+    .sidebar-toggle.open .arrow { transform: rotate(90deg); }
+    .sidebar-nested { max-height: 0; overflow: hidden; transition: max-height 0.25s; }
+    .sidebar-nested.open { max-height: 400px; }
+    .sidebar-sub .sidebar-nested .sidebar-item { padding-left: 3rem; font-size: 0.85rem; }
     .main { margin-left: var(--sidebar-width); margin-right: var(--toc-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 900px; }
     .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
     h1 { font-size: 2.3rem; margin-bottom: 1rem; }
@@ -103,7 +110,17 @@
           <a href="#erlc-session" class="sidebar-item">ERLC Session MGMT</a>
           <a href="application.html" class="sidebar-item">Application Bot</a>
           <a href="#moderation" class="sidebar-item">Discord Moderation Panel</a>
-          <a href="tickets.html" class="sidebar-item">Tickets With Kite</a>
+          <div class="sidebar-group">
+            <div class="sidebar-item sidebar-toggle" onclick="toggleGroup(this)"><span>Tickets With Kite</span><span class="arrow">▶</span></div>
+            <div class="sidebar-nested">
+              <a href="tickets.html#ticket-open" class="sidebar-item">Ticket Open</a>
+              <a href="tickets.html#claim-button" class="sidebar-item">Claim Button</a>
+              <a href="tickets.html#close-button" class="sidebar-item">Close Button</a>
+              <a href="tickets.html#rename" class="sidebar-item">Rename Command</a>
+              <a href="tickets.html#close-request" class="sidebar-item">Close Request</a>
+              <a href="tickets.html#sharecodes" class="sidebar-item">Sharecodes</a>
+            </div>
+          </div>
         </div>
       </div>
       <div class="sidebar-section">
@@ -205,7 +222,8 @@
   </footer>
   <script>
     function toggleCategory(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
-    document.querySelectorAll('.sidebar-item').forEach(i => i.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open')));
+    function toggleGroup(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
+    document.querySelectorAll('.sidebar-item:not(.sidebar-toggle)').forEach(i => i.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open')));
     const searchInput = document.getElementById('tutorial-search');
     const searchEmpty = document.getElementById('search-empty');
     if (searchInput) {

@@ -35,6 +35,13 @@
     .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
     .sidebar-sub.open { max-height: 800px; }
     .sidebar-sub .sidebar-item { padding-left: 2rem; font-size: 0.875rem; }
+    .sidebar-toggle { justify-content: space-between; cursor: pointer; user-select: none; }
+    .sidebar-toggle .arrow { font-size: 0.7rem; opacity: 0.7; transition: transform 0.2s; }
+    .sidebar-toggle.open { color: var(--accent); }
+    .sidebar-toggle.open .arrow { transform: rotate(90deg); }
+    .sidebar-nested { max-height: 0; overflow: hidden; transition: max-height 0.25s; }
+    .sidebar-nested.open { max-height: 400px; }
+    .sidebar-nested .sidebar-item { padding-left: 2.5rem; font-size: 0.85rem; }
     .main { margin-left: var(--sidebar-width); flex: 1; padding: 2rem 2.5rem 4rem; max-width: 900px; }
     .breadcrumb { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
     .breadcrumb a { color: var(--text-muted); text-decoration: none; }
@@ -79,10 +86,9 @@
   <div class="layout">
     <aside class="sidebar">
       <a href="index.html" class="sidebar-item">Intro</a>
-      <a href="tickets.html" class="sidebar-item active">Tickets With Kite</a>
-      <div class="sidebar-section">
-        <div class="sidebar-category open" onclick="toggleCategory(this)"><span>On this page</span><span class="arrow">▶</span></div>
-        <div class="sidebar-sub open">
+      <div class="sidebar-group">
+        <div class="sidebar-item sidebar-toggle open" onclick="toggleGroup(this)"><span>Tickets With Kite</span><span class="arrow">▶</span></div>
+        <div class="sidebar-nested open">
           <a href="#ticket-open" class="sidebar-item">Ticket Open</a>
           <a href="#claim-button" class="sidebar-item">Claim Button</a>
           <a href="#close-button" class="sidebar-item">Close Button</a>
@@ -133,7 +139,7 @@
         <li>No → private response <code>Okay, we've canceled the deletion.</code></li>
         <li>Yes → response:
 <pre><code>{{user}} has selected to delete the ticket.
--# Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></pre></li>
+-# Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</code></pre></li>
         <li>Wait block: 15 seconds.</li>
         <li>Delete channel block: <code>{{channel.id}}</code>.</li>
       </ul>
@@ -159,7 +165,7 @@
         <li>Else → private response <code>This channel is not a ticket</code>.</li>
         <li>Match → response <code>We've sent a close request for this ticket.</code></li>
         <li>Create channel message to <code>{{channel.id}}</code> with button <strong>Accept Close.</strong></li>
-        <li>Under button: response <code>{{user}} has accepted the close for this ticket. This Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></li>
+        <li>Under button: response <code>{{user}} has accepted the close for this ticket. This Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</code></li>
         <li>Wait 15 seconds, then delete channel.</li>
       </ul>
       <hr class="divider">
@@ -204,7 +210,12 @@
       const sub = el.nextElementSibling;
       if (sub) sub.classList.toggle('open');
     }
-    document.querySelectorAll('.sidebar-item').forEach(item => {
+    function toggleGroup(el) {
+      el.classList.toggle('open');
+      const sub = el.nextElementSibling;
+      if (sub) sub.classList.toggle('open');
+    }
+    document.querySelectorAll('.sidebar-item:not(.sidebar-toggle)').forEach(item => {
       item.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open'));
     });
     function flashBtn(btn) {
