@@ -30,6 +30,8 @@
     .sidebar-sub { max-height: 0; overflow: hidden; transition: max-height 0.25s; }
     .sidebar-sub.open { max-height: 800px; }
     .sidebar-sub .sidebar-item { padding-left: 2rem; font-size: 0.875rem; }
+    .sidebar-item.disabled { opacity: 0.4; cursor: not-allowed; }
+    .sidebar-item.disabled:hover { background: transparent; color: var(--text-secondary); }
     .sidebar-toggle { justify-content: space-between; cursor: pointer; user-select: none; }
     .sidebar-toggle .arrow { font-size: 0.7rem; opacity: 0.7; transition: transform 0.2s; }
     .sidebar-toggle.open { color: var(--accent); }
@@ -79,22 +81,22 @@
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Basic Commands</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#calculator" class="sidebar-item">Calculator Command</a>
-          <a href="#userinfo" class="sidebar-item">User Info Command</a>
-          <a href="#dm" class="sidebar-item">Dm Command</a>
-          <a href="#say" class="sidebar-item">Say Command</a>
-          <a href="#prefix" class="sidebar-item">Prefix Commands</a>
-          <a href="#password" class="sidebar-item">Password Commands</a>
-          <a href="#ranklock" class="sidebar-item">Rank/Role Lock Commands</a>
-          <a href="#purge" class="sidebar-item">Purge Command</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Calculator Command</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">User Info Command</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Dm Command</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Say Command</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Prefix Commands</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Password Commands</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Rank/Role Lock Commands</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Purge Command</a>
           <a href="reminder.html" class="sidebar-item">Reminder Command</a>
-          <a href="#counting" class="sidebar-item">Custom Counting</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Custom Counting</a>
           <a href="fakequote.html" class="sidebar-item">Fake Quote Creator</a>
         </div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Games</span><span class="arrow">▶</span></div>
-        <div class="sidebar-sub open"><a href="#clicker" class="sidebar-item">Clicker Game</a></div>
+        <div class="sidebar-sub open"><a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Clicker Game</a></div>
       </div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Setup Guides</span><span class="arrow">▶</span></div>
@@ -107,9 +109,9 @@
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Panels & Systems</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a href="#erlc-session" class="sidebar-item">ERLC Session MGMT</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">ERLC Session MGMT</a>
           <a href="application.html" class="sidebar-item">Application Bot</a>
-          <a href="#moderation" class="sidebar-item">Discord Moderation Panel</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Discord Moderation Panel</a>
           <div class="sidebar-group">
             <div class="sidebar-item sidebar-toggle" onclick="toggleGroup(this)"><span>Tickets With Kite</span><span class="arrow">▶</span></div>
             <div class="sidebar-nested">
@@ -128,10 +130,10 @@
         <div class="sidebar-sub open">
           <a href="timestamps.html" class="sidebar-item">Timestamps with Kite</a>
           <a href="cookie-api.html" class="sidebar-item">Cookie API Transcripts</a>
-          <a href="#roblox-lookup" class="sidebar-item">Roblox Account Lookup</a>
-          <a href="#roblox-verify" class="sidebar-item">Roblox Verification</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Roblox Account Lookup</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Roblox Verification</a>
           <a href="membercount.html" class="sidebar-item">Member Count API</a>
-          <a href="#erlc-api" class="sidebar-item">ERLC API V2</a>
+          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">ERLC API V2</a>
         </div>
       </div>
     </aside>
