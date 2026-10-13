@@ -5,7 +5,7 @@
 
 const db = require('./_db');
 const bot = require('./_bot');
-const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postEmbeds, webhookChannelId } = require('./_shared');
+const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postEmbeds, logsChannelId } = require('./_shared');
 const { getProfile, saveProfile } = require('./_auth');
 const { loadConfig, buildEmbeds } = require('./_config');
 
@@ -82,24 +82,27 @@ module.exports = async (req, res) => {
     id: me.id, username: me.username, display: displayName(me), avatar: me.avatar || null, lastSeen: now, lastLogin: now,
   });
 
-  // One thread per user (needs the bot + a database to remember the thread id).
+  // One thread per user, created in the logs channel; its id is stored and every later login goes only to that thread.
+  // Posts are made by the bot (a webhook can only post in its own channel's threads).
   const makeThread = async () => {
-    if (!bot.hasToken() || !dbOn) return null;
-    const channel = await webhookChannelId();
-    if (!channel) return null;
-    const t = await bot.createThread(channel, clip(name, 70) + ' (' + me.id + ')');
+    const t = await bot.createThread(logsChannelId(), clip(name, 70) + ' (' + me.id + ')');
     return t.ok && t.json && t.json.id ? t.json.id : null;
   };
 
   let threadId = next.threadId || null;
-  if (!threadId) threadId = await makeThread();
-  let r = await postEmbeds(embeds, { threadId });
-  if (!r.ok && threadId) {
-    // The thread was probably deleted: make a fresh one, and as a last resort post in the channel itself.
-    const fresh = await makeThread();
-    r = fresh ? await postEmbeds(embeds, { threadId: fresh }) : r;
-    threadId = r.ok ? fresh : null;
-    if (!r.ok) r = await postEmbeds(embeds);
+  let r;
+  if (bot.hasToken() && dbOn) {
+    if (!threadId) threadId = await makeThread();
+    r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+    if (!r.ok && threadId && (r.status === 404 || r.status === 403 || r.status === 400)) {
+      // The stored thread was deleted/locked: make a new one and remember it.
+      threadId = await makeThread();
+      r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+    }
+    if (!r.ok) threadId = next.threadId || null; // keep the old id if we couldn't replace it
+  } else {
+    r = await postEmbeds(embeds); // no bot/database configured: plain webhook post
+    threadId = next.threadId || null;
   }
   next.threadId = threadId;
   if (dbOn) { try { await saveProfile(next); } catch (e) { /* keep going */ } }

@@ -83,9 +83,7 @@ async function postOne(embeds, attempt, threadId) {
   return { ok: r.ok, status: r.status };
 }
 
-// Sends the embeds via the webhook (optionally into a thread), splitting across as many messages as needed.
-async function postEmbeds(embeds, opts) {
-  const threadId = opts && opts.threadId;
+function groupEmbeds(embeds) {
   const groups = [];
   let cur = [], size = 0;
   for (const e of embeds) {
@@ -94,6 +92,13 @@ async function postEmbeds(embeds, opts) {
     cur.push(e); size += s;
   }
   if (cur.length) groups.push(cur);
+  return groups;
+}
+
+// Sends the embeds via the webhook (optionally into a thread), splitting across as many messages as needed.
+async function postEmbeds(embeds, opts) {
+  const threadId = opts && opts.threadId;
+  const groups = groupEmbeds(embeds);
   let last = { ok: true, status: 204 };
   for (let i = 0; i < groups.length; i++) {
     if (i > 0) await sleep(500);
@@ -103,19 +108,11 @@ async function postEmbeds(embeds, opts) {
   return last;
 }
 
-// The channel the webhook posts into (read from the webhook itself; needs no extra setup).
-let webhookChannel = null;
-async function webhookChannelId() {
-  if (process.env.DISCORD_LOGS_CHANNEL_ID) return process.env.DISCORD_LOGS_CHANNEL_ID;
-  if (webhookChannel) return webhookChannel;
-  try {
-    const r = await fetch(process.env.DISCORD_WEBHOOK_URL);
-    if (r.ok) webhookChannel = (await r.json()).channel_id || null;
-  } catch (e) { /* ignore */ }
-  return webhookChannel;
-}
+// The channel where each user's login thread is created (override with env DISCORD_LOGS_CHANNEL_ID).
+const LOGS_CHANNEL_ID = '1559522618313416755';
+const logsChannelId = () => process.env.DISCORD_LOGS_CHANNEL_ID || LOGS_CHANNEL_ID;
 
 module.exports = {
   ALLOWED_ORIGIN, OWNER_ID, sleep, clip, handleCommon, discordGet, verifyToken,
-  displayName, avatarUrl, postEmbeds, webhookChannelId,
+  displayName, avatarUrl, postEmbeds, groupEmbeds, logsChannelId,
 };
