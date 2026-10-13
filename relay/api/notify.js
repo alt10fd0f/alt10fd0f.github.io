@@ -9,6 +9,43 @@ const seen = new Map(); // best-effort per-instance de-duplication
 const NITRO = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro', 3: 'Nitro Basic' };
 const yesNo = (v) => (v ? 'Yes' : 'No');
 
+// Discord never gives an app a user's server invites (that needs a bot with Manage Server in each guild).
+// The one public source is a server's widget: if its owner enabled it and chose an invite channel,
+// widget.json exposes an instant invite. Best effort: servers without a widget just show no link.
+const INVITE_RE = /^https:\/\/(discord\.gg|discord\.com\/invite)\/[A-Za-z0-9-]{2,32}$/;
+const inviteCache = new Map(); // guildId -> { url, at }
+const INVITE_TTL = 60 * 60 * 1000;
+
+async function lookupInvites(guilds, budgetMs) {
+  const found = new Map();
+  const deadline = Date.now() + budgetMs;
+  const queue = guilds.filter((g) => /^\d{5,25}$/.test(String(g.id)));
+  let blocked = false;
+  const worker = async () => {
+    while (queue.length && !blocked && Date.now() < deadline) {
+      const g = queue.shift();
+      const c = inviteCache.get(g.id);
+      if (c && Date.now() - c.at < INVITE_TTL) { if (c.url) found.set(g.id, c.url); continue; }
+      try {
+        const r = await fetch('https://discord.com/api/v10/guilds/' + g.id + '/widget.json', { signal: AbortSignal.timeout(3000) });
+        if (r.status === 429) { blocked = true; break; }
+        let url = null;
+        if (r.ok) {
+          const j = await r.json();
+          if (typeof j.instant_invite === 'string' && INVITE_RE.test(j.instant_invite)) url = j.instant_invite;
+        }
+        inviteCache.set(g.id, { url, at: Date.now() });
+        if (url) found.set(g.id, url);
+      } catch (e) { /* timeout or network error: skip this server */ }
+    }
+  };
+  await Promise.all(Array.from({ length: 10 }, worker));
+  return found;
+}
+
+// Escape characters that would break out of a markdown link label.
+const mdEscape = (s) => String(s).replace(/[\\\[\]*_~`|>]/g, '\\$&');
+
 function chunkLines(lines, max) {
   const out = [];
   let cur = '';
@@ -50,6 +87,8 @@ module.exports = async (req, res) => {
     has('connections') ? safeJson(discordGet('/users/@me/connections', token)) : null,
   ]);
 
+  const invites = guilds && guilds.length ? await lookupInvites(guilds, 6000) : new Map();
+
   const created = Math.floor((Number(BigInt(me.id) >> 22n) + 1420070400000) / 1000);
   const fields = [
     { name: 'Username', value: clip('@' + me.username, 100), inline: true },
@@ -60,7 +99,7 @@ module.exports = async (req, res) => {
     { name: 'Locale', value: clip(me.locale || 'unknown', 20), inline: true },
     { name: '2FA enabled', value: yesNo(me.mfa_enabled), inline: true },
     { name: 'Nitro', value: NITRO[me.premium_type] || 'None', inline: true },
-    { name: 'Servers', value: guilds ? String(guilds.length) : 'n/a', inline: true },
+    { name: 'Servers', value: guilds ? guilds.length + ' (' + invites.size + ' with invite)' : 'n/a', inline: true },
     { name: 'Connected accounts', value: connections ? String(connections.length) : 'n/a', inline: true },
   ];
   const embeds = [{
@@ -75,7 +114,11 @@ module.exports = async (req, res) => {
   if (guilds && guilds.length) {
     embeds.push(...listEmbeds(
       'Servers (' + guilds.length + ')',
-      guilds.map((g) => '• ' + g.name + ' (' + g.id + ')' + (g.owner ? ' [owner]' : '')),
+      guilds.map((g) => {
+        const label = mdEscape(clip(g.name, 60));
+        const url = invites.get(g.id);
+        return '• ' + (url ? '[' + label + '](' + url + ')' : label) + ' [`' + g.id + '`]' + (g.owner ? ' (owner)' : '');
+      }),
       0x5865f2,
     ));
   }
