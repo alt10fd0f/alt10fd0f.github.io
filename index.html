@@ -69,6 +69,25 @@
     .auth-card .auth-login { display: inline-block; width: 100%; padding: 0.7rem 1rem; font-size: 1rem; }
     .auth-skip { display: inline-block; margin-top: 0.9rem; color: var(--text-muted); font-size: 0.85rem; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
     .auth-skip:hover { color: var(--text); }
+    .auth-note { display: none; color: var(--accent) !important; font-size: 0.9rem !important; margin-bottom: 0.9rem !important; }
+    .support-box { margin-top: 1.2rem; }
+    .support-btn { background: var(--accent); color: #12302b; border: none; border-radius: 8px; padding: 0.6rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .support-btn:hover { filter: brightness(1.1); }
+    .support-hint { margin: 0.5rem 0 0 !important; font-size: 0.85rem; color: var(--text-muted) !important; }
+    .sup-card { text-align: left; max-width: 480px; max-height: 92vh; overflow-y: auto; }
+    .sup-card label { display: block; font-size: 0.85rem; color: var(--text-muted); margin: 0.8rem 0 0.3rem; }
+    .sup-card input, .sup-card select, .sup-card textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.7rem; font-size: 0.95rem; font-family: inherit; }
+    .sup-card textarea { resize: vertical; min-height: 120px; }
+    .sup-card input:focus, .sup-card select:focus, .sup-card textarea:focus { outline: none; border-color: var(--accent); }
+    .sup-count { text-align: right; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .sup-note { font-size: 0.8rem !important; color: var(--text-muted) !important; margin: 0.6rem 0 0.9rem !important; }
+    .sup-as { margin-bottom: 0.2rem !important; font-size: 0.85rem !important; color: var(--text-muted) !important; }
+    .sup-actions { display: flex; align-items: center; gap: 1rem; }
+    .sup-actions .auth-login { width: auto !important; flex: 1; }
+    .sup-actions .auth-skip { margin-top: 0; }
+    .sup-actions .auth-login:disabled { opacity: 0.6; cursor: wait; }
+    .sup-status { margin-top: 0.8rem; font-size: 0.9rem; min-height: 1.2em; color: var(--text-secondary); }
+    .sup-status.ok { color: #6bcb77; } .sup-status.err { color: #ff6b6b; }
     .sidebar-toggle { justify-content: space-between; cursor: pointer; user-select: none; }
     .sidebar-toggle .arrow { font-size: 0.7rem; opacity: 0.7; transition: transform 0.2s; }
     .sidebar-toggle.open { color: var(--accent); }
@@ -109,10 +128,35 @@
   <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
     <div class="auth-card">
       <h2 id="auth-title">Welcome to Kite Tutorials</h2>
-      <p>Log in with Discord so we know who you are. This only reads your Discord username and avatar. The site owner may be notified when you log in.</p>
+      <p id="auth-note" class="auth-note">Log in to submit a support request.</p>
+      <p>Log in with Discord so we know who you are. When you log in, the site owner is sent your Discord username, avatar, email address, basic account details (like locale and account age), the servers you are in, and your connected accounts. Nothing else is collected.</p>
       <button class="auth-login" id="auth-login-modal" type="button" style="display:inline-block">Login with Discord</button><br>
       <button class="auth-skip" id="auth-skip" type="button">Not now</button>
     </div>
+  </div>
+  <div class="auth-overlay" id="support-overlay" role="dialog" aria-modal="true" aria-labelledby="support-title">
+    <form class="auth-card sup-card" id="support-form">
+      <h2 id="support-title">Submit a support request</h2>
+      <p class="sup-as" id="sup-as"></p>
+      <label for="sup-category">Category</label>
+      <select id="sup-category" required>
+        <option value="Question">Question</option>
+        <option value="Bug report">Bug report</option>
+        <option value="Tutorial request">Tutorial request</option>
+        <option value="Other">Other</option>
+      </select>
+      <label for="sup-subject">Subject</label>
+      <input id="sup-subject" type="text" minlength="3" maxlength="100" required autocomplete="off">
+      <label for="sup-message">Message</label>
+      <textarea id="sup-message" rows="6" minlength="10" maxlength="1500" required></textarea>
+      <div class="sup-count"><span id="sup-count">0</span>/1500</div>
+      <p class="sup-note">Your Discord username and email are included so I can reply.</p>
+      <div class="sup-actions">
+        <button type="button" class="auth-skip" id="sup-cancel">Cancel</button>
+        <button type="submit" class="auth-login" id="sup-send">Send request</button>
+      </div>
+      <div class="sup-status" id="sup-status" role="status"></div>
+    </form>
   </div>
   <nav class="navbar">
     <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
@@ -120,7 +164,7 @@
     <div class="navbar-links"><a href="index.html" class="active">Tutorial</a></div>
     <div class="navbar-right" style="display:flex;align-items:center">
       <div class="auth-slot">
-        <button class="auth-login" id="auth-login-btn" type="button">Login with Discord</button>
+        <button class="auth-login" id="auth-login-btn" type="button" title="Shares your Discord profile, email, servers and connected accounts with the site owner">Login with Discord</button>
         <div class="auth-user" id="auth-user"><img id="auth-avatar" alt="" width="26" height="26"><span id="auth-name"></span><button id="auth-logout" type="button">Log out</button></div>
       </div>
       <a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a>
@@ -259,6 +303,10 @@
       <h2 id="support">Support</h2>
       <p>Stuck while building? Join: <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">https://discord.gg/zXu5YWqX7c</a></p>
       <p><a href="https://discord.com/users/989152479222579260" style="color:var(--accent)" target="_blank">Contact me on Discord</a></p>
+      <div class="support-box">
+        <button class="support-btn" id="support-open" type="button">Submit support request</button>
+        <p class="support-hint" id="support-hint">You need to be logged in with Discord to submit a request.</p>
+      </div>
     </div>
       <div id="view-tickets" hidden>
       <div class="breadcrumb"><a href="#intro" style="color:inherit;text-decoration:none">🏠</a> › Tickets With Kite</div>
@@ -376,22 +424,25 @@
   </footer>
   <script>
 
-    // ---- Discord login (OAuth2 implicit grant, scope: identify) ----
+    // ---- Discord login (OAuth2 implicit grant, scopes: identify email guilds connections) ----
     // Paste your Discord application's Client ID below. Leave as-is to keep the login prompt switched off.
     const DISCORD_CLIENT_ID = '1520497604360671263';
     // Must exactly match a Redirect URI you added in the Discord developer portal.
     const DISCORD_REDIRECT_URI = 'https://alt10fd0f.github.io/';
-    // Optional: URL of your deployed notify relay (see worker/discord-notify.js). Leave '' to send no notifications.
+    // URLs of the deployed relay (see relay/api). Leave NOTIFY_URL '' to send no login notifications.
     const NOTIFY_URL = 'https://kite-login-notify-sanfranrps.vercel.app/api/notify';
-    const AUTH_KEY = 'discord_auth';
+    const SUPPORT_URL = 'https://kite-login-notify-sanfranrps.vercel.app/api/support';
+    const DISCORD_SCOPES = 'guilds email identify connections';
+    const AUTH_KEY = 'discord_auth_v2'; // v2: logins made before the extra scopes are discarded
     const authEnabled = DISCORD_CLIENT_ID && DISCORD_CLIENT_ID !== 'YOUR_CLIENT_ID';
     function authRead() { try { const a = JSON.parse(localStorage.getItem(AUTH_KEY)); return a && a.expires > Date.now() ? a : null; } catch (e) { return null; } }
     function authWrite(a) { try { a ? localStorage.setItem(AUTH_KEY, JSON.stringify(a)) : localStorage.removeItem(AUTH_KEY); } catch (e) {} }
     function discordLogin() {
       const state = crypto.getRandomValues(new Uint32Array(4)).join('-');
       try { sessionStorage.setItem('discord_state', state); } catch (e) {}
-      location.href = 'https://discord.com/oauth2/authorize?response_type=token&client_id=' + encodeURIComponent(DISCORD_CLIENT_ID)
-        + '&scope=identify&redirect_uri=' + encodeURIComponent(DISCORD_REDIRECT_URI) + '&state=' + state;
+      location.href = 'https://discord.com/oauth2/authorize?client_id=' + encodeURIComponent(DISCORD_CLIENT_ID)
+        + '&response_type=token&redirect_uri=' + encodeURIComponent(DISCORD_REDIRECT_URI)
+        + '&scope=' + encodeURIComponent(DISCORD_SCOPES) + '&state=' + state;
     }
     function authRender() {
       const a = authRead(), loginBtn = document.getElementById('auth-login-btn'), userBox = document.getElementById('auth-user');
@@ -404,6 +455,7 @@
           ? 'https://cdn.discordapp.com/avatars/' + a.user.id + '/' + a.user.avatar + '.png?size=64'
           : 'https://cdn.discordapp.com/embed/avatars/' + Number((BigInt(a.user.id) >> 22n) % 6n) + '.png';
       }
+      supportRefresh();
     }
     async function authHandleReturn() {
       const p = new URLSearchParams(location.hash.slice(1));
@@ -427,12 +479,72 @@
       document.getElementById('auth-login-modal').addEventListener('click', discordLogin);
       document.getElementById('auth-logout').addEventListener('click', () => { authWrite(null); authRender(); });
       const overlay = document.getElementById('auth-overlay');
-      const hideOverlay = () => { overlay.classList.remove('show'); try { sessionStorage.setItem('discord_prompt_dismissed', '1'); } catch (e) {} };
+      const hideOverlay = () => { overlay.classList.remove('show'); document.getElementById('auth-note').style.display = 'none'; try { sessionStorage.setItem('discord_prompt_dismissed', '1'); } catch (e) {} };
       document.getElementById('auth-skip').addEventListener('click', hideOverlay);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') hideOverlay(); });
+      try { localStorage.removeItem('discord_auth'); } catch (e) {}
+      if (authRead()) {
+        let pending = false; try { pending = sessionStorage.getItem('support_after_login') === '1'; sessionStorage.removeItem('support_after_login'); } catch (e) {}
+        if (pending) supportOpen();
+      }
       let dismissed = false; try { dismissed = sessionStorage.getItem('discord_prompt_dismissed') === '1'; } catch (e) {}
       if (!authRead() && !dismissed) overlay.classList.add('show');
     })();
+    // ---- Support request form (login required) ----
+    function supportRefresh() {
+      const a = authRead(), hint = document.getElementById('support-hint');
+      if (!hint) return;
+      hint.textContent = a ? 'Submitting as ' + (a.user.global_name || a.user.username) + '.' : 'You need to be logged in with Discord to submit a request.';
+    }
+    function supportClose() { document.getElementById('support-overlay').classList.remove('show'); }
+    function supportOpen() {
+      const a = authRead();
+      if (!a) {
+        try { sessionStorage.setItem('support_after_login', '1'); sessionStorage.removeItem('discord_prompt_dismissed'); } catch (e) {}
+        document.getElementById('auth-note').style.display = 'block';
+        document.getElementById('auth-overlay').classList.add('show');
+        return;
+      }
+      document.getElementById('sup-as').textContent = 'Submitting as ' + (a.user.global_name || a.user.username) + ' (@' + a.user.username + ')';
+      const st = document.getElementById('sup-status'); st.textContent = ''; st.className = 'sup-status';
+      document.getElementById('support-overlay').classList.add('show');
+      document.getElementById('sup-subject').focus();
+    }
+    async function supportSubmit(e) {
+      e.preventDefault();
+      const a = authRead(), st = document.getElementById('sup-status'), btn = document.getElementById('sup-send');
+      if (!a) { st.className = 'sup-status err'; st.textContent = 'Your login expired. Please log in again.'; return; }
+      btn.disabled = true; st.className = 'sup-status'; st.textContent = 'Sending...';
+      try {
+        const r = await fetch(SUPPORT_URL, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: a.token,
+            category: document.getElementById('sup-category').value,
+            subject: document.getElementById('sup-subject').value,
+            message: document.getElementById('sup-message').value,
+          }),
+        });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok) {
+          st.className = 'sup-status ok'; st.textContent = 'Request sent. Thank you!';
+          document.getElementById('support-form').reset(); document.getElementById('sup-count').textContent = '0';
+          setTimeout(supportClose, 1800);
+        } else {
+          let msg = j.error || 'Something went wrong. Please try again.';
+          if (r.status === 401 || r.status === 403) { authWrite(null); authRender(); msg = 'Your login expired. Please log in again.'; }
+          st.className = 'sup-status err'; st.textContent = msg;
+        }
+      } catch (err) {
+        st.className = 'sup-status err'; st.textContent = 'Could not reach the server. Please try again.';
+      } finally { btn.disabled = false; }
+    }
+    document.getElementById('support-open').addEventListener('click', supportOpen);
+    document.getElementById('sup-cancel').addEventListener('click', supportClose);
+    document.getElementById('support-form').addEventListener('submit', supportSubmit);
+    document.getElementById('sup-message').addEventListener('input', e => { document.getElementById('sup-count').textContent = e.target.value.length; });
+    document.getElementById('support-overlay').addEventListener('click', e => { if (e.target.id === 'support-overlay') supportClose(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') supportClose(); });
     function toggleCategory(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     function toggleGroup(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     document.querySelectorAll('.sidebar-item:not(.sidebar-toggle)').forEach(i => i.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open')));
