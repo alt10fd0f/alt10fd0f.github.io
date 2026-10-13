@@ -23,8 +23,9 @@ async function inKiteServer(token) {
   return false;
 }
 
-function buildLoginMessage(vars, avatar) {
-  const content =
+function buildLoginEmbeds(vars, avatar) {
+  const color = 0x94cec4;
+  const desc =
     '**User**\n' +
     '> ' + vars.mention + ' [`' + vars.id + '`]\n\n' +
     '**Account Data**\n' +
@@ -34,59 +35,25 @@ function buildLoginMessage(vars, avatar) {
     '2FA Enabled • ' + vars.mfa + '\n' +
     'Kite Server • ' + vars.kiteServer + '\n' +
     'Nitro • ' + vars.nitro + '\n' +
-    'Locale • ' + vars.locale + '\n' +
-    'Connected Accounts •\n' + vars.connections;
+    'Locale • ' + vars.locale;
 
-  return {
-    flags: 32768,
-    allowed_mentions: { parse: [] },
-    components: [
-      {
-        type: 17,
-        components: [
-          {
-            type: 9,
-            components: [
-              {
-                type: 10,
-                content: content.slice(0, 4000),
-              },
-            ],
-            accessory: {
-              type: 11,
-              media: {
-                url: avatar || 'https://cdn.discordapp.com/embed/avatars/0.png',
-              },
-            },
-          },
-          {
-            type: 14,
-            spacing: 2,
-          },
-        ],
-      },
-    ],
-  };
-}
+  const embeds = [{
+    color,
+    description: desc.slice(0, 4096),
+    thumbnail: avatar ? { url: avatar } : undefined,
+    timestamp: new Date().toISOString(),
+    fields: [],
+  }];
 
-async function postComponentsTo(channelId, payload) {
-  if (!bot.hasToken || !bot.hasToken()) return { ok: false, status: 0 };
-  return bot.call('POST', '/channels/' + channelId + '/messages', payload);
-}
-
-async function postComponentsWebhook(payload) {
-  const base = process.env.DISCORD_WEBHOOK_URL;
-  if (!base) return { ok: false, status: 0 };
-  try {
-    const r = await fetch(base, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ username: 'Kite Tutorials' }, payload)),
+  if (vars.connections && vars.connections !== 'None' && vars.connections !== 'Not shared') {
+    embeds[0].fields.push({
+      name: 'Connected Accounts',
+      value: vars.connections.slice(0, 1024),
+      inline: false,
     });
-    return { ok: r.ok, status: r.status };
-  } catch (e) {
-    return { ok: false, status: 0 };
   }
+
+  return embeds;
 }
 
 module.exports = async (req, res) => {
@@ -146,7 +113,7 @@ module.exports = async (req, res) => {
   };
 
   const avatar = avatarUrl(me);
-  const payload = buildLoginMessage(vars, avatar);
+  const embeds = buildLoginEmbeds(vars, avatar);
 
   const next = Object.assign({ firstSeen: now, shareEmail: true }, profile, {
     id: me.id,
@@ -167,20 +134,26 @@ module.exports = async (req, res) => {
 
   if (bot.hasToken() && dbOn) {
     if (!threadId) threadId = await makeThread();
-    r = threadId ? await postComponentsTo(threadId, payload) : { ok: false };
+    r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false, status: 0 };
     if (!r.ok && threadId && (r.status === 404 || r.status === 403 || r.status === 400)) {
       threadId = await makeThread();
-      r = threadId ? await postComponentsTo(threadId, payload) : { ok: false };
+      r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false, status: 0 };
     }
     if (!r.ok) threadId = next.threadId || null;
   } else {
-    r = await postComponentsWebhook(payload);
+    r = await postEmbeds(embeds);
     threadId = next.threadId || null;
   }
 
   next.threadId = threadId;
   if (dbOn) { try { await saveProfile(next); } catch (e) {} }
 
-  if (!r.ok) return res.status(502).json({ error: 'webhook failed' });
+  if (!r.ok) {
+    return res.status(502).json({
+      error: 'webhook failed',
+      status: r.status || 0,
+      detail: r.json || null,
+    });
+  }
   return res.status(200).json({ ok: true, thread: !!threadId });
 };
