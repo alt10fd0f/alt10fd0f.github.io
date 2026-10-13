@@ -1,8 +1,8 @@
-// Shared helpers for the relay endpoints. Secrets come from environment variables only:
-//   DISCORD_WEBHOOK_URL  (private, never in this repo)
-//   DISCORD_CLIENT_ID
+// Shared helpers for the relay endpoints. Secrets come from environment variables only
+// (DISCORD_WEBHOOK_URL, DISCORD_BOT_TOKEN, ANTHROPIC_API_KEY, storage tokens...), never from this repo.
 
 const ALLOWED_ORIGIN = 'https://alt10fd0f.github.io';
+const OWNER_ID = '989152479222579260';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const clip = (s, n) => {
@@ -10,33 +10,40 @@ const clip = (s, n) => {
   return s.length > n ? s.slice(0, n - 1) + '…' : s;
 };
 
-// Handles CORS, method and origin checks. Returns true if the response was already sent.
-function handleCommon(req, res) {
+// CORS + method + origin checks. Returns true if the response was already sent.
+function handleCommon(req, res, methods) {
+  methods = methods || ['POST'];
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', methods.concat('OPTIONS').join(', '));
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Vary', 'Origin');
   if (req.method === 'OPTIONS') { res.status(204).end(); return true; }
-  if (req.method !== 'POST') { res.status(405).json({ error: 'method not allowed' }); return true; }
-  if (req.headers.origin !== ALLOWED_ORIGIN) { res.status(403).json({ error: 'forbidden origin' }); return true; }
+  if (!methods.includes(req.method)) { res.status(405).json({ error: 'method not allowed' }); return true; }
+  if (req.method === 'POST' && req.headers.origin !== ALLOWED_ORIGIN) { res.status(403).json({ error: 'forbidden origin' }); return true; }
   return false;
 }
 
 const discordGet = (path, token) =>
   fetch('https://discord.com/api' + path, { headers: { Authorization: 'Bearer ' + token } });
 
-// Confirms the token is real AND was issued to our Discord application.
+// Confirms the token is real AND was issued to our Discord application. Cached briefly in memory.
+const tokenCache = new Map();
 async function verifyToken(token) {
   if (typeof token !== 'string' || token.length < 10 || token.length > 200) return { status: 400, error: 'bad token' };
+  const hit = tokenCache.get(token);
+  if (hit && hit.exp > Date.now()) return { me: hit.me, scopes: hit.scopes };
   try {
     const [meRes, appRes] = await Promise.all([discordGet('/users/@me', token), discordGet('/oauth2/@me', token)]);
-    if (!meRes.ok || !appRes.ok) return { status: 401, error: 'invalid token' };
+    if (!meRes.ok || !appRes.ok) { tokenCache.delete(token); return { status: 401, error: 'invalid token' }; }
     const me = await meRes.json();
     const info = await appRes.json();
     if (!info || !info.application || info.application.id !== process.env.DISCORD_CLIENT_ID) {
       return { status: 403, error: 'token is for a different app' };
     }
-    return { me, scopes: info.scopes || [] };
+    const scopes = info.scopes || [];
+    if (tokenCache.size > 500) tokenCache.clear();
+    tokenCache.set(token, { me, scopes, exp: Date.now() + 5 * 60 * 1000 });
+    return { me, scopes };
   } catch (e) {
     return { status: 502, error: 'discord unreachable' };
   }
@@ -55,8 +62,13 @@ function embedSize(e) {
   return n;
 }
 
-async function postOne(embeds, attempt) {
-  const r = await fetch(process.env.DISCORD_WEBHOOK_URL, {
+function webhookUrl(threadId) {
+  const base = process.env.DISCORD_WEBHOOK_URL;
+  return threadId ? base + (base.includes('?') ? '&' : '?') + 'thread_id=' + encodeURIComponent(threadId) : base;
+}
+
+async function postOne(embeds, attempt, threadId) {
+  const r = await fetch(webhookUrl(threadId), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     // allowed_mentions: none, so user-supplied text can never ping anyone.
@@ -66,13 +78,14 @@ async function postOne(embeds, attempt) {
     let wait = 1000;
     try { wait = Math.min(5000, Math.ceil(((await r.json()).retry_after || 1) * 1000)); } catch (e) {}
     await sleep(wait);
-    return postOne(embeds, attempt + 1);
+    return postOne(embeds, attempt + 1, threadId);
   }
-  return r.ok;
+  return { ok: r.ok, status: r.status };
 }
 
-// Sends the embeds, splitting them across as many webhook messages as needed.
-async function postEmbeds(embeds) {
+// Sends the embeds via the webhook (optionally into a thread), splitting across as many messages as needed.
+async function postEmbeds(embeds, opts) {
+  const threadId = opts && opts.threadId;
   const groups = [];
   let cur = [], size = 0;
   for (const e of embeds) {
@@ -81,11 +94,28 @@ async function postEmbeds(embeds) {
     cur.push(e); size += s;
   }
   if (cur.length) groups.push(cur);
+  let last = { ok: true, status: 204 };
   for (let i = 0; i < groups.length; i++) {
     if (i > 0) await sleep(500);
-    if (!(await postOne(groups[i], 0))) return false;
+    last = await postOne(groups[i], 0, threadId);
+    if (!last.ok) return last;
   }
-  return true;
+  return last;
 }
 
-module.exports = { ALLOWED_ORIGIN, sleep, clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postEmbeds };
+// The channel the webhook posts into (read from the webhook itself; needs no extra setup).
+let webhookChannel = null;
+async function webhookChannelId() {
+  if (process.env.DISCORD_LOGS_CHANNEL_ID) return process.env.DISCORD_LOGS_CHANNEL_ID;
+  if (webhookChannel) return webhookChannel;
+  try {
+    const r = await fetch(process.env.DISCORD_WEBHOOK_URL);
+    if (r.ok) webhookChannel = (await r.json()).channel_id || null;
+  } catch (e) { /* ignore */ }
+  return webhookChannel;
+}
+
+module.exports = {
+  ALLOWED_ORIGIN, OWNER_ID, sleep, clip, handleCommon, discordGet, verifyToken,
+  displayName, avatarUrl, postEmbeds, webhookChannelId,
+};
