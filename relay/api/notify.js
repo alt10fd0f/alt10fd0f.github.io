@@ -1,21 +1,14 @@
-// Login notification. After a visitor logs in with Discord this:
-//   - checks whether they are in the Kite support server (the ONLY use of the "guilds" permission; the list is never kept),
-//   - records/updates their profile in the database,
-//   - posts the (admin-editable) login embed into that user's own thread, creating the thread on first login.
-
 const db = require('./_db');
 const bot = require('./_bot');
 const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postEmbeds, logsChannelId } = require('./_shared');
 const { getProfile, saveProfile } = require('./_auth');
-const { loadConfig, buildEmbeds } = require('./_config');
 
 const NITRO = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro', 3: 'Nitro Basic' };
 const yesNo = (v) => (v ? 'Yes' : 'No');
-const recent = new Map(); // userId -> last notify time (used when no database is connected)
+const recent = new Map();
 
 const safeJson = async (p) => { try { const r = await p; return r && r.ok ? await r.json() : null; } catch (e) { return null; } };
 
-// true / false, or null when it can't be checked. Reads the user's server list page by page and keeps only the answer.
 async function inKiteServer(token) {
   const target = process.env.KITE_GUILD_ID;
   if (!target) return null;
@@ -28,6 +21,72 @@ async function inKiteServer(token) {
     after = list[list.length - 1].id;
   }
   return false;
+}
+
+function buildLoginMessage(vars, avatar) {
+  const content =
+    '**User**\n' +
+    '> ' + vars.mention + ' [`' + vars.id + '`]\n\n' +
+    '**Account Data**\n' +
+    '>>> Email • ||' + vars.email + '||\n' +
+    'Created At • ' + vars.created + ' (' + vars.createdAgo + ')\n' +
+    'Connections • ' + vars.connectionCount + '\n' +
+    '2FA Enabled • ' + vars.mfa + '\n' +
+    'Kite Server • ' + vars.kiteServer + '\n' +
+    'Nitro • ' + vars.nitro + '\n' +
+    'Locale • ' + vars.locale + '\n' +
+    'Connected Accounts •\n' + vars.connections;
+
+  return {
+    flags: 32768,
+    allowed_mentions: { parse: [] },
+    components: [
+      {
+        type: 17,
+        components: [
+          {
+            type: 9,
+            components: [
+              {
+                type: 10,
+                content: content.slice(0, 4000),
+              },
+            ],
+            accessory: {
+              type: 11,
+              media: {
+                url: avatar || 'https://cdn.discordapp.com/embed/avatars/0.png',
+              },
+            },
+          },
+          {
+            type: 14,
+            spacing: 2,
+          },
+        ],
+      },
+    ],
+  };
+}
+
+async function postComponentsTo(channelId, payload) {
+  if (!bot.hasToken || !bot.hasToken()) return { ok: false, status: 0 };
+  return bot.call('POST', '/channels/' + channelId + '/messages', payload);
+}
+
+async function postComponentsWebhook(payload) {
+  const base = process.env.DISCORD_WEBHOOK_URL;
+  if (!base) return { ok: false, status: 0 };
+  try {
+    const r = await fetch(base, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ username: 'Kite Tutorials' }, payload)),
+    });
+    return { ok: r.ok, status: r.status };
+  } catch (e) {
+    return { ok: false, status: 0 };
+  }
 }
 
 module.exports = async (req, res) => {
@@ -55,15 +114,27 @@ module.exports = async (req, res) => {
   const prefs = profile || {};
   const name = prefs.nickname || displayName(me);
   const created = Math.floor((Number(BigInt(me.id) >> 22n) + 1420070400000) / 1000);
-  const connLines = (connections || []).map((c) => '• ' + clip(c.type, 20) + ': ' + clip(c.name, 60) + (c.verified ? ' (verified)' : '') + (c.visibility === 0 ? ' [hidden]' : ''));
+  const connLines = (connections || []).map((c) =>
+    '• ' + clip(c.type, 20) + ': ' + clip(c.name, 60) +
+    (c.verified ? ' (verified)' : '') +
+    (c.visibility === 0 ? ' [hidden]' : '')
+  );
   let connText = connLines.length ? connLines.join('\n') : connections ? 'None' : 'Not shared';
-  if (connText.length > 1000) connText = connText.slice(0, connText.lastIndexOf('\n', 980)) + '\n…and ' + (connLines.length - connText.slice(0, connText.lastIndexOf('\n', 980)).split('\n').length) + ' more';
+  if (connText.length > 1000) {
+    connText = connText.slice(0, connText.lastIndexOf('\n', 980)) +
+      '\n…and ' + (connLines.length - connText.slice(0, connText.lastIndexOf('\n', 980)).split('\n').length) + ' more';
+  }
+
   const vars = {
     display: clip(name, 80),
     username: clip(me.username, 40),
     id: me.id,
     mention: '<@' + me.id + '>',
-    email: prefs.shareEmail === false ? 'Hidden by user' : me.email ? clip(me.email, 200) + (me.verified ? ' (verified)' : ' (unverified)') : 'Not provided',
+    email: prefs.shareEmail === false
+      ? 'Hidden by user'
+      : me.email
+        ? clip(me.email, 200) + (me.verified ? ' (verified)' : ' (unverified)')
+        : 'Not provided',
     created: '<t:' + created + ':F>',
     createdAgo: '<t:' + created + ':R>',
     locale: clip(me.locale || 'unknown', 20),
@@ -74,16 +145,18 @@ module.exports = async (req, res) => {
     connections: connText,
   };
 
-  const cfg = await loadConfig();
-  const embeds = buildEmbeds(cfg.loginEmbed, vars, avatarUrl(me));
+  const avatar = avatarUrl(me);
+  const payload = buildLoginMessage(vars, avatar);
 
-  // Save the profile first so a failed webhook post doesn't lose the thread id we are about to create.
   const next = Object.assign({ firstSeen: now, shareEmail: true }, profile, {
-    id: me.id, username: me.username, display: displayName(me), avatar: me.avatar || null, lastSeen: now, lastLogin: now,
+    id: me.id,
+    username: me.username,
+    display: displayName(me),
+    avatar: me.avatar || null,
+    lastSeen: now,
+    lastLogin: now,
   });
 
-  // One thread per user, created in the logs channel; its id is stored and every later login goes only to that thread.
-  // Posts are made by the bot (a webhook can only post in its own channel's threads).
   const makeThread = async () => {
     const t = await bot.createThread(logsChannelId(), clip(name, 70) + ' (' + me.id + ')');
     return t.ok && t.json && t.json.id ? t.json.id : null;
@@ -91,21 +164,22 @@ module.exports = async (req, res) => {
 
   let threadId = next.threadId || null;
   let r;
+
   if (bot.hasToken() && dbOn) {
     if (!threadId) threadId = await makeThread();
-    r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+    r = threadId ? await postComponentsTo(threadId, payload) : { ok: false };
     if (!r.ok && threadId && (r.status === 404 || r.status === 403 || r.status === 400)) {
-      // The stored thread was deleted/locked: make a new one and remember it.
       threadId = await makeThread();
-      r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+      r = threadId ? await postComponentsTo(threadId, payload) : { ok: false };
     }
-    if (!r.ok) threadId = next.threadId || null; // keep the old id if we couldn't replace it
+    if (!r.ok) threadId = next.threadId || null;
   } else {
-    r = await postEmbeds(embeds); // no bot/database configured: plain webhook post
+    r = await postComponentsWebhook(payload);
     threadId = next.threadId || null;
   }
+
   next.threadId = threadId;
-  if (dbOn) { try { await saveProfile(next); } catch (e) { /* keep going */ } }
+  if (dbOn) { try { await saveProfile(next); } catch (e) {} }
 
   if (!r.ok) return res.status(502).json({ error: 'webhook failed' });
   return res.status(200).json({ ok: true, thread: !!threadId });
