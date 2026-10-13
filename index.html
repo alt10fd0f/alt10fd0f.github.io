@@ -382,7 +382,7 @@
     // Must exactly match a Redirect URI you added in the Discord developer portal.
     const DISCORD_REDIRECT_URI = 'https://alt10fd0f.github.io/';
     // Optional: URL of your deployed notify relay (see worker/discord-notify.js). Leave '' to send no notifications.
-    const NOTIFY_URL = '';
+    const NOTIFY_URL = 'https://kite-login-notify-sanfranrps.vercel.app/api/notify';
     const AUTH_KEY = 'discord_auth';
     const authEnabled = DISCORD_CLIENT_ID && DISCORD_CLIENT_ID !== 'YOUR_CLIENT_ID';
     function authRead() { try { const a = JSON.parse(localStorage.getItem(AUTH_KEY)); return a && a.expires > Date.now() ? a : null; } catch (e) { return null; } }
