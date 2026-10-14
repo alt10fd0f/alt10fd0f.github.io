@@ -17,7 +17,7 @@ async function call(method, path, body) {
         'User-Agent': 'DiscordBot (https://alt10fd0f.github.io, 1.0)',
       },
       body: body ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(2500),
+      signal: AbortSignal.timeout(6000),
     });
     let json = null;
     try { json = await r.json(); } catch (e) { /* empty body */ }
@@ -45,13 +45,24 @@ async function sendDM(userId, payload) {
 const postToChannel = (payload) =>
   call('POST', '/channels/' + process.env.DISCORD_MODMAIL_CHANNEL_ID + '/messages', Object.assign({ allowed_mentions: { parse: [] } }, payload));
 
-// Creates a public thread (not attached to a message) in a text channel. Needs "Create Public Threads".
-const createThread = (channelId, name) =>
-  call('POST', '/channels/' + channelId + '/threads', {
-    name: clip(String(name).replace(/\s+/g, ' '), 100),
-    type: 11,
-    auto_archive_duration: 10080,
-  });
+// Creates a per-user thread. In a text channel this is a public thread (needs "Create Public Threads");
+// in a forum/media channel it is a forum post (needs "Create Posts"), which must start with a message.
+const channelTypes = new Map();
+async function createThread(channelId, name) {
+  let type = channelTypes.get(channelId);
+  if (type === undefined) {
+    const c = await call('GET', '/channels/' + channelId);
+    if (c.ok && c.json) { type = c.json.type; channelTypes.set(channelId, type); }
+    else console.error('thread: cannot read channel', channelId, c.status, JSON.stringify(c.json));
+  }
+  const title = clip(String(name).replace(/\s+/g, ' '), 100);
+  const body = { name: title, auto_archive_duration: 10080 };
+  if (type === 15 || type === 16) body.message = { content: 'Login log for ' + title, allowed_mentions: { parse: [] } };
+  else body.type = 11;
+  const r = await call('POST', '/channels/' + channelId + '/threads', body);
+  if (!r.ok) console.error('thread: create failed', r.status, JSON.stringify(r.json));
+  return r;
+}
 
 // The server id of the modmail channel (used to build message links). Cached.
 let guildCache = null;

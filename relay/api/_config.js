@@ -24,7 +24,7 @@ const DEFAULT_CONFIG = {
   banner: { enabled: false, text: '', style: 'info', link: '' },
   notification: { enabled: false, id: '', title: '', text: '' },
   disabled: [],
-  features: { favorites: true, ratings: true, support: true, chat: true, loginPrompt: true },
+  features: { favorites: true, ratings: true, support: true, loginPrompt: true },
   loginMessage: DEFAULT_LOGIN_MESSAGE,
   links: { kite: '' },
 };

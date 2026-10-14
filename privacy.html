@@ -64,16 +64,12 @@
     <h2>Difficulty ratings and favorites</h2>
     <p>Your favorites are private to you. Your ratings are stored against your ID so you can change them; only the totals (average and number of ratings) are shown publicly.</p>
 
-    <h2>AI chat helper</h2>
-    <p>If you use the chat helper, the messages you type are sent through my server to Anthropic's Claude API to generate an answer, together with the tutorial text. I do not store the conversation (a per-day question counter is kept to prevent abuse). Do not type personal or sensitive information into it. Answers may be wrong.</p>
-
     <h2>Who else handles data</h2>
     <ul>
       <li><b>Discord</b> (login, the reports and support messages).</li>
       <li><b>GitHub Pages</b> (hosts the website; may log visits as part of hosting).</li>
       <li><b>Vercel</b> (runs my server code and keeps routine request logs).</li>
       <li><b>Upstash</b> (the database).</li>
-      <li><b>Anthropic</b> (only if you use the chat helper).</li>
     </ul>
     <p>I do not sell your data, show ads or use analytics or tracking cookies.</p>
 
@@ -96,6 +92,6 @@
 
   </main>
   <script src="site.js"></script>
-  <script>Site.init({ header: '#nav-right', noChat: true, promptLogin: false });</script>
+  <script>Site.init({ header: "#nav-right", promptLogin: false });</script>
 </body>
 </html>

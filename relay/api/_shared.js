@@ -1,5 +1,5 @@
 // Shared helpers for the relay endpoints. Secrets come from environment variables only
-// (DISCORD_WEBHOOK_URL, DISCORD_BOT_TOKEN, ANTHROPIC_API_KEY, storage tokens...), never from this repo.
+// (DISCORD_WEBHOOK_URL, DISCORD_BOT_TOKEN, storage tokens...), never from this repo.
 
 const ALLOWED_ORIGIN = 'https://alt10fd0f.github.io';
 const OWNER_ID = '989152479222579260';

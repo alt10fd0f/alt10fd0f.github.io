@@ -102,7 +102,6 @@
           <label class="chk"><input type="checkbox" data-f="favorites"> Favorites (stars)</label>
           <label class="chk"><input type="checkbox" data-f="ratings"> Difficulty ratings</label>
           <label class="chk"><input type="checkbox" data-f="support"> Support requests</label>
-          <label class="chk"><input type="checkbox" data-f="chat"> AI chat helper</label>
           <label class="chk"><input type="checkbox" data-f="loginPrompt"> Show the login pop-up when someone opens the site</label>
           <label class="lbl" for="k-link">Kite Discord invite link (for the Kite icon in the header)</label><input type="url" id="k-link" placeholder="https://discord.gg/...">
           <div class="row"><button class="b p" id="f-save" type="button">Save features</button></div><div class="st" id="f-st"></div></div>
@@ -239,7 +238,7 @@
       $('tk-refresh').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'tickets', status: 'open' }); if (r.ok) tickets(r.json.tickets); });
 
       $('gate-login').addEventListener('click', function () { Site.login({ returnTo: 'admin.html' }); });
-      Site.init({ header: '#nav-right', noChat: true, promptLogin: false }).then(function () {
+      Site.init({ header: "#nav-right", promptLogin: false }).then(function () {
         if (!Site.state.auth) { $('gate-msg').textContent = 'Log in with Discord to open the admin panel.'; $('gate-login').hidden = false; return; }
         load();
       });

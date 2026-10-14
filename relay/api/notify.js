@@ -17,7 +17,7 @@ const safeJson = async (p) => { try { const r = await p; return r && r.ok ? awai
 
 // true / false, or null when it can't be checked. Reads the user's server list page by page and keeps only the answer.
 async function inKiteServer(token) {
-  const target = process.env.KITE_GUILD_ID;
+  const target = process.env.KITE_GUILD_ID || '845800518458540083'; // Kite support server
   if (!target) return null;
   let after = '';
   for (let page = 0; page < 5; page++) {
@@ -104,7 +104,11 @@ module.exports = async (req, res) => {
       threadId = await makeThread();
       r = threadId ? await bot.postMessagesTo(threadId, messages) : { ok: false };
     }
-    if (!r.ok) threadId = next.threadId || null; // keep the old id if we couldn't replace it
+    if (!r.ok) {
+      console.error('login post via bot failed', r.status, JSON.stringify(r.json));
+      threadId = next.threadId || null; // keep the old id if we couldn't replace it
+      r = await postWebhookMessages(messages); // never lose the report: fall back to the webhook
+    }
   } else {
     r = await postWebhookMessages(messages); // no bot/database configured: plain webhook post (no dropdown)
     threadId = next.threadId || null;

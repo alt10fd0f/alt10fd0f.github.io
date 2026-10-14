@@ -1,5 +1,5 @@
 /* Shared site shell: Discord login, header icons, theme, user panel, support form, banner/notifications,
-   maintenance cover, and the chat helper. Pages call Site.init({ header: '#nav-right' }). */
+   and maintenance cover. Pages call Site.init({ header: '#nav-right' }). */
 (function () {
   'use strict';
   var CLIENT_ID = '1520497604360671263';
@@ -254,56 +254,18 @@
     $('admin-ribbon').classList.toggle('show', off && staff);
   }
 
-  // ---------- chat helper ----------
-  var chatMsgs = [];
-  function buildChat() {
-    var f = document.createElement('button'); f.className = 'chat-fab'; f.id = 'chat-fab'; f.type = 'button'; f.title = 'Ask the tutorial helper'; f.setAttribute('aria-label', 'Open the tutorial helper chat'); f.textContent = '💬';
-    var p = document.createElement('div'); p.className = 'chat-panel'; p.id = 'chat-panel';
-    p.innerHTML = '<div class="chat-head"><span>Tutorial helper (AI)</span><button type="button" id="chat-x" aria-label="Close">×</button></div><div class="chat-log" id="chat-log"></div><div class="chat-note">AI answers can be wrong. Check the tutorials for the real steps.</div>' +
-      '<form class="chat-form" id="chat-form"><input id="chat-in" maxlength="500" placeholder="Ask about a tutorial..." autocomplete="off"><button type="submit">Send</button></form>';
-    document.body.appendChild(f); document.body.appendChild(p);
-    f.addEventListener('click', function () {
-      p.classList.toggle('show');
-      if (p.classList.contains('show')) { paintChat(); setTimeout(function () { var i = $('chat-in'); if (i) i.focus(); }, 50); }
-    });
-    $('chat-x').addEventListener('click', function () { p.classList.remove('show'); });
-    $('chat-form').addEventListener('submit', sendChat);
-  }
-  function fmt(s) {
-    s = esc(s);
-    s = s.replace(/```(?:\w+)?\n?([\s\S]*?)```/g, function (m, c) { return '<pre><code>' + c.replace(/\n$/, '') + '</code></pre>'; });
-    s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
-    return s.replace(/\n/g, '<br>').replace(/<\/pre><br>/g, '</pre>').replace(/<br><pre>/g, '<pre>');
-  }
-  function paintChat() {
-    var log = $('chat-log'), form = $('chat-form');
-    if (!S.auth) { log.innerHTML = '<div class="chat-login">Log in with Discord to ask the tutorial helper questions.<br><br><button class="login-btn" id="chat-login" type="button" style="display:inline-block">Login with Discord</button></div>'; form.style.display = 'none'; $('chat-login').addEventListener('click', function () { openLogin('Log in to use the tutorial helper.'); }); return; }
-    form.style.display = '';
-    if (!chatMsgs.length) log.innerHTML = '<div class="chat-msg bot">Hi! Ask me about any of the tutorials, like how to build the reminder command or set up buttons.</div>';
-    else log.innerHTML = chatMsgs.map(function (m) { return '<div class="chat-msg ' + (m.role === 'user' ? 'user' : 'bot') + '">' + (m.role === 'user' ? esc(m.content) : fmt(m.content)) + '</div>'; }).join('');
-    log.scrollTop = log.scrollHeight;
-  }
-  async function sendChat(e) {
-    e.preventDefault();
-    var inp = $('chat-in'), text = inp.value.trim(); if (!text || !S.auth) return;
-    inp.value = ''; chatMsgs.push({ role: 'user', content: text }); chatMsgs.push({ role: 'assistant', content: '…' }); paintChat();
-    var r = await api('chat', { messages: chatMsgs.slice(0, -1).slice(-8) });
-    chatMsgs.pop(); chatMsgs.push({ role: 'assistant', content: r.ok ? r.json.reply : (r.json.error || 'Sorry, something went wrong.') }); paintChat();
-  }
-  function paintChatVisibility() { var f = $('chat-fab'); if (!f) return; var on = !S.cfg || S.cfg.features.chat !== false; f.classList.toggle('show', on); if (!on) $('chat-panel').classList.remove('show'); if ($('chat-panel').classList.contains('show')) paintChat(); }
-
   // ---------- init ----------
   async function init(opts) {
     opts = opts || {};
     S.headerEl = opts.header ? document.querySelector(opts.header) : null;
     S.auth = authRead();
     lsSet('discord_auth', null);
-    buildChrome(); buildLogin(); buildSupport(); buildUser(); if (!opts.noChat) buildChat();
+    buildChrome(); buildLogin(); buildSupport(); buildUser();
     renderHeader();
     if (await handleReturn()) return;
     S.auth = authRead();
     await Promise.all([loadPublic(), loadMe()]);
-    renderHeader(); paintChrome(); if (!opts.noChat) paintChatVisibility(); emit();
+    renderHeader(); paintChrome(); emit();
     // post-login actions
     if (S.auth) {
       var after = ssGet('after_login'); ssSet('after_login', null);
@@ -312,7 +274,7 @@
     var sb = $('support-open'); if (sb) sb.addEventListener('click', openSupport);
     var hint = $('support-hint'); var paintHint = function () { if (hint) hint.textContent = S.auth ? 'Submitting as ' + nameOf(S.auth.user) + '.' : 'You need to be logged in with Discord to submit a request.'; };
     on(paintHint); paintHint();
-    on(function () { paintChrome(); if (!opts.noChat) paintChatVisibility(); });
+    on(function () { paintChrome(); });
     // live refresh (ratings, banner, notification, maintenance)
     setInterval(async function () { if (document.hidden) return; await loadPublic(); renderHeader(); emit(); }, 15000);
     document.addEventListener('visibilitychange', async function () { if (!document.hidden) { await loadPublic(); emit(); } });
