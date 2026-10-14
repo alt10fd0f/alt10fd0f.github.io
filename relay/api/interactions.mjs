@@ -5,6 +5,10 @@
 import crypto from 'node:crypto';
 import bot from './_bot.js';
 import embeds from './_embeds.js';
+import db from './_db.js';
+import tickets from './_tickets.js';
+
+const track = async (id, patchFn) => { if (!db.ready() || !id) return; try { const t = await tickets.getTicket(id); if (t) await tickets.updateTicket(id, patchFn(t)); } catch (e) { /* best effort */ } };
 
 const SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex'); // wraps a raw 32-byte Ed25519 public key
 const ID = /^\d{5,25}$/;
@@ -58,6 +62,19 @@ async function handle(it) {
 
   const channelOk = it.channel_id === process.env.DISCORD_MODMAIL_CHANNEL_ID;
   const parts = String((it.data && it.data.custom_id) || '').split(':');
+  // Login report dropdown: shows small facts about that user, only to whoever picked the option.
+  if (parts[0] === 'lg' && it.type === 3 && ID.test(parts[1] || '')) {
+    const uid = parts[1];
+    const pick = it.data.values && it.data.values[0];
+    const created = Math.floor((Number(BigInt(uid) >> 22n) + 1420070400000) / 1000);
+    const out = {
+      id: '`' + uid + '`',
+      mention: '`<@' + uid + '>`',
+      age: 'Account created <t:' + created + ':F> (<t:' + created + ':R>)',
+      link: 'https://discord.com/users/' + uid,
+    }[pick];
+    return out ? ephemeral(out) : ephemeral('Unknown option.');
+  }
   if (parts[0] !== 'mm') return ephemeral('Unknown action.');
 
   // ---- Button clicks ----
@@ -65,6 +82,21 @@ async function handle(it) {
     if (parts[1] === 'r') { // staff: open reply modal
       if (!channelOk || !ID.test(parts[2] || '') || !it.message) return ephemeral('This button cannot be used here.');
       return modal('mm:rs:' + parts[2] + ':' + it.message.id, 'Reply to user', 'Your reply', 'This will be sent to the user as a DM.');
+    }
+    if (parts[1] === 'c') { // staff: close the ticket
+      if (!channelOk || !ID.test(parts[2] || '') || !it.message) return ephemeral('This button cannot be used here.');
+      const staff = modName(it.member);
+      const ref = it.message.message_reference && it.message.message_reference.message_id;
+      const ticketId = ref && ID.test(ref) ? ref : it.message.id;
+      await bot.sendDM(parts[2], embeds.closedDM(staff));
+      await track(ticketId, (t) => ({ status: 'closed', closedBy: staff, updated: Date.now() }));
+      const orig = (it.message.embeds && it.message.embeds[0]) || { title: 'Support request' };
+      if (ticketId === it.message.id) return { type: 7, data: embeds.closedTicket(orig, staff) };
+      // Closed from a user's reply: grey out the original ticket message too.
+      const ch = process.env.DISCORD_MODMAIL_CHANNEL_ID;
+      const og = await bot.call('GET', '/channels/' + ch + '/messages/' + ticketId);
+      if (og.ok && og.json && og.json.embeds && og.json.embeds[0]) await bot.call('PATCH', '/channels/' + ch + '/messages/' + ticketId, embeds.closedTicket(og.json.embeds[0], staff));
+      return { type: 7, data: { components: [] } };
     }
     if (parts[1] === 'u') { // user: open reply modal
       if (!ID.test(parts[2] || '')) return ephemeral('This button cannot be used here.');
@@ -81,6 +113,7 @@ async function handle(it) {
       if (!channelOk || !ID.test(parts[2] || '') || !ID.test(parts[3] || '')) return ephemeral('This action cannot be used here.');
       const dm = await bot.sendDM(parts[2], embeds.staffReplyDM(modName(it.member), text, parts[3]));
       if (!dm.ok) return ephemeral('Could not DM that user (they may have DMs closed). Your reply was not sent.');
+      await track(parts[3], (t) => ({ replies: (t.replies || 0) + 1, updated: Date.now(), status: 'open' }));
       return { type: 4, data: embeds.staffReplyLog(modName(it.member), parts[2], text) };
     }
 
@@ -90,6 +123,7 @@ async function handle(it) {
       if (limited(user.id)) return { type: 4, data: { content: 'You are replying too quickly. Please wait a moment and try again.' } };
       const post = await bot.postToChannel(embeds.userReplyChannel(user, text, parts[2]));
       if (!post.ok) return { type: 4, data: { content: 'Sorry, your reply could not be delivered. Please try again.' } };
+      await track(parts[2], (t) => ({ replies: (t.replies || 0) + 1, updated: Date.now(), status: 'open' }));
       return { type: 4, data: { content: 'Your reply was sent to the support team.' } };
     }
   }

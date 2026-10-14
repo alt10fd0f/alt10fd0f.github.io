@@ -83,6 +83,22 @@ async function postOne(embeds, attempt, threadId) {
   return { ok: r.ok, status: r.status };
 }
 
+// Webhook post of ready-made payloads (Components V2 needs with_components=true; dropdowns won't work from webhooks).
+async function postWebhookMessages(payloads) {
+  let last = { ok: true, status: 204 };
+  for (let i = 0; i < payloads.length; i++) {
+    if (i > 0) await sleep(500);
+    const base = process.env.DISCORD_WEBHOOK_URL;
+    const r = await fetch(base + (base.includes('?') ? '&' : '?') + 'with_components=true', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ username: 'Kite Tutorials' }, payloads[i])),
+    });
+    last = { ok: r.ok, status: r.status };
+    if (!r.ok) return last;
+  }
+  return last;
+}
+
 function groupEmbeds(embeds) {
   const groups = [];
   let cur = [], size = 0;
@@ -114,5 +130,5 @@ const logsChannelId = () => process.env.DISCORD_LOGS_CHANNEL_ID || LOGS_CHANNEL_
 
 module.exports = {
   ALLOWED_ORIGIN, OWNER_ID, sleep, clip, handleCommon, discordGet, verifyToken,
-  displayName, avatarUrl, postEmbeds, groupEmbeds, logsChannelId,
+  displayName, avatarUrl, postEmbeds, postWebhookMessages, groupEmbeds, logsChannelId,
 };

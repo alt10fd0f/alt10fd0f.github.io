@@ -75,4 +75,16 @@ async function postEmbedsTo(channelId, embeds) {
   return last;
 }
 
-module.exports = { postEmbedsTo, configured, hasToken, call, sendDM, postToChannel, createThread, guildId };
+// Posts ready-made message payloads (e.g. Components V2) one after another into a channel/thread as the bot.
+async function postMessagesTo(channelId, payloads) {
+  let last = { ok: true, status: 200 };
+  for (let i = 0; i < payloads.length; i++) {
+    if (i > 0) await sleep(500);
+    last = await call('POST', '/channels/' + channelId + '/messages', payloads[i]);
+    if (last.status === 429) { await sleep(1500); last = await call('POST', '/channels/' + channelId + '/messages', payloads[i]); }
+    if (!last.ok) return last;
+  }
+  return last;
+}
+
+module.exports = { postMessagesTo, postEmbedsTo, configured, hasToken, call, sendDM, postToChannel, createThread, guildId };

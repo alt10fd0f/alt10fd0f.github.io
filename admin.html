@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Admin Panel | ALT10fd0f</title>
+  <link rel="icon" type="image/png" sizes="128x128" href="favicon.png?v=3"><link rel="shortcut icon" href="favicon.ico?v=3"><link rel="apple-touch-icon" href="favicon.png?v=3">
+  <meta name="theme-color" content="#94CEC4">
+  <script>try{var t=localStorage.getItem('site_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <style>
+    :root { --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134; --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4; --border: #3a3b3d; --navbar-height: 60px; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1rem; }
+    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.1rem; }
+    .navbar-brand img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    @media (max-width: 768px) { .navbar-brand span { display: none; } .navbar { padding: 0 0.6rem; } }
+    main { max-width: 980px; margin: 0 auto; padding: calc(var(--navbar-height) + 1.6rem) 1.25rem 4rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.2rem; }
+    .sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .tab { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 8px; padding: 0.45rem 0.9rem; cursor: pointer; font-family: inherit; font-size: 0.9rem; }
+    .tab.on { border-color: var(--accent); color: var(--accent); }
+    .panel { display: none; }
+    .panel.on { display: block; }
+    .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+    .card h2 { font-size: 1.05rem; margin-bottom: 0.7rem; }
+    .card p.hint { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.7rem; }
+    label.lbl { display: block; font-size: 0.82rem; color: var(--text-muted); margin: 0.7rem 0 0.25rem; }
+    input[type=text], input[type=url], select, textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.65rem; font-family: inherit; font-size: 0.92rem; }
+    textarea { min-height: 150px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    .chk { display: flex; align-items: center; gap: 0.55rem; margin: 0.5rem 0; color: var(--text-secondary); font-size: 0.92rem; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 0.8rem; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } }
+    button.b { background: var(--bg-tertiary); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.9rem; cursor: pointer; font-family: inherit; font-size: 0.88rem; }
+    button.b:hover { border-color: var(--accent); color: var(--accent); }
+    button.b.p { background: var(--accent); border-color: var(--accent); color: #12302b; font-weight: 600; }
+    button.b.d { border-color: #e5484d; color: #e5484d; }
+    button.b:disabled { opacity: 0.55; cursor: wait; }
+    .st { font-size: 0.88rem; min-height: 1.2em; margin-top: 0.5rem; color: var(--text-secondary); }
+    .st.ok { color: #3fa755; } .st.err { color: #e5484d; }
+    .list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .item { display: flex; align-items: center; gap: 0.7rem; padding: 0.45rem 0.6rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; }
+    .item .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .item small { color: var(--text-muted); }
+    .tag { font-size: 0.72rem; border-radius: 999px; padding: 0.05rem 0.5rem; background: var(--bg-tertiary); color: var(--text-muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.4rem 0; }
+    .chip { font-family: ui-monospace, monospace; font-size: 0.78rem; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 6px; padding: 0.1rem 0.4rem; cursor: pointer; }
+    .chip:hover { border-color: var(--accent); }
+    /* Discord-like preview */
+    .dc { background: #313338; color: #dbdee1; border-radius: 8px; padding: 1rem; font-family: "gg sans", var(--font); font-size: 0.93rem; line-height: 1.4; }
+    .dc .cont { background: #2b2d31; border: 1px solid #1e1f22; border-radius: 8px; padding: 0.9rem; border-left: 4px solid #1e1f22; }
+    .dc .sec { display: flex; gap: 1rem; justify-content: space-between; }
+    .dc .sec img { width: 64px; height: 64px; border-radius: 8px; flex: none; background: #555; }
+    .dc .txt { white-space: pre-wrap; word-break: break-word; min-width: 0; }
+    .dc blockquote { border-left: 4px solid #4e5058; padding-left: 0.6rem; margin: 0.1rem 0; }
+    .dc code { background: #1e1f22; padding: 0 0.25rem; border-radius: 3px; font-size: 0.88em; color: #dbdee1; }
+    .dc .sp { background: #1e1f22; color: transparent; border-radius: 3px; padding: 0 0.2rem; }
+    .dc .sp:hover { color: #dbdee1; }
+    .dc .men { background: rgba(88,101,242,0.3); color: #c9cdfb; border-radius: 3px; padding: 0 0.2rem; }
+    .dc hr { border: none; border-top: 1px solid #3f4147; margin: 0.8rem 0; }
+    .dc .sel { background: #1e1f22; border: 1px solid #1e1f22; border-radius: 6px; padding: 0.5rem 0.7rem; color: #949ba4; display: flex; justify-content: space-between; }
+    .gate { text-align: center; padding: 3rem 1rem; color: var(--text-secondary); }
+    .gate .b { margin-top: 1rem; }
+    a { color: var(--accent); }
+  </style>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <nav class="navbar"><a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a><span style="color:var(--text-muted)">Admin</span><div class="navbar-right" id="nav-right"></div></nav>
+  <main>
+    <div id="gate" class="gate"><p id="gate-msg">Checking access...</p><button class="b p" id="gate-login" type="button" hidden>Login with Discord</button></div>
+    <div id="app" hidden>
+      <h1>Admin Panel</h1>
+      <p class="sub" id="who"></p>
+      <div class="tabs" id="tabs"></div>
+
+      <section class="panel" id="p-announce">
+        <div class="card"><h2>Banner</h2><p class="hint">A bar shown at the top of every page.</p>
+          <label class="chk"><input type="checkbox" id="b-on"> Show banner</label>
+          <label class="lbl" for="b-text">Text (max 200)</label><input type="text" id="b-text" maxlength="200">
+          <div class="grid2"><div><label class="lbl" for="b-style">Style</label><select id="b-style"><option value="info">Info (blue)</option><option value="warn">Warning (amber)</option><option value="success">Success (green)</option></select></div>
+          <div><label class="lbl" for="b-link">Link (optional, https only)</label><input type="url" id="b-link" placeholder="https://"></div></div>
+          <div class="row"><button class="b p" id="b-save" type="button">Save banner</button></div><div class="st" id="b-st"></div></div>
+        <div class="card"><h2>Notification</h2><p class="hint">A small pop-up in the corner. Visitors who already dismissed it will not see it again unless you publish it as new.</p>
+          <label class="chk"><input type="checkbox" id="n-on"> Show notification</label>
+          <label class="lbl" for="n-title">Title (max 60)</label><input type="text" id="n-title" maxlength="60">
+          <label class="lbl" for="n-text">Text (max 300)</label><input type="text" id="n-text" maxlength="300">
+          <label class="chk"><input type="checkbox" id="n-new" checked> Show again to people who dismissed the old one</label>
+          <div class="row"><button class="b p" id="n-save" type="button">Save notification</button></div><div class="st" id="n-st"></div></div>
+      </section>
+
+      <section class="panel" id="p-site">
+        <div class="card"><h2>Site on / off</h2><p class="hint">When off, visitors see a "be right back" screen. Staff can still use the site. (This is a soft switch for updates: it hides the pages in the browser, it is not a security lock.)</p>
+          <label class="chk"><input type="checkbox" id="s-on"> Site is enabled</label>
+          <label class="lbl" for="s-msg">Message shown while off</label><input type="text" id="s-msg" maxlength="300">
+          <div class="row"><button class="b p" id="s-save" type="button">Save</button></div><div class="st" id="s-st"></div></div>
+        <div class="card"><h2>Site features</h2><p class="hint">Turn features on or off for everyone.</p>
+          <label class="chk"><input type="checkbox" data-f="favorites"> Favorites (stars)</label>
+          <label class="chk"><input type="checkbox" data-f="ratings"> Difficulty ratings</label>
+          <label class="chk"><input type="checkbox" data-f="support"> Support requests</label>
+          <label class="chk"><input type="checkbox" data-f="chat"> AI chat helper</label>
+          <label class="chk"><input type="checkbox" data-f="loginPrompt"> Show the login pop-up when someone opens the site</label>
+          <label class="lbl" for="k-link">Kite Discord invite link (for the Kite icon in the header)</label><input type="url" id="k-link" placeholder="https://discord.gg/...">
+          <div class="row"><button class="b p" id="f-save" type="button">Save features</button></div><div class="st" id="f-st"></div></div>
+      </section>
+
+      <section class="panel" id="p-tut">
+        <div class="card"><h2>Tutorials</h2><p class="hint">Switch a tutorial off to hide it from visitors (it shows greyed out and cannot be opened).</p>
+          <div class="list" id="t-list"></div>
+          <div class="row"><button class="b p" id="t-save" type="button">Save tutorials</button></div><div class="st" id="t-st"></div></div>
+      </section>
+
+      <section class="panel" id="p-staff">
+        <div class="card"><h2>Staff members</h2><p class="hint">Staff can edit the banner and notification and see support tickets. Only you can change anything else. Enter a Discord user ID (turn on Developer Mode in Discord, right-click a user, Copy User ID).</p>
+          <div class="list" id="st-list"></div>
+          <div class="row"><input type="text" id="st-id" placeholder="Discord user ID" style="max-width:260px" inputmode="numeric"><button class="b p" id="st-add" type="button">Add staff</button></div><div class="st" id="st-st"></div></div>
+      </section>
+
+      <section class="panel" id="p-login">
+        <div class="card"><h2>Login message (embed editor)</h2><p class="hint">This is what is posted in each user's thread when they log in. It uses Discord's Components V2 layout: one text block (markdown works), an optional avatar on the right, and an optional dropdown.</p>
+          <div class="grid2"><div>
+            <label class="lbl" for="l-text">Message text</label><textarea id="l-text" maxlength="3000"></textarea>
+            <div class="hint" style="margin:.4rem 0 0">Click a variable to insert it:</div><div class="chips" id="l-vars"></div>
+            <label class="chk"><input type="checkbox" id="l-thumb"> Show the user's avatar on the right</label>
+            <label class="chk"><input type="checkbox" id="l-dd"> Show the dropdown under the text</label>
+            <label class="lbl" for="l-ph">Dropdown placeholder</label><input type="text" id="l-ph" maxlength="100">
+            <p class="hint" style="margin-top:.4rem">Dropdown options: <span id="l-opts"></span>.</p>
+            <label class="lbl" for="l-acc">Accent color (the stripe on the left; leave empty for none)</label>
+            <div class="row" style="margin-top:0"><input type="text" id="l-acc" maxlength="7" placeholder="#94cec4" style="max-width:130px"><input type="color" id="l-accp" value="#94cec4"></div>
+          </div><div><label class="lbl">Preview (sample data)</label><div class="dc" id="l-prev"></div></div></div>
+          <div class="row"><button class="b p" id="l-save" type="button">Save login message</button><button class="b" id="l-reset" type="button">Reset to default</button></div><div class="st" id="l-st"></div></div>
+      </section>
+
+      <section class="panel" id="p-tickets">
+        <div class="card"><h2>Open support tickets</h2><p class="hint">Tickets are opened and answered on Discord only (the Reply and Close buttons in the support channel). This list is just a view.</p>
+          <div class="list" id="tk-list"></div><div class="row"><button class="b" id="tk-refresh" type="button">Refresh</button></div></div>
+      </section>
+    </div>
+  </main>
+  <script src="site.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var esc = Site.esc, A = null, cfg = null;
+      try { sessionStorage.setItem('login_return', 'admin.html'); } catch (e) {}
+      var SAMPLE = { display: 'Alex', username: 'alex', id: '123456789012345678', mention: '@Alex', email: 'alex@example.com (verified)', created: 'Jan 1, 2020', createdAgo: '6 years ago', locale: 'en-US', mfa: 'Yes', nitro: 'Nitro', kiteServer: 'Member', connectionCount: '2', connections: '• github: alex (verified)\n• twitch: alex' };
+
+      function st(id, msg, ok) { var e = $(id); e.textContent = msg; e.className = 'st' + (ok === true ? ' ok' : ok === false ? ' err' : ''); }
+      async function save(patch, id) {
+        st(id, 'Saving...');
+        var r = await Site.api('admin', { action: 'save', patch: patch });
+        if (r.ok) { cfg = r.json.config; st(id, 'Saved.', true); return true; }
+        st(id, r.json.error || 'Could not save.', false); return false;
+      }
+
+      function md(s) {
+        s = Site.esc(s);
+        s = s.replace(/\|\|([^|]+)\|\|/g, '<span class="sp">$1</span>').replace(/```([\s\S]*?)```/g, '<code>$1</code>').replace(/`([^`\n]+)`/g, '<code>$1</code>')
+          .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/&lt;@!?(\d+)&gt;/g, '<span class="men">@user</span>').replace(/&lt;t:\d+(?::[a-zA-Z])?&gt;/g, '<span class="men">date</span>');
+        var out = [], lines = s.split('\n'), blockAll = false;
+        lines.forEach(function (l) {
+          if (/^&gt;&gt;&gt; ?/.test(l)) { blockAll = true; l = l.replace(/^&gt;&gt;&gt; ?/, ''); }
+          if (blockAll) out.push('<blockquote>' + l + '</blockquote>');
+          else if (/^&gt; ?/.test(l)) out.push('<blockquote>' + l.replace(/^&gt; ?/, '') + '</blockquote>');
+          else out.push(l + '\n');
+        });
+        return out.join('');
+      }
+      function preview() {
+        var t = $('l-text').value;
+        var txt = t.replace(/\{(\w+)\}/g, function (m, k) { return SAMPLE.hasOwnProperty(k) ? SAMPLE[k] : m; });
+        var acc = /^#[0-9a-f]{6}$/i.test($('l-acc').value) ? $('l-acc').value : '';
+        var html = '<div class="cont" style="border-left-color:' + (acc || '#1e1f22') + '"><div class="sec"><div class="txt">' + md(txt) + '</div>' + ($('l-thumb').checked ? '<img alt="" src="logo.png">' : '') + '</div>';
+        if ($('l-dd').checked) html += '<hr><div class="sel"><span>' + esc($('l-ph').value || 'Select an option') + '</span><span>\u25BE</span></div>';
+        $('l-prev').innerHTML = html + '</div>';
+      }
+      function fillLogin(m) {
+        $('l-text').value = m.text; $('l-thumb').checked = m.thumbnail; $('l-dd').checked = m.dropdown.enabled; $('l-ph').value = m.dropdown.placeholder; $('l-acc').value = m.accent || '';
+        if (m.accent) $('l-accp').value = m.accent; preview();
+      }
+
+      function fillAll(d) {
+        cfg = d.config;
+        $('b-on').checked = cfg.banner.enabled; $('b-text').value = cfg.banner.text; $('b-style').value = cfg.banner.style; $('b-link').value = cfg.banner.link;
+        $('n-on').checked = cfg.notification.enabled; $('n-title').value = cfg.notification.title; $('n-text').value = cfg.notification.text;
+        $('s-on').checked = cfg.siteEnabled; $('s-msg').value = cfg.maintenanceMessage;
+        document.querySelectorAll('[data-f]').forEach(function (c) { c.checked = cfg.features[c.dataset.f] !== false; });
+        $('k-link').value = (cfg.links && cfg.links.kite) || '';
+        fillLogin(cfg.loginMessage);
+        // tutorials
+        var cats = {}; d.tutorials.forEach(function (t) { (cats[t.cat] = cats[t.cat] || []).push(t); });
+        var h = '';
+        Object.keys(cats).forEach(function (c) { h += '<div style="margin:.6rem 0 .2rem;color:var(--text-muted);font-size:.8rem;text-transform:uppercase">' + esc(c) + '</div>'; cats[c].forEach(function (t) { h += '<label class="item"><input type="checkbox" data-t="' + esc(t.id) + '"' + (cfg.disabled.indexOf(t.id) < 0 ? ' checked' : '') + (t.live ? '' : ' disabled') + '><span class="grow">' + esc(t.name) + '</span>' + (t.live ? '' : '<span class="tag">coming soon</span>') + '</label>'; }); });
+        $('t-list').innerHTML = h;
+        // staff
+        $('st-list').innerHTML = d.staff.length ? d.staff.map(function (s) { return '<div class="item"><span class="grow">' + esc(s.name || 'Unknown (has not logged in yet)') + ' <small>' + esc(s.id) + '</small></span><button class="b d" data-rm="' + esc(s.id) + '" type="button">Remove</button></div>'; }).join('') : '<p class="hint">No staff yet.</p>';
+        $('st-list').querySelectorAll('[data-rm]').forEach(function (b) { b.addEventListener('click', async function () { var r = await Site.api('admin', { action: 'staffRemove', id: b.dataset.rm }); if (r.ok) load(); else st('st-st', r.json.error, false); }); });
+        $('l-vars').innerHTML = d.vars.map(function (v) { return '<button type="button" class="chip" data-v="' + v + '">{' + v + '}</button>'; }).join('');
+        $('l-vars').querySelectorAll('.chip').forEach(function (c) { c.addEventListener('click', function () { var t = $('l-text'), s = t.selectionStart, e = t.selectionEnd; t.value = t.value.slice(0, s) + '{' + c.dataset.v + '}' + t.value.slice(e); t.focus(); t.selectionStart = t.selectionEnd = s + c.dataset.v.length + 2; preview(); }); });
+        $('l-opts').textContent = d.loginOptions.join(', ');
+        tickets(d.tickets);
+      }
+      function tickets(list) {
+        $('tk-list').innerHTML = list.length ? list.map(function (t) { return '<div class="item"><span class="grow"><b>' + esc(t.subject) + '</b> <span class="tag">' + esc(t.category) + '</span><br><small>' + esc(t.name || t.username) + ' (' + esc(t.userId) + ') \u00b7 ' + new Date(t.created).toLocaleString() + ' \u00b7 ' + (t.replies || 0) + ' repl' + (t.replies === 1 ? 'y' : 'ies') + '</small><br><small>' + esc((t.message || '').slice(0, 160)) + '</small></span></div>'; }).join('') : '<p class="hint">No open tickets.</p>';
+      }
+
+      async function load() {
+        var r = await Site.api('admin', { action: 'state' });
+        if (!r.ok) { $('gate-msg').textContent = r.status === 403 ? 'You do not have access to this page.' : (r.json.error || 'Could not load the admin panel.'); $('gate-login').hidden = true; return; }
+        A = r.json; $('gate').hidden = true; $('app').hidden = false;
+        $('who').textContent = 'Signed in as ' + (Site.state.auth.user.global_name || Site.state.auth.user.username) + ' \u00b7 ' + A.role + (A.storage ? '' : ' \u00b7 storage is NOT connected: changes cannot be saved');
+        var tabs = [['announce', 'Banner & notification'], ['tickets', 'Tickets']];
+        if (A.role === 'owner') tabs = [['announce', 'Banner & notification'], ['site', 'Site & features'], ['tut', 'Tutorials'], ['staff', 'Staff'], ['login', 'Login message'], ['tickets', 'Tickets']];
+        $('tabs').innerHTML = tabs.map(function (t) { return '<button class="tab" data-p="' + t[0] + '" type="button">' + t[1] + '</button>'; }).join('');
+        $('tabs').querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.p); }); });
+        fillAll(A);
+        show(sessionStorage.getItem('admin_tab') && tabs.some(function (t) { return t[0] === sessionStorage.getItem('admin_tab'); }) ? sessionStorage.getItem('admin_tab') : 'announce');
+      }
+      function show(p) {
+        document.querySelectorAll('.panel').forEach(function (e) { e.classList.toggle('on', e.id === 'p-' + p); });
+        document.querySelectorAll('.tab').forEach(function (e) { e.classList.toggle('on', e.dataset.p === p); });
+        try { sessionStorage.setItem('admin_tab', p); } catch (e) {}
+      }
+
+      $('b-save').addEventListener('click', function () { save({ banner: { enabled: $('b-on').checked, text: $('b-text').value, style: $('b-style').value, link: $('b-link').value } }, 'b-st'); });
+      $('n-save').addEventListener('click', function () { save({ notification: { enabled: $('n-on').checked, title: $('n-title').value, text: $('n-text').value, publish: $('n-new').checked } }, 'n-st'); });
+      $('s-save').addEventListener('click', function () { save({ siteEnabled: $('s-on').checked, maintenanceMessage: $('s-msg').value }, 's-st'); });
+      $('f-save').addEventListener('click', function () { var f = {}; document.querySelectorAll('[data-f]').forEach(function (c) { f[c.dataset.f] = c.checked; }); save({ features: f, links: { kite: $('k-link').value } }, 'f-st'); });
+      $('t-save').addEventListener('click', function () { var d = []; document.querySelectorAll('[data-t]').forEach(function (c) { if (!c.checked) d.push(c.dataset.t); }); save({ disabled: d }, 't-st'); });
+      $('st-add').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'staffAdd', id: $('st-id').value.trim() }); if (r.ok) { $('st-id').value = ''; st('st-st', 'Added.', true); var s = await Site.api('admin', { action: 'state' }); if (s.ok) fillAll(s.json); } else st('st-st', r.json.error, false); });
+      $('l-save').addEventListener('click', function () { save({ loginMessage: { text: $('l-text').value, thumbnail: $('l-thumb').checked, accent: /^#[0-9a-f]{6}$/i.test($('l-acc').value) ? $('l-acc').value : '', dropdown: { enabled: $('l-dd').checked, placeholder: $('l-ph').value } } }, 'l-st'); });
+      $('l-reset').addEventListener('click', function () { fillLogin(A.defaultLogin); });
+      ['l-text', 'l-thumb', 'l-dd', 'l-ph', 'l-acc'].forEach(function (i) { $(i).addEventListener('input', preview); $(i).addEventListener('change', preview); });
+      $('l-accp').addEventListener('input', function () { $('l-acc').value = $('l-accp').value; preview(); });
+      $('tk-refresh').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'tickets', status: 'open' }); if (r.ok) tickets(r.json.tickets); });
+
+      $('gate-login').addEventListener('click', function () { Site.login({ returnTo: 'admin.html' }); });
+      Site.init({ header: '#nav-right', noChat: true, promptLogin: false }).then(function () {
+        if (!Site.state.auth) { $('gate-msg').textContent = 'Log in with Discord to open the admin panel.'; $('gate-login').hidden = false; return; }
+        load();
+      });
+    })();
+  </script>
+</body>
+</html>

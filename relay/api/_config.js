@@ -10,25 +10,12 @@ const EMBED_VARS = [
   'kiteServer', 'connectionCount', 'connections',
 ];
 
-const DEFAULT_LOGIN_EMBED = {
-  title: 'New login on the tutorial site',
-  description: '**{display}** (@{username}) just logged in.',
-  color: '#94cec4',
-  footer: '',
+// The login report is a Components V2 message: one container with the text (+ optional avatar thumbnail) and an optional dropdown.
+const DEFAULT_LOGIN_MESSAGE = {
+  text: '**User**\n> {mention} [`{id}`]\n\n**Account Data**\n>>> Email • ||{email}||\nCreated At • {created}\n2FA Enabled • {mfa}\nNitro • {nitro}\nKite Support Server • {kiteServer}\nConnected Accounts • {connectionCount}\n{connections}',
   thumbnail: true,
-  timestamp: true,
-  fields: [
-    { name: 'Username', value: '@{username}', inline: true, enabled: true },
-    { name: 'Display name', value: '{display}', inline: true, enabled: true },
-    { name: 'User ID', value: '{id}', inline: true, enabled: true },
-    { name: 'Email', value: '{email}', inline: false, enabled: true },
-    { name: 'Account created', value: '{created}', inline: true, enabled: true },
-    { name: 'Locale', value: '{locale}', inline: true, enabled: true },
-    { name: '2FA enabled', value: '{mfa}', inline: true, enabled: true },
-    { name: 'Nitro', value: '{nitro}', inline: true, enabled: true },
-    { name: 'Kite support server', value: '{kiteServer}', inline: true, enabled: true },
-    { name: 'Connected accounts', value: '{connections}', inline: false, enabled: true },
-  ],
+  accent: '',
+  dropdown: { enabled: true, placeholder: 'Select an option' },
 };
 
 const DEFAULT_CONFIG = {
@@ -38,7 +25,8 @@ const DEFAULT_CONFIG = {
   notification: { enabled: false, id: '', title: '', text: '' },
   disabled: [],
   features: { favorites: true, ratings: true, support: true, chat: true, loginPrompt: true },
-  loginEmbed: DEFAULT_LOGIN_EMBED,
+  loginMessage: DEFAULT_LOGIN_MESSAGE,
+  links: { kite: '' },
 };
 
 const FEATURE_KEYS = Object.keys(DEFAULT_CONFIG.features);
@@ -48,23 +36,14 @@ const str = (v, n) => clip(typeof v === 'string' ? v : '', n).replace(/\u0000/g,
 const bool = (v, d) => (typeof v === 'boolean' ? v : d);
 const isHttps = (u) => /^https:\/\/[^\s]+$/i.test(u);
 
-function sanitizeEmbed(t, base) {
-  base = base || DEFAULT_LOGIN_EMBED;
+function sanitizeLogin(t) {
   t = t && typeof t === 'object' ? t : {};
-  const fields = (Array.isArray(t.fields) ? t.fields : base.fields).slice(0, 20).map((f) => ({
-    name: str(f && f.name, 120),
-    value: str(f && f.value, 900),
-    inline: bool(f && f.inline, false),
-    enabled: bool(f && f.enabled, true),
-  }));
+  const d = t.dropdown && typeof t.dropdown === 'object' ? t.dropdown : {};
   return {
-    title: str(t.title, 200),
-    description: str(t.description, 3000),
-    color: /^#[0-9a-f]{6}$/i.test(t.color) ? t.color.toLowerCase() : base.color,
-    footer: str(t.footer, 200),
+    text: str(t.text, 3000).trim() || DEFAULT_LOGIN_MESSAGE.text,
     thumbnail: bool(t.thumbnail, true),
-    timestamp: bool(t.timestamp, true),
-    fields,
+    accent: /^#[0-9a-f]{6}$/i.test(t.accent) ? t.accent.toLowerCase() : '',
+    dropdown: { enabled: bool(d.enabled, true), placeholder: str(d.placeholder, 100).trim() || 'Select an option' },
   };
 }
 
@@ -100,7 +79,8 @@ function sanitizePatch(patch, current, role) {
       out.features = {};
       for (const k of FEATURE_KEYS) out.features[k] = bool(f[k], current.features ? current.features[k] !== false : true);
     }
-    if ('loginEmbed' in patch) out.loginEmbed = sanitizeEmbed(patch.loginEmbed);
+    if ('links' in patch) out.links = { kite: isHttps((patch.links || {}).kite || '') ? str(patch.links.kite, 300) : '' };
+    if ('loginMessage' in patch) out.loginMessage = sanitizeLogin(patch.loginMessage);
   }
   return out;
 }
@@ -114,8 +94,9 @@ function merge(stored) {
     banner: { ...DEFAULT_CONFIG.banner, ...(stored.banner || {}) },
     notification: { ...DEFAULT_CONFIG.notification, ...(stored.notification || {}) },
     features: { ...DEFAULT_CONFIG.features, ...(stored.features || {}) },
+    links: { ...DEFAULT_CONFIG.links, ...(stored.links || {}) },
     disabled: Array.isArray(stored.disabled) ? stored.disabled : [],
-    loginEmbed: sanitizeEmbed(stored.loginEmbed || DEFAULT_LOGIN_EMBED),
+    loginMessage: sanitizeLogin(stored.loginMessage || DEFAULT_LOGIN_MESSAGE),
   };
 }
 
@@ -142,10 +123,46 @@ const publicView = (c) => ({
   notification: c.notification,
   disabled: c.disabled,
   features: c.features,
+  links: c.links,
 });
 
 // ---- Embed rendering ----
 const fill = (s, vars) => String(s || '').replace(/\{(\w+)\}/g, (m, k) => (Object.prototype.hasOwnProperty.call(vars, k) ? String(vars[k]) : m));
+
+const LOGIN_OPTIONS = [
+  { label: 'Copy user ID', value: 'id', description: 'Shows the ID in a copyable box' },
+  { label: 'Mention user', value: 'mention', description: 'Shows the mention text' },
+  { label: 'Account age', value: 'age', description: 'When the Discord account was created' },
+  { label: 'Profile link', value: 'link', description: 'Link to their Discord profile' },
+];
+
+const container = (parts, accent) => {
+  const o = { type: 17, components: parts };
+  if (accent) o.accent_color = parseInt(accent.slice(1), 16);
+  return o;
+};
+
+// Builds the login report as Components V2 message payloads (more than one only if the text is too long for a single message).
+// opts.interactive: include the dropdown (only bot-sent messages can have working dropdowns).
+function buildLoginMessages(tpl, vars, avatar, userId, opts) {
+  const interactive = !!(opts && opts.interactive);
+  const full = fill(tpl.text, vars).trim();
+  let main = full, extra = [];
+  if (full.length > 3800) {
+    main = fill(tpl.text, Object.assign({}, vars, { connections: '(continued below)' })).trim();
+    if (main.length > 3800) main = main.slice(0, 3799) + '…';
+    extra = chunkText(vars.connections || '', 3800);
+  }
+  const text = { type: 10, content: main || '(empty template)' };
+  const parts = [tpl.thumbnail && avatar ? { type: 9, components: [text], accessory: { type: 11, media: { url: avatar } } } : text];
+  if (interactive && tpl.dropdown.enabled) {
+    parts.push({ type: 14, spacing: 2 });
+    parts.push({ type: 1, components: [{ type: 3, custom_id: 'lg:' + userId, placeholder: tpl.dropdown.placeholder, min_values: 1, max_values: 1, options: LOGIN_OPTIONS }] });
+  }
+  const msgs = [{ flags: 32768, allowed_mentions: { parse: [] }, components: [container(parts, tpl.accent)] }];
+  for (const e of extra) msgs.push({ flags: 32768, allowed_mentions: { parse: [] }, components: [container([{ type: 10, content: e }], tpl.accent)] });
+  return msgs;
+}
 
 function chunkText(text, max) {
   const out = [];
@@ -159,35 +176,7 @@ function chunkText(text, max) {
   return out;
 }
 
-// Turns a template + variables into one or more Discord embeds (long descriptions continue in extra embeds).
-function buildEmbeds(tpl, vars, avatar) {
-  const color = parseInt((tpl.color || '#94cec4').slice(1), 16);
-  const title = clip(fill(tpl.title, vars), 256);
-  const desc = fill(tpl.description, vars).trim();
-  const fields = [];
-  for (const f of tpl.fields || []) {
-    if (!f.enabled) continue;
-    const name = clip(fill(f.name, vars).trim(), 256);
-    const value = clip(fill(f.value, vars).trim(), 1024);
-    if (name && value) fields.push({ name, value, inline: !!f.inline });
-    if (fields.length >= 25) break;
-  }
-  const parts = desc ? chunkText(desc, 3800) : [];
-  const main = { color, fields };
-  if (title) main.title = title;
-  if (parts[0]) main.description = parts[0];
-  if (tpl.thumbnail && avatar) main.thumbnail = { url: avatar };
-  if (tpl.footer) main.footer = { text: clip(fill(tpl.footer, vars), 200) };
-  if (tpl.timestamp) main.timestamp = new Date().toISOString();
-  if (!main.title && !main.description && !fields.length) main.description = '(empty template)';
-  const embeds = [main];
-  for (let i = 1; i < parts.length; i++) {
-    embeds.push({ color, title: clip((title || 'Continued') + ' — part ' + (i + 1) + '/' + parts.length, 256), description: parts[i] });
-  }
-  return embeds;
-}
-
 module.exports = {
-  EMBED_VARS, DEFAULT_CONFIG, DEFAULT_LOGIN_EMBED, STAFF_KEYS, FEATURE_KEYS,
-  sanitizeEmbed, sanitizePatch, loadConfig, saveConfig, publicView, fill, buildEmbeds,
+  EMBED_VARS, DEFAULT_CONFIG, DEFAULT_LOGIN_MESSAGE, STAFF_KEYS, FEATURE_KEYS, LOGIN_OPTIONS,
+  sanitizeLogin, sanitizePatch, loadConfig, saveConfig, publicView, fill, buildLoginMessages,
 };

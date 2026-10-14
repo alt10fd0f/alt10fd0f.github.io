@@ -1,17 +1,27 @@
-// Support request: only works for a logged-in Discord user (token verified server-side),
-// then posts the request to the webhook.
+// Support request (login required). Tickets live in Discord only:
+// the request is posted in the modmail channel by the bot (with Reply/Close buttons), the user gets a DM copy,
+// and a record is kept so the admin panel can list open tickets. Falls back to the webhook if the bot isn't set up.
 
-const { clip, handleCommon, verifyToken, displayName, avatarUrl, postEmbeds } = require('./_shared');
+const db = require('./_db');
+const bot = require('./_bot');
+const emb = require('./_embeds');
+const { clip, handleCommon, displayName, avatarUrl, postEmbeds } = require('./_shared');
+const { authenticate, getProfile } = require('./_auth');
+const { loadConfig } = require('./_config');
+const { saveTicket } = require('./_tickets');
 
 const CATEGORIES = ['Bug report', 'Question', 'Tutorial request', 'Other'];
-const recent = new Map(); // userId -> [timestamps], best-effort rate limit per warm instance
+const recent = new Map();
 
 module.exports = async (req, res) => {
   if (handleCommon(req, res)) return;
-  const b = req.body || {};
-  const v = await verifyToken(b.token);
-  if (v.error) return res.status(v.status).json({ error: v.error });
+  const v = await authenticate(req, res);
+  if (!v) return;
   const me = v.me;
+  const b = req.body || {};
+
+  const cfg = await loadConfig();
+  if (cfg.features && cfg.features.support === false) return res.status(403).json({ error: 'Support requests are turned off right now.' });
 
   const category = CATEGORIES.includes(b.category) ? b.category : null;
   const subject = typeof b.subject === 'string' ? b.subject.trim() : '';
@@ -20,7 +30,6 @@ module.exports = async (req, res) => {
   if (subject.length < 3 || subject.length > 100) return res.status(400).json({ error: 'Subject must be 3-100 characters.' });
   if (message.length < 10 || message.length > 1500) return res.status(400).json({ error: 'Message must be 10-1500 characters.' });
 
-  // At most 3 requests per user per hour, and one every 30 seconds.
   const now = Date.now();
   const times = (recent.get(me.id) || []).filter((t) => now - t < 3600000);
   if (times.length >= 3 || (times.length && now - times[times.length - 1] < 30000)) {
@@ -28,27 +37,33 @@ module.exports = async (req, res) => {
   }
   times.push(now);
   recent.set(me.id, times);
+  const fail = () => { times.pop(); return res.status(502).json({ error: 'Could not deliver your request. Please try again.' }); };
 
-  const embed = {
-    title: clip('Support request: ' + subject, 250),
-    description: message,
-    color: 0xe8b4b8,
-    thumbnail: { url: avatarUrl(me) },
-    fields: [
-      { name: 'Category', value: category, inline: true },
-      { name: 'From', value: clip(displayName(me), 80) + ' (@' + clip(me.username, 40) + ')', inline: true },
-      { name: 'User ID', value: clip(me.id, 30), inline: true },
-      { name: 'Email', value: me.email ? clip(me.email, 200) : 'Not provided', inline: false },
-    ],
-    timestamp: new Date().toISOString(),
-  };
+  let prof = null;
+  if (db.ready()) { try { prof = await getProfile(me.id); } catch (e) { prof = null; } }
+  const name = (prof && prof.nickname) || displayName(me);
+  const email = prof && prof.shareEmail === false ? null : me.email || null;
+  const t = { category, subject, message };
 
   try {
-    const ok = await postEmbeds([embed]);
-    if (!ok) { times.pop(); return res.status(502).json({ error: 'Could not deliver your request. Please try again.' }); }
-    return res.status(200).json({ ok: true });
+    if (bot.configured()) {
+      const post = await bot.postToChannel(emb.ticketMessage(me, t, { name, email }));
+      if (!post.ok || !post.json || !post.json.id) return fail();
+      const ticketId = post.json.id;
+      const dm = await bot.sendDM(me.id, emb.receiptDM(t, ticketId));
+      if (db.ready()) {
+        try {
+          await saveTicket({ id: ticketId, userId: me.id, username: me.username, name, category, subject, message, status: 'open', created: now, updated: now, replies: 0, dm: dm.ok });
+        } catch (e) { /* ticket still exists in Discord */ }
+      }
+      return res.status(200).json({ ok: true, dm: dm.ok });
+    }
+    // No bot configured: webhook only (no buttons).
+    const embed = emb.ticketMessage(me, t, { name, email }).embeds[0];
+    const r = await postEmbeds([embed]);
+    if (!r.ok) return fail();
+    return res.status(200).json({ ok: true, dm: false });
   } catch (e) {
-    times.pop();
-    return res.status(502).json({ error: 'Could not deliver your request. Please try again.' });
+    return fail();
   }
 };

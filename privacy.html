@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | ALT10fd0f</title>
+  <meta name="description" content="Privacy Policy for the Kite tutorial site.">
+  <link rel="icon" type="image/png" sizes="128x128" href="favicon.png?v=3"><link rel="shortcut icon" href="favicon.ico?v=3"><link rel="apple-touch-icon" href="favicon.png?v=3">
+  <meta name="theme-color" content="#94CEC4">
+  <script>try{var t=localStorage.getItem('site_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <style>
+    :root { --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134; --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4; --border: #3a3b3d; --navbar-height: 60px; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-height); background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; z-index: 100; gap: 1rem; }
+    .navbar-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text); font-weight: 600; font-size: 1.1rem; }
+    .navbar-brand img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    @media (max-width: 768px) { .navbar-brand span { display: none; } .navbar { padding: 0 0.6rem; } }
+    main { max-width: 780px; margin: 0 auto; padding: calc(var(--navbar-height) + 2rem) 1.25rem 4rem; }
+    h1 { font-size: 2rem; margin-bottom: 0.3rem; }
+    .updated { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.6rem; }
+    h2 { font-size: 1.2rem; margin: 2rem 0 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    p, li { color: var(--text-secondary); margin-bottom: 0.6rem; }
+    ul { margin: 0.4rem 0 1rem 1.4rem; }
+    a { color: var(--accent); }
+    code { background: var(--bg-tertiary); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em; }
+    table { width: 100%; border-collapse: collapse; margin: 0.6rem 0 1.2rem; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-secondary); }
+    th { color: var(--text); }
+    .back { display: inline-block; margin-bottom: 1rem; font-size: 0.9rem; }
+  </style>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <nav class="navbar"><a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28"><span>ALT10fd0f</span></a><div class="navbar-right" id="nav-right"></div></nav>
+  <main>
+    <a class="back" href="index.html">&larr; Back to the tutorials</a>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: October 13, 2026</p>
+    <p>This site (alt10fd0f.github.io, "the site") hosts Kite Discord-bot tutorials written by ALT10fd0f ("I", "me"). It is a hobby project and is <b>not officially affiliated with Kite</b>. This policy explains what is collected when you use it. Browsing the tutorials needs no account; logging in with Discord is how the features that need to know who you are (favorites, difficulty ratings, support requests, the chat helper) work.</p>
+
+    <h2>What is collected when you log in with Discord</h2>
+    <p>You log in through Discord's own authorization screen and approve these permissions (scopes): <code>identify</code>, <code>email</code>, <code>guilds</code> and <code>connections</code>. After you approve, the site and my server receive:</p>
+    <ul>
+      <li><b>Profile:</b> your Discord user ID, username, display name, avatar and locale, whether you have 2FA and what Nitro type you have, and (from your ID) when your account was created.</li>
+      <li><b>Email address</b> and whether Discord has verified it. You can switch off sharing it in your account panel; the site still receives it from Discord, but it is left out of the reports and support requests.</li>
+      <li><b>Server membership, used only for one check:</b> the <code>guilds</code> permission lets me see the list of servers you are in. <b>We only use the server connection to check whether you are in the Kite support server.</b> The list itself is not saved, not shown to anyone and not included in any report; only the answer ("member" or "not a member") is used.</li>
+      <li><b>Connected accounts:</b> the accounts linked to your Discord profile (for example the type and name of a linked service).</li>
+    </ul>
+    <p>Each login sends a short report with this information to a private thread on a Discord server that I control, so I can see who is using the site. Your login creates (once) a thread for you; later logins are posted to the same thread.</p>
+
+    <h2>What is stored</h2>
+    <table>
+      <tr><th>Where</th><th>What</th><th>Why</th></tr>
+      <tr><td>Your browser (localStorage)</td><td>Your Discord access token (valid for about a week), a small copy of your profile (ID, name, avatar), your dark/light choice, and which notices you dismissed.</td><td>Keeps you logged in and remembers your choices. Log out to remove the token; clear site data to remove the rest.</td></tr>
+      <tr><td>Site database (Upstash Redis)</td><td>Your Discord ID, username, display name, avatar id, your display name/email-sharing choices, first and last login time, the id of your Discord thread, your favorites and difficulty ratings, and records of your support requests (category, subject, message, status, times).</td><td>To make favorites, ratings, support and the admin tools work.</td></tr>
+      <tr><td>Discord (my private server)</td><td>The login reports, and the support requests and replies.</td><td>So I can answer you and see site usage. Staff of that server can read them.</td></tr>
+    </table>
+    <p>Your Discord access token is verified with Discord on each request and is <b>not</b> saved in the database.</p>
+
+    <h2>Support requests</h2>
+    <p>When you send a support request, the subject, message and category are posted in a private staff channel on Discord with your username and ID (and your email unless you turned that off). The Kite Tutorials bot also sends you a copy by direct message and relays replies between you and staff. DMs only work if you allow them from the bot; the request is still received if they are closed.</p>
+
+    <h2>Difficulty ratings and favorites</h2>
+    <p>Your favorites are private to you. Your ratings are stored against your ID so you can change them; only the totals (average and number of ratings) are shown publicly.</p>
+
+    <h2>AI chat helper</h2>
+    <p>If you use the chat helper, the messages you type are sent through my server to Anthropic's Claude API to generate an answer, together with the tutorial text. I do not store the conversation (a per-day question counter is kept to prevent abuse). Do not type personal or sensitive information into it. Answers may be wrong.</p>
+
+    <h2>Who else handles data</h2>
+    <ul>
+      <li><b>Discord</b> (login, the reports and support messages).</li>
+      <li><b>GitHub Pages</b> (hosts the website; may log visits as part of hosting).</li>
+      <li><b>Vercel</b> (runs my server code and keeps routine request logs).</li>
+      <li><b>Upstash</b> (the database).</li>
+      <li><b>Anthropic</b> (only if you use the chat helper).</li>
+    </ul>
+    <p>I do not sell your data, show ads or use analytics or tracking cookies.</p>
+
+    <h2>Your choices and your rights</h2>
+    <ul>
+      <li><b>See and edit:</b> click your name at the top right to see what is stored and to change your display name and email-sharing choice.</li>
+      <li><b>Delete:</b> use <i>Request data deletion</i> in the same panel. It erases your profile, favorites, ratings and support request records from the site database and logs you out. I am notified so I can also delete your Discord thread and support messages by hand.</li>
+      <li><b>Revoke access:</b> in Discord, go to Settings &rarr; Authorized Apps and remove the app at any time.</li>
+      <li>You can contact me on Discord (link in the footer) with any request or question.</li>
+    </ul>
+
+    <h2>Retention</h2>
+    <p>Data is kept until you delete it or I clean it up. Discord messages remain until deleted by me or by you via a deletion request.</p>
+
+    <h2>Children</h2>
+    <p>Discord requires users to be at least 13 (or the minimum age in your country). The site is not meant for anyone younger.</p>
+
+    <h2>Changes</h2>
+    <p>I may update this policy; the date at the top shows the latest version.</p>
+
+  </main>
+  <script src="site.js"></script>
+  <script>Site.init({ header: '#nav-right', noChat: true, promptLogin: false });</script>
+</body>
+</html>

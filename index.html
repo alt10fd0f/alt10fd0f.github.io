@@ -7,6 +7,7 @@
   <meta name="description" content="Make advanced commands with Kite!">
   <link rel="icon" type="image/png" sizes="128x128" href="favicon.png?v=3"><link rel="shortcut icon" href="favicon.ico?v=3"><link rel="apple-touch-icon" href="favicon.png?v=3">
   <meta name="theme-color" content="#94CEC4">
+  <script>try{var t=localStorage.getItem('site_theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
   <style>
     :root { --bg: #1b1b1d; --bg-secondary: #242526; --bg-tertiary: #2a2b2d; --bg-hover: #303134; --text: #e3e3e3; --text-muted: #a0a0a0; --text-secondary: #c4c4c4; --accent: #94CEC4; --border: #3a3b3d; --sidebar-width: 280px; --navbar-height: 60px; --toc-width: 200px; --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -63,7 +64,7 @@
     .auth-user button:hover { color: var(--accent); border-color: var(--accent); }
     .auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 300; display: none; align-items: center; justify-content: center; padding: 1rem; }
     .auth-overlay.show { display: flex; }
-    .auth-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; max-width: 420px; width: 100%; text-align: center; }
+    .auth-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; max-width: 420px; width: 100%; }
     .auth-card h2 { font-size: 1.4rem; margin: 0 0 0.6rem; padding: 0; border: none; }
     .auth-card p { color: var(--text-secondary); margin-bottom: 1.3rem; font-size: 0.95rem; }
     .auth-card .auth-login { display: inline-block; width: 100%; padding: 0.7rem 1rem; font-size: 1rem; }
@@ -125,68 +126,50 @@
       .navbar-brand { font-size: 1rem; min-width: 0; }
       .navbar-brand span { display: none; }
       .navbar-links { display: none; }
-      .navbar-right { min-width: 0; gap: 0.5rem; }
-      .navbar-right > a { display: none; }
-      .auth-slot, .auth-user { min-width: 0; }
-      .auth-user { gap: 0.35rem; }
-      .auth-user #auth-name { max-width: 7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .auth-user img { flex: none; }
-      .auth-user button, .auth-login { white-space: nowrap; flex: none; }
     }
     .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
     @media (max-width: 1100px) { .toc { display: none; } .main, .footer { margin-right: 0; } }
     @media (max-width: 768px) { .sidebar { transform: translateX(-100%); transition: transform 0.25s; } .sidebar.open { transform: translateX(0); } .main, .footer { margin-left: 0; } .menu-toggle { display: block; } }
+    .intro-row { display: flex; align-items: center; }
+    .intro-row .sidebar-item { flex: 1; }
+    .fav-filter { background: none; border: none; color: var(--text-muted); font-size: 1.15rem; cursor: pointer; padding: 0 1.1rem 0 0.4rem; line-height: 1; font-family: inherit; }
+    .fav-filter:hover { color: #e5b400; }
+    .fav-filter.on { color: #e5b400; }
+    .card-meta { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+    .card-meta .diff { font-size: 0.75rem; color: var(--text-muted); background: var(--bg-tertiary); border-radius: 999px; padding: 0.1rem 0.5rem; white-space: nowrap; }
+    .fav-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.05rem; line-height: 1; padding: 0.15rem; font-family: inherit; }
+    .fav-btn:hover, .fav-btn.on { color: #e5b400; }
+    .fav-btn.big { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.8rem; font-size: 0.95rem; color: var(--text-secondary); background: var(--bg-secondary); }
+    .fav-btn.big.on { border-color: #e5b400; }
+    .fav-btn.big span { font-size: 0.85rem; }
+    .tut-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.8rem 1.2rem; margin-bottom: 1rem; padding: 0.6rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; }
+    .tut-bar[hidden] { display: none; }
+    .tb-rate { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; font-size: 0.88rem; color: var(--text-secondary); }
+    .tb-rate small { color: var(--text-muted); }
+    .tb-pips { display: inline-flex; gap: 0.25rem; }
+    .pip { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; font-size: 0.8rem; font-family: inherit; }
+    .pip:hover { border-color: var(--accent); color: var(--accent); }
+    .pip.on { background: var(--accent); border-color: var(--accent); color: #12302b; font-weight: 700; }
+    .tb-note { color: #e5484d; font-size: 0.85rem; min-height: 1em; margin-bottom: 0.4rem; }
+    .tut-off-box { padding: 2.5rem 1rem; text-align: center; color: var(--text-secondary); }
+    .tut-off-box h2 { border: none; }
+    .main.tut-off #view-frame, .main.tut-off #view-tickets { display: none !important; }
+    .tutorial-card.is-off, .sidebar a.is-off { opacity: 0.4; cursor: not-allowed; }
+    .tutorial-card.is-off:hover { border-color: var(--border); background: var(--bg-secondary); }
+    .tutorial-card { position: relative; }
   </style>
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
-  <div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-    <div class="auth-card">
-      <h2 id="auth-title">Welcome to Kite Tutorials</h2>
-      <p id="auth-note" class="auth-note">Log in to submit a support request.</p>
-      <p>Log in with Discord so we know who you are. When you log in, the site owner is sent your Discord username, avatar, email address, basic account details (like locale and account age), the servers you are in, and your connected accounts. Nothing else is collected.</p>
-      <button class="auth-login" id="auth-login-modal" type="button" style="display:inline-block">Login with Discord</button><br>
-      <button class="auth-skip" id="auth-skip" type="button">Not now</button>
-    </div>
-  </div>
-  <div class="auth-overlay" id="support-overlay" role="dialog" aria-modal="true" aria-labelledby="support-title">
-    <form class="auth-card sup-card" id="support-form">
-      <h2 id="support-title">Submit a support request</h2>
-      <p class="sup-as" id="sup-as"></p>
-      <label for="sup-category">Category</label>
-      <select id="sup-category" required>
-        <option value="Question">Question</option>
-        <option value="Bug report">Bug report</option>
-        <option value="Tutorial request">Tutorial request</option>
-        <option value="Other">Other</option>
-      </select>
-      <label for="sup-subject">Subject</label>
-      <input id="sup-subject" type="text" minlength="3" maxlength="100" required autocomplete="off">
-      <label for="sup-message">Message</label>
-      <textarea id="sup-message" rows="6" minlength="10" maxlength="1500" required></textarea>
-      <div class="sup-count"><span id="sup-count">0</span>/1500</div>
-      <p class="sup-note">Your Discord username and email are included so I can reply.</p>
-      <div class="sup-actions">
-        <button type="button" class="auth-skip" id="sup-cancel">Cancel</button>
-        <button type="submit" class="auth-login" id="sup-send">Send request</button>
-      </div>
-      <div class="sup-status" id="sup-status" role="status"></div>
-    </form>
-  </div>
   <nav class="navbar">
     <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
     <a href="index.html" class="navbar-brand"><img src="logo.png" alt="logo" width="28" height="28" style="border-radius:50%;object-fit:cover"><span>ALT10fd0f</span></a>
     <div class="navbar-links"><a href="index.html" class="active">Tutorial</a></div>
-    <div class="navbar-right" style="display:flex;align-items:center">
-      <div class="auth-slot">
-        <button class="auth-login" id="auth-login-btn" type="button" title="Shares your Discord profile, email, servers and connected accounts with the site owner">Login with Discord</button>
-        <div class="auth-user" id="auth-user"><img id="auth-avatar" alt="" width="26" height="26"><span id="auth-name"></span><button id="auth-logout" type="button">Log out</button></div>
-      </div>
-      <a href="https://github.com/ronaksahai/kite-tutorials" target="_blank">GitHub ↗</a>
-    </div>
+    <div class="navbar-right" id="nav-right"></div>
   </nav>
   <div class="layout">
     <aside class="sidebar">
-      <a href="#intro" class="sidebar-item active">Intro</a>
+      <div class="intro-row"><a href="#intro" class="sidebar-item active">Intro</a><button type="button" class="fav-filter" id="fav-filter" aria-pressed="false" title="Click to show only your favorites">☆</button></div>
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Basic Commands</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
@@ -322,6 +305,9 @@
         <p class="support-hint" id="support-hint">You need to be logged in with Discord to submit a request.</p>
       </div>
     </div>
+      <div class="tut-bar" id="tut-bar" hidden></div>
+      <div class="tb-note" id="tb-note" role="status"></div>
+      <div id="tut-off" class="tut-off-box" hidden><h2>This tutorial is turned off</h2><p>It is temporarily unavailable. Please check back soon.</p></div>
       <div id="view-frame" hidden><iframe id="tut-frame" title="Tutorial" style="width:100%;border:0;display:block;min-height:60vh;background:transparent" scrolling="no"></iframe></div>
       <div id="view-tickets" hidden>
       <div class="breadcrumb"><a href="#intro" style="color:inherit;text-decoration:none">🏠</a> › Tickets With Kite</div>
@@ -436,165 +422,14 @@
     Tutorials made with 💛 by ALT10fd0f.<br><br>
     <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord Server</a> ·
     <a href="https://discord.com/users/989152479222579260" style="color:var(--accent)" target="_blank">Contact on Discord</a>
+    <div class="legal-links"><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></div>
   </footer>
+  <script src="site.js"></script>
+  <script src="tutorials.js"></script>
   <script>
-
-    // ---- Discord login (OAuth2 implicit grant, scopes: identify email guilds connections) ----
-    // Paste your Discord application's Client ID below. Leave as-is to keep the login prompt switched off.
-    const DISCORD_CLIENT_ID = '1520497604360671263';
-    // Must exactly match a Redirect URI you added in the Discord developer portal.
-    const DISCORD_REDIRECT_URI = 'https://alt10fd0f.github.io/';
-    // URLs of the deployed relay (see relay/api). Leave NOTIFY_URL '' to send no login notifications.
-    const NOTIFY_URL = 'https://kite-login-notify-sanfranrps.vercel.app/api/notify';
-    const SUPPORT_URL = 'https://kite-login-notify-sanfranrps.vercel.app/api/support';
-    const DISCORD_SCOPES = 'guilds email identify connections';
-    const AUTH_KEY = 'discord_auth_v2'; // v2: logins made before the extra scopes are discarded
-    const authEnabled = DISCORD_CLIENT_ID && DISCORD_CLIENT_ID !== 'YOUR_CLIENT_ID';
-    function authRead() { try { const a = JSON.parse(localStorage.getItem(AUTH_KEY)); return a && a.expires > Date.now() ? a : null; } catch (e) { return null; } }
-    function authWrite(a) { try { a ? localStorage.setItem(AUTH_KEY, JSON.stringify(a)) : localStorage.removeItem(AUTH_KEY); } catch (e) {} }
-    function discordLogin() {
-      const state = crypto.getRandomValues(new Uint32Array(4)).join('-');
-      try { sessionStorage.setItem('discord_state', state); } catch (e) {}
-      location.href = 'https://discord.com/oauth2/authorize?client_id=' + encodeURIComponent(DISCORD_CLIENT_ID)
-        + '&response_type=token&redirect_uri=' + encodeURIComponent(DISCORD_REDIRECT_URI)
-        + '&scope=' + encodeURIComponent(DISCORD_SCOPES) + '&state=' + state;
-    }
-    function authRender() {
-      const a = authRead(), loginBtn = document.getElementById('auth-login-btn'), userBox = document.getElementById('auth-user');
-      if (!authEnabled) { loginBtn.style.display = 'none'; userBox.style.display = 'none'; return; }
-      loginBtn.style.display = a ? 'none' : 'inline-block';
-      userBox.style.display = a ? 'flex' : 'none';
-      if (a) {
-        document.getElementById('auth-name').textContent = a.user.global_name || a.user.username;
-        document.getElementById('auth-avatar').src = a.user.avatar
-          ? 'https://cdn.discordapp.com/avatars/' + a.user.id + '/' + a.user.avatar + '.png?size=64'
-          : 'https://cdn.discordapp.com/embed/avatars/' + Number((BigInt(a.user.id) >> 22n) % 6n) + '.png';
-      }
-      supportRefresh();
-    }
-    async function authHandleReturn() {
-      const p = new URLSearchParams(location.hash.slice(1));
-      if (!p.get('access_token')) return;
-      const token = p.get('access_token'), expires = Number(p.get('expires_in') || 0) * 1000;
-      let ok = false; try { ok = p.get('state') && p.get('state') === sessionStorage.getItem('discord_state'); sessionStorage.removeItem('discord_state'); } catch (e) {}
-      history.replaceState(null, '', location.pathname + location.search);
-      if (!ok) return;
-      try {
-        const r = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
-        if (!r.ok) return;
-        authWrite({ token, expires: Date.now() + expires, user: await r.json() });
-        if (NOTIFY_URL) fetch(NOTIFY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => {});
-      } catch (e) {}
-    }
-    (async function authInit() {
-      if (!authEnabled) return;
-      await authHandleReturn();
-      authRender();
-      document.getElementById('auth-login-btn').addEventListener('click', discordLogin);
-      document.getElementById('auth-login-modal').addEventListener('click', discordLogin);
-      document.getElementById('auth-logout').addEventListener('click', () => { authWrite(null); authRender(); });
-      const overlay = document.getElementById('auth-overlay');
-      const hideOverlay = () => { overlay.classList.remove('show'); document.getElementById('auth-note').style.display = 'none'; try { sessionStorage.setItem('discord_prompt_dismissed', '1'); } catch (e) {} };
-      document.getElementById('auth-skip').addEventListener('click', hideOverlay);
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') hideOverlay(); });
-      try { localStorage.removeItem('discord_auth'); } catch (e) {}
-      if (authRead()) {
-        let pending = false; try { pending = sessionStorage.getItem('support_after_login') === '1'; sessionStorage.removeItem('support_after_login'); } catch (e) {}
-        if (pending) supportOpen();
-      }
-      let dismissed = false; try { dismissed = sessionStorage.getItem('discord_prompt_dismissed') === '1'; } catch (e) {}
-      if (!authRead() && !dismissed) overlay.classList.add('show');
-    })();
-    // ---- Support request form (login required) ----
-    function supportRefresh() {
-      const a = authRead(), hint = document.getElementById('support-hint');
-      if (!hint) return;
-      hint.textContent = a ? 'Submitting as ' + (a.user.global_name || a.user.username) + '.' : 'You need to be logged in with Discord to submit a request.';
-    }
-    function supportClose() { document.getElementById('support-overlay').classList.remove('show'); }
-    function supportOpen() {
-      const a = authRead();
-      if (!a) {
-        try { sessionStorage.setItem('support_after_login', '1'); sessionStorage.removeItem('discord_prompt_dismissed'); } catch (e) {}
-        document.getElementById('auth-note').style.display = 'block';
-        document.getElementById('auth-overlay').classList.add('show');
-        return;
-      }
-      document.getElementById('sup-as').textContent = 'Submitting as ' + (a.user.global_name || a.user.username) + ' (@' + a.user.username + ')';
-      const st = document.getElementById('sup-status'); st.textContent = ''; st.className = 'sup-status';
-      document.getElementById('support-overlay').classList.add('show');
-      document.getElementById('sup-subject').focus();
-    }
-    async function supportSubmit(e) {
-      e.preventDefault();
-      const a = authRead(), st = document.getElementById('sup-status'), btn = document.getElementById('sup-send');
-      if (!a) { st.className = 'sup-status err'; st.textContent = 'Your login expired. Please log in again.'; return; }
-      btn.disabled = true; st.className = 'sup-status'; st.textContent = 'Sending...';
-      try {
-        const r = await fetch(SUPPORT_URL, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token: a.token,
-            category: document.getElementById('sup-category').value,
-            subject: document.getElementById('sup-subject').value,
-            message: document.getElementById('sup-message').value,
-          }),
-        });
-        const j = await r.json().catch(() => ({}));
-        if (r.ok) {
-          st.className = 'sup-status ok'; st.textContent = 'Request sent. Thank you!';
-          document.getElementById('support-form').reset(); document.getElementById('sup-count').textContent = '0';
-          setTimeout(supportClose, 1800);
-        } else {
-          let msg = j.error || 'Something went wrong. Please try again.';
-          if (r.status === 401 || r.status === 403) { authWrite(null); authRender(); msg = 'Your login expired. Please log in again.'; }
-          st.className = 'sup-status err'; st.textContent = msg;
-        }
-      } catch (err) {
-        st.className = 'sup-status err'; st.textContent = 'Could not reach the server. Please try again.';
-      } finally { btn.disabled = false; }
-    }
-    document.getElementById('support-open').addEventListener('click', supportOpen);
-    document.getElementById('sup-cancel').addEventListener('click', supportClose);
-    document.getElementById('support-form').addEventListener('submit', supportSubmit);
-    document.getElementById('sup-message').addEventListener('input', e => { document.getElementById('sup-count').textContent = e.target.value.length; });
-    document.getElementById('support-overlay').addEventListener('click', e => { if (e.target.id === 'support-overlay') supportClose(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') supportClose(); });
     function toggleCategory(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     function toggleGroup(el) { el.classList.toggle('open'); const s = el.nextElementSibling; if (s) s.classList.toggle('open'); }
     document.querySelectorAll('.sidebar-item:not(.sidebar-toggle)').forEach(i => i.addEventListener('click', () => document.querySelector('.sidebar').classList.remove('open')));
-    const searchInput = document.getElementById('tutorial-search');
-    const searchEmpty = document.getElementById('search-empty');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim().toLowerCase();
-        let any = false;
-        document.querySelectorAll('.tutorial-card').forEach(c => {
-          const n = (c.querySelector('.name')?.textContent || '').toLowerCase();
-          const m = !q || n.includes(q);
-          c.classList.toggle('hidden', !m);
-          if (m) any = true;
-        });
-        document.querySelectorAll('.category-heading').forEach(h => {
-          const g = h.nextElementSibling;
-          if (g && g.classList.contains('tutorial-grid')) {
-            const vis = [...g.querySelectorAll('.tutorial-card')].some(c => !c.classList.contains('hidden'));
-            const cat = (h.dataset.category || h.textContent || '').toLowerCase();
-            const show = vis || (q && cat.includes(q));
-            h.classList.toggle('hidden', !show && !!q);
-            g.classList.toggle('hidden', !show && !!q);
-            if (show) any = true;
-            if (q && cat.includes(q)) {
-              h.classList.remove('hidden'); g.classList.remove('hidden');
-              g.querySelectorAll('.tutorial-card').forEach(c => c.classList.remove('hidden'));
-              any = true;
-            }
-          }
-        });
-        searchEmpty.style.display = any || !q ? 'none' : 'block';
-      });
-    }
-
     const TICKET_IDS = ['ticket-open','claim-button','close-button','rename','close-request','sharecodes'];
     const viewHome = document.getElementById('view-home');
     const viewTickets = document.getElementById('view-tickets');
@@ -634,13 +469,16 @@
         const t = document.querySelector('.sidebar-toggle'), n = document.querySelector('.sidebar-nested');
         if (t) t.classList.add('open'); if (n) n.classList.add('open');
       }
+      if (window.TutorialsUI) TutorialsUI.setCurrent(isTicket ? 'tickets' : frame ? id : null);
       if (frame) { window.scrollTo(0, 0); return; }
+      if (window.TutorialsUI && !frame) TutorialsUI.setCurrent(isTicket ? 'tickets' : null);
       const target = id ? document.getElementById(id) : null;
       if (target && !target.closest('[hidden]') && !target.classList.contains('tutorial-card')) target.scrollIntoView();
       else if (!id || id === 'intro' || (target && target.classList.contains('tutorial-card'))) window.scrollTo(0, 0);
     }
     window.addEventListener('hashchange', route);
     route();
+    Site.init({ header: '#nav-right' });
     function flashBtn(btn) {
       const orig = btn.textContent;
       btn.textContent = 'Copied!';

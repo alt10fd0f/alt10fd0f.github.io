@@ -5,9 +5,9 @@
 
 const db = require('./_db');
 const bot = require('./_bot');
-const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postEmbeds, logsChannelId } = require('./_shared');
+const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, postWebhookMessages, logsChannelId } = require('./_shared');
 const { getProfile, saveProfile } = require('./_auth');
-const { loadConfig, buildEmbeds } = require('./_config');
+const { loadConfig, buildLoginMessages } = require('./_config');
 
 const NITRO = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro', 3: 'Nitro Basic' };
 const yesNo = (v) => (v ? 'Yes' : 'No');
@@ -75,7 +75,8 @@ module.exports = async (req, res) => {
   };
 
   const cfg = await loadConfig();
-  const embeds = buildEmbeds(cfg.loginEmbed, vars, avatarUrl(me));
+  const botMode = bot.hasToken() && dbOn;
+  const messages = buildLoginMessages(cfg.loginMessage, vars, avatarUrl(me), me.id, { interactive: botMode });
 
   // Save the profile first so a failed webhook post doesn't lose the thread id we are about to create.
   const next = Object.assign({ firstSeen: now, shareEmail: true }, profile, {
@@ -91,17 +92,17 @@ module.exports = async (req, res) => {
 
   let threadId = next.threadId || null;
   let r;
-  if (bot.hasToken() && dbOn) {
+  if (botMode) {
     if (!threadId) threadId = await makeThread();
-    r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+    r = threadId ? await bot.postMessagesTo(threadId, messages) : { ok: false };
     if (!r.ok && threadId && (r.status === 404 || r.status === 403 || r.status === 400)) {
       // The stored thread was deleted/locked: make a new one and remember it.
       threadId = await makeThread();
-      r = threadId ? await bot.postEmbedsTo(threadId, embeds) : { ok: false };
+      r = threadId ? await bot.postMessagesTo(threadId, messages) : { ok: false };
     }
     if (!r.ok) threadId = next.threadId || null; // keep the old id if we couldn't replace it
   } else {
-    r = await postEmbeds(embeds); // no bot/database configured: plain webhook post
+    r = await postWebhookMessages(messages); // no bot/database configured: plain webhook post (no dropdown)
     threadId = next.threadId || null;
   }
   next.threadId = threadId;

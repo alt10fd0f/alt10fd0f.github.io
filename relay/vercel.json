@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/chat.js": { "maxDuration": 30 },
+    "api/notify.js": { "maxDuration": 30 },
+    "api/support.js": { "maxDuration": 20 }
+  }
+}
