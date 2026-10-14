@@ -177,7 +177,7 @@
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">User Info Command</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Dm Command</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Say Command</a>
-          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Prefix Commands</a>
+          <a href="#prefix" class="sidebar-item">Prefix Commands</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Password Commands</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Rank/Role Lock Commands</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Purge Command</a>
@@ -222,7 +222,7 @@
         <div class="sidebar-sub open">
           <a href="#timestamps" class="sidebar-item">Timestamps with Kite</a>
           <a href="#cookie" class="sidebar-item">Cookie API Transcripts</a>
-          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Roblox Account Lookup</a>
+          <a href="#roblox-lookup" class="sidebar-item">Roblox Account Lookup</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Roblox Verification</a>
           <a href="#membercount" class="sidebar-item">Member Count API</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">ERLC API V2</a>
@@ -263,7 +263,7 @@
         <a href="#" class="tutorial-card" id="userinfo"><span class="num">02</span><span class="name">User Info Command</span></a>
         <a href="#" class="tutorial-card" id="dm"><span class="num">03</span><span class="name">Dm Command</span></a>
         <a href="#" class="tutorial-card" id="say"><span class="num">06</span><span class="name">Say Command</span></a>
-        <a href="#" class="tutorial-card" id="prefix"><span class="num">07</span><span class="name">Prefix Commands</span></a>
+        <a href="#prefix" class="tutorial-card" id="prefix"><span class="num">07</span><span class="name">Prefix Commands</span></a>
         <a href="#" class="tutorial-card" id="password"><span class="num">08</span><span class="name">Password Commands</span></a>
         <a href="#" class="tutorial-card" id="ranklock"><span class="num">09</span><span class="name">Rank/Role Lock Commands</span></a>
         <a href="#" class="tutorial-card" id="purge"><span class="num">20</span><span class="name">Purge Command</span></a>
@@ -292,7 +292,7 @@
       <div class="tutorial-grid">
         <a href="#timestamps" class="tutorial-card" id="timestamps"><span class="num">11</span><span class="name">Timestamps with kite</span></a>
         <a href="#cookie" class="tutorial-card" id="cookie"><span class="num">14</span><span class="name">Cookie API Transcripts</span></a>
-        <a href="#" class="tutorial-card" id="roblox-lookup"><span class="num">15</span><span class="name">Roblox Account Lookup</span></a>
+        <a href="#roblox-lookup" class="tutorial-card" id="roblox-lookup"><span class="num">15</span><span class="name">Roblox Account Lookup</span></a>
         <a href="#" class="tutorial-card" id="roblox-verify"><span class="num">16</span><span class="name">Roblox Verification</span></a>
         <a href="#membercount" class="tutorial-card" id="membercount"><span class="num">17</span><span class="name">Member Count API</span></a>
         <a href="#" class="tutorial-card" id="erlc-api"><span class="num">18</span><span class="name">ERLC API V2</span></a>
@@ -434,7 +434,7 @@
     const viewHome = document.getElementById('view-home');
     const viewTickets = document.getElementById('view-tickets');
     const tocEl = document.querySelector('.toc');
-    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['member-count.html'.replace('member-count','membercount'), 'Member Count API'] };
+    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'] };
     const viewFrame = document.getElementById('view-frame');
     const frameEl = document.getElementById('tut-frame');
     let frameRO = null;

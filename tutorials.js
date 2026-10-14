@@ -3,7 +3,7 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var S = Site.state;
-  var LIVE = ['reminder', 'fakequote', 'modal', 'buttons', 'dropdown', 'application', 'tickets', 'timestamps', 'cookie', 'membercount'];
+  var LIVE = ['reminder', 'fakequote', 'modal', 'buttons', 'dropdown', 'application', 'tickets', 'timestamps', 'cookie', 'membercount', 'prefix', 'roblox-lookup'];
   var current = null;   // tutorial id being viewed, or null
   var favOnly = false;
   var favs = function () { return new Set((S.me && S.me.favorites) || []); };
@@ -13,7 +13,7 @@
   var starHtml = function (on) { return on ? '★' : '☆'; };
 
   // ---- map sidebar links to tutorial ids ----
-  var HREF_TID = { '#reminder': 'reminder', '#fakequote': 'fakequote', '#modal': 'modal', '#buttons': 'buttons', '#dropdown': 'dropdown', '#application': 'application', '#timestamps': 'timestamps', '#cookie': 'cookie', '#membercount': 'membercount' };
+  var HREF_TID = { '#reminder': 'reminder', '#fakequote': 'fakequote', '#modal': 'modal', '#buttons': 'buttons', '#dropdown': 'dropdown', '#application': 'application', '#timestamps': 'timestamps', '#cookie': 'cookie', '#membercount': 'membercount', '#prefix': 'prefix', '#roblox-lookup': 'roblox-lookup' };
   document.querySelectorAll('.sidebar a.sidebar-item').forEach(function (a) { var t = HREF_TID[a.getAttribute('href')]; if (t) a.dataset.tid = t; });
   document.querySelectorAll('.sidebar .sidebar-toggle').forEach(function (t) { if (/Tickets/i.test(t.textContent)) t.dataset.tid = 'tickets'; });
 

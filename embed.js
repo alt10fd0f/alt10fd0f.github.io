@@ -1,7 +1,7 @@
 // Loaded by each tutorial page. When a page is shown inside the main site (in an iframe) it hides its own
 // navbar/sidebar/footer and sends links to other tutorials back to the parent so they open in the same view.
 (function () {
-  var MAP = { 'reminder.html': 'reminder', 'fakequote.html': 'fakequote', 'modal.html': 'modal', 'buttons-data.html': 'buttons', 'dropdown.html': 'dropdown', 'application.html': 'application', 'timestamps.html': 'timestamps', 'cookie-api.html': 'cookie', 'membercount.html': 'membercount' };
+  var MAP = { 'reminder.html': 'reminder', 'fakequote.html': 'fakequote', 'modal.html': 'modal', 'buttons-data.html': 'buttons', 'dropdown.html': 'dropdown', 'application.html': 'application', 'timestamps.html': 'timestamps', 'cookie-api.html': 'cookie', 'membercount.html': 'membercount', 'roblox-lookup.html': 'roblox-lookup', 'prefix.html': 'prefix' };
   // Theme (dark/light) shared with the main page.
   try { var th = localStorage.getItem('site_theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}
   var lt = document.createElement('style');
