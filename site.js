@@ -46,7 +46,7 @@
       var j = await r.json().catch(function () { return {}; });
       if ((r.status === 401 || (r.status === 400 && j.error === 'bad token')) && a) { authWrite(null); S.me = null; renderHeader(); emit(); }
       return { ok: r.ok, status: r.status, json: j };
-    } catch (e) { return { ok: false, status: 0, json: { error: 'Could not reach the server. Please try again.' } }; }
+    } catch (e) { return { ok: false, status: 0, json: { error: 'The site\'s server is not responding right now (it may be updating). Nothing was saved. Please try again later.' } }; }
   }
 
   async function handleReturn() {
@@ -82,7 +82,7 @@
     var r = await api('user', { action: 'me' });
     S.me = r.ok ? r.json : null;
   }
-  var isStaff = function () { return !!(S.me && S.me.role); };
+  var isStaff = function () { return !!((S.me && S.me.role) || (S.auth && S.auth.user && S.auth.user.id === OWNER_ID)); };
 
   // ---------- header ----------
   var KITE_ICON = 'kite-icon.png';
@@ -187,7 +187,7 @@
     if (!S.auth) return openLogin();
     var u = S.auth.user, p = (S.me && S.me.profile) || { nickname: '', shareEmail: true };
     var favs = (S.me && S.me.favorites || []).length, rated = S.me ? Object.keys(S.me.myRatings || {}).length : 0;
-    var role = S.me && S.me.role;
+    var role = (S.me && S.me.role) || (S.auth && S.auth.user && S.auth.user.id === OWNER_ID ? 'owner' : null);
     $('u-body').innerHTML =
       '<div class="up-head"><img alt="" src="' + esc(avatarOf(u)) + '"><div><b>' + esc(u.global_name || u.username) + '</b><small>@' + esc(u.username) + (role ? ' · ' + role : '') + '</small></div></div>' +
       '<h3>Your information</h3>' +
