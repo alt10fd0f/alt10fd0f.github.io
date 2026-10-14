@@ -57,7 +57,11 @@ module.exports = async (req, res) => {
   const created = Math.floor((Number(BigInt(me.id) >> 22n) + 1420070400000) / 1000);
   const connLines = (connections || []).map((c) => '• ' + clip(c.type, 20) + ': ' + clip(c.name, 60) + (c.verified ? ' (verified)' : '') + (c.visibility === 0 ? ' [hidden]' : ''));
   let connText = connLines.length ? connLines.join('\n') : connections ? 'None' : 'Not shared';
-  if (connText.length > 1000) connText = connText.slice(0, connText.lastIndexOf('\n', 980)) + '\n…and ' + (connLines.length - connText.slice(0, connText.lastIndexOf('\n', 980)).split('\n').length) + ' more';
+  if (connText.length > 1000) {
+    const cut = connText.slice(0, connText.lastIndexOf('\n', 980));
+    const extra = connLines.length - cut.split('\n').length;
+    connText = cut + '\n…and ' + extra + ' more';
+  }
   const vars = {
     display: clip(name, 80),
     username: clip(me.username, 40),
