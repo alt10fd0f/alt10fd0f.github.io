@@ -86,6 +86,8 @@ function sanitizePatch(patch, current, role) {
 }
 
 let cache = { at: 0, cfg: null };
+let lastError = null;
+const storageError = () => lastError;
 function merge(stored) {
   stored = stored && typeof stored === 'object' ? stored : {};
   return {
@@ -103,7 +105,9 @@ function merge(stored) {
 async function loadConfig(fresh) {
   if (!db.ready()) return merge(null);
   if (!fresh && cache.cfg && Date.now() - cache.at < 5000) return cache.cfg;
-  const cfg = merge(await db.getJSON('cfg'));
+  let cfg;
+  try { cfg = merge(await db.getJSON('cfg')); lastError = null; }
+  catch (e) { lastError = String(e && e.message || e).slice(0, 200); console.error('config load failed', lastError); cfg = merge(null); }
   cache = { at: Date.now(), cfg };
   return cfg;
 }
@@ -178,5 +182,5 @@ function chunkText(text, max) {
 
 module.exports = {
   EMBED_VARS, DEFAULT_CONFIG, DEFAULT_LOGIN_MESSAGE, STAFF_KEYS, FEATURE_KEYS, LOGIN_OPTIONS,
-  sanitizeLogin, sanitizePatch, loadConfig, saveConfig, publicView, fill, buildLoginMessages,
+  sanitizeLogin, sanitizePatch, storageError, loadConfig, saveConfig, publicView, fill, buildLoginMessages,
 };
