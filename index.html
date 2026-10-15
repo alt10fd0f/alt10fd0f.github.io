@@ -153,8 +153,10 @@
     .tb-note { color: #e5484d; font-size: 0.85rem; min-height: 1em; margin-bottom: 0.4rem; }
     .tut-off-box { padding: 2.5rem 1rem; text-align: center; color: var(--text-secondary); }
     .tut-off-box h2 { border: none; }
-    .main.tut-off #view-frame, .main.tut-off #view-tickets { display: none !important; }
+    .main.tut-off #view-frame, .main.tut-off #view-tickets, .main.tut-off #view-custom { display: none !important; }
     .tutorial-card.is-off, .sidebar a.is-off { opacity: 0.4; cursor: not-allowed; }
+    .tutorial-card.staff-hidden, .sidebar a.staff-hidden { opacity: 0.55; }
+    .tutorial-card.staff-hidden .name::after, .sidebar a.staff-hidden::after { content: '(hidden)'; margin-left: 0.4rem; font-size: 0.75rem; color: var(--text-muted); }
     .tutorial-card.is-off:hover { border-color: var(--border); background: var(--bg-secondary); }
     .tutorial-card { position: relative; }
   </style>
@@ -309,6 +311,7 @@
       <div class="tb-note" id="tb-note" role="status"></div>
       <div id="tut-off" class="tut-off-box" hidden><h2>This tutorial is turned off</h2><p>It is temporarily unavailable. Please check back soon.</p></div>
       <div id="view-frame" hidden><iframe id="tut-frame" title="Tutorial" style="width:100%;border:0;display:block;min-height:60vh;background:transparent" scrolling="no"></iframe></div>
+      <div id="view-custom" class="md" hidden><div class="breadcrumb"><a href="#intro">🏠</a> › <span id="cs-crumb"></span></div><h1 id="cs-title" style="font-size:2.2rem;font-weight:700;margin-bottom:1rem"></h1><div id="cs-body"></div></div>
       <div id="view-tickets" hidden>
       <div class="breadcrumb"><a href="#intro" style="color:inherit;text-decoration:none">🏠</a> › Tickets With Kite</div>
       <h1>Tickets With Kite</h1>
@@ -436,6 +439,7 @@
     const tocEl = document.querySelector('.toc');
     const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'] };
     const viewFrame = document.getElementById('view-frame');
+    const viewCustom = document.getElementById('view-custom');
     const frameEl = document.getElementById('tut-frame');
     let frameRO = null;
     function fitFrame() {
@@ -452,10 +456,12 @@
       const id = decodeURIComponent(location.hash.slice(1));
       const isTicket = TICKET_IDS.includes(id);
       const frame = Object.prototype.hasOwnProperty.call(FRAMES, id) ? FRAMES[id] : null;
-      viewHome.hidden = isTicket || !!frame;
+      const isCustom = /^c-[a-z0-9-]+$/.test(id);
+      viewCustom.hidden = !isCustom;
+      viewHome.hidden = isTicket || !!frame || isCustom;
       viewTickets.hidden = !isTicket;
       viewFrame.hidden = !frame;
-      if (tocEl) tocEl.style.display = (isTicket || frame) ? 'none' : '';
+      if (tocEl) tocEl.style.display = (isTicket || frame || isCustom) ? 'none' : '';
       document.title = isTicket ? 'Tickets With Kite | ALT10fd0f' : frame ? frame[1] + ' | ALT10fd0f' : 'Kite Tutorials | ALT10fd0f';
       if (frame) {
         const src = frame[0] + '?embed=1';
@@ -463,14 +469,14 @@
       }
       document.querySelectorAll('.sidebar a.sidebar-item').forEach(a => {
         const h = a.getAttribute('href');
-        a.classList.toggle('active', !!h && ((isTicket || frame) ? h === '#' + id : h === '#intro'));
+        a.classList.toggle('active', !!h && ((isTicket || frame || isCustom) ? h === '#' + id : h === '#intro'));
       });
       if (isTicket) {
         const t = document.querySelector('.sidebar-toggle'), n = document.querySelector('.sidebar-nested');
         if (t) t.classList.add('open'); if (n) n.classList.add('open');
       }
-      if (window.TutorialsUI) TutorialsUI.setCurrent(isTicket ? 'tickets' : frame ? id : null);
-      if (frame) { window.scrollTo(0, 0); return; }
+      if (window.TutorialsUI) { TutorialsUI.setCurrent(isTicket ? 'tickets' : (frame || isCustom) ? id : null); TutorialsUI.showCustom(isCustom ? id : null); }
+      if (frame || isCustom) { window.scrollTo(0, 0); return; }
       if (window.TutorialsUI && !frame) TutorialsUI.setCurrent(isTicket ? 'tickets' : null);
       const target = id ? document.getElementById(id) : null;
       if (target && !target.closest('[hidden]') && !target.classList.contains('tutorial-card')) target.scrollIntoView();

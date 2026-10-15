@@ -107,3 +107,20 @@ html.has-banner .toc { top: calc(var(--navbar-height) + var(--banner-h)) !import
 .legal-links { margin-top: 0.4rem; font-size: 0.8rem; }
 .legal-links a { color: var(--text-muted); margin: 0 0.4rem; }
 .legal-links a:hover { color: var(--accent); }
+
+/* ---- rendered showcases (markdown) ---- */
+.md h2 { font-size: 1.4rem; font-weight: 600; margin: 2rem 0 0.8rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+.md h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.6rem; color: var(--accent); }
+.md p, .md li { margin-bottom: 0.55rem; color: var(--text-secondary); }
+.md ul, .md ol { margin: 0.5rem 0 1rem 1.4rem; }
+.md ul ul, .md ol ol, .md ul ol, .md ol ul { margin: 0.3rem 0 0.4rem 1.2rem; }
+.md a { color: var(--accent); }
+.md code { background: var(--bg-tertiary); padding: 0.12rem 0.35rem; border-radius: 4px; font-size: 0.88em; font-family: monospace; color: #e8b4b8; }
+:root[data-theme="light"] .md code { color: #b0305a; }
+.md pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0.8rem 0 1.2rem; font-size: 0.82rem; }
+.md pre code { background: none; padding: 0; color: var(--text-secondary); }
+.md img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; margin: 0.6rem 0 1.2rem; display: block; }
+.md hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.md .md-note { background: rgba(148,206,196,0.08); border-left: 4px solid var(--accent); padding: 0.9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1.1rem 0; color: var(--text-secondary); }
+.md .md-sub { font-size: 0.8rem; color: var(--text-muted); }
+.md strong { color: var(--text); }

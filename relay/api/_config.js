@@ -24,6 +24,7 @@ const DEFAULT_CONFIG = {
   banner: { enabled: false, text: '', style: 'info', link: '' },
   notification: { enabled: false, id: '', title: '', text: '' },
   disabled: [],
+  hidden: [],
   features: { favorites: true, ratings: true, support: true, loginPrompt: true },
   loginMessage: DEFAULT_LOGIN_MESSAGE,
   links: { kite: '' },
@@ -73,6 +74,7 @@ function sanitizePatch(patch, current, role) {
   if (role === 'owner') {
     if ('siteEnabled' in patch) out.siteEnabled = bool(patch.siteEnabled, true);
     if ('maintenanceMessage' in patch) out.maintenanceMessage = str(patch.maintenanceMessage, 300) || DEFAULT_CONFIG.maintenanceMessage;
+    if ('hidden' in patch) out.hidden = [...new Set((Array.isArray(patch.hidden) ? patch.hidden : []).filter((id) => ALL_IDS.includes(id)))];
     if ('disabled' in patch) out.disabled = [...new Set((Array.isArray(patch.disabled) ? patch.disabled : []).filter((id) => ALL_IDS.includes(id)))];
     if ('features' in patch) {
       const f = patch.features || {};
@@ -98,6 +100,7 @@ function merge(stored) {
     features: { ...DEFAULT_CONFIG.features, ...(stored.features || {}) },
     links: { ...DEFAULT_CONFIG.links, ...(stored.links || {}) },
     disabled: Array.isArray(stored.disabled) ? stored.disabled : [],
+    hidden: Array.isArray(stored.hidden) ? stored.hidden : [],
     loginMessage: sanitizeLogin(stored.loginMessage || DEFAULT_LOGIN_MESSAGE),
   };
 }
@@ -126,6 +129,7 @@ const publicView = (c) => ({
   banner: c.banner,
   notification: c.notification,
   disabled: c.disabled,
+  hidden: c.hidden,
   features: c.features,
   links: c.links,
 });

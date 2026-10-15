@@ -280,8 +280,58 @@
     document.addEventListener('visibilitychange', async function () { if (!document.hidden) { await loadPublic(); emit(); } });
   }
 
+
+  // ---------- tiny safe markdown (used for admin-made showcases) ----------
+  // Everything is HTML-escaped first; only a fixed set of tags is produced. Links/images must be https (or a file in this site).
+  function md(src) {
+    var E = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); };
+    var okImg = function (u) { return /^https:\/\/[^\s"']+$/i.test(u) || /^[\w][\w./-]*\.(png|jpe?g|gif|webp|svg)$/i.test(u); };
+    function inline(t) {
+      t = E(t);
+      var codes = [];
+      t = t.replace(/`([^`\n]+)`/g, function (m, c) { codes.push(c); return '\u0000' + (codes.length - 1) + '\u0000'; });
+      t = t.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (m, alt, u) { return okImg(u.replace(/&amp;/g, '&')) ? '<img src="' + u + '" alt="' + alt + '" loading="lazy">' : m; });
+      t = t.replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      t = t.replace(/\*\*\*([^*\n]+)\*\*\*/g, '<strong><em>$1</em></strong>').replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>').replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s).,:;!?])/g, '$1<em>$2</em>').replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s).,:;!?])/g, '$1<em>$2</em>');
+      return t.replace(/\u0000(\d+)\u0000/g, function (m, i) { return '<code>' + codes[+i] + '</code>'; });
+    }
+    var lines = String(src || '').replace(/\r\n?/g, '\n').split('\n'), out = [], i = 0, para = [], stack = [];
+    function flushPara() { if (para.length) { out.push('<p>' + para.map(inline).join('<br>') + '</p>'); para = []; } }
+    function closeLists(to) { while (stack.length > to) out.push('</li></' + stack.pop().tag + '>'); }
+    while (i < lines.length) {
+      var ln = lines[i], m;
+      if (/^```/.test(ln)) {
+        flushPara(); closeLists(0); var buf = []; i++;
+        while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
+        i++; out.push('<pre><code>' + E(buf.join('\n')) + '</code></pre>'); continue;
+      }
+      if ((m = /^(\s*)([-*]|\d+\.)\s+(.*)$/.exec(ln)) && !/^-#\s/.test(ln)) {
+        flushPara();
+        var depth = Math.floor(m[1].replace(/\t/g, '  ').length / 2) + 1, tag = /\d/.test(m[2]) ? 'ol' : 'ul';
+        if (depth > stack.length + 1) depth = stack.length + 1;
+        if (depth <= stack.length) { closeLists(depth); out.push('</li><li>'); }
+        else { out.push('<' + tag + (tag === 'ul' ? ' class="md-list"' : '') + '><li>'); stack.push({ tag: tag }); }
+        out.push(inline(m[3])); i++; continue;
+      }
+      if (stack.length && /^\s+\S/.test(ln)) { out.push('<br>' + inline(ln.trim())); i++; continue; }
+      closeLists(0);
+      if (!ln.trim()) { flushPara(); i++; continue; }
+      if ((m = /^(#{1,6})\s+(.*)$/.exec(ln))) { flushPara(); var lvl = m[1].length >= 3 ? 'h3' : 'h2'; out.push('<' + lvl + '>' + inline(m[2]) + '</' + lvl + '>'); i++; continue; }
+      if (/^(-{3,}|\*{3,})\s*$/.test(ln)) { flushPara(); out.push('<hr>'); i++; continue; }
+      if ((m = /^-#\s+(.*)$/.exec(ln))) { flushPara(); out.push('<p class="md-sub">' + inline(m[1]) + '</p>'); i++; continue; }
+      if (/^>\s?/.test(ln)) {
+        flushPara(); var q = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) { q.push(lines[i].replace(/^>\s?/, '')); i++; }
+        out.push('<div class="md-note">' + q.map(inline).join('<br>') + '</div>'); continue;
+      }
+      para.push(ln); i++;
+    }
+    flushPara(); closeLists(0);
+    return out.join('');
+  }
+
   window.Site = {
-    state: S, init: init, on: on, api: api, login: login, logout: logout, openLogin: openLogin, requireLogin: requireLogin, openSupport: openSupport,
+    state: S, apiBase: API, md: md, init: init, on: on, api: api, login: login, logout: logout, openLogin: openLogin, requireLogin: requireLogin, openSupport: openSupport,
     isStaff: isStaff, esc: esc, emit: emit, setTheme: setTheme, reloadPublic: loadPublic, reloadMe: loadMe, avatarOf: avatarOf, OWNER_ID: OWNER_ID,
   };
 })();

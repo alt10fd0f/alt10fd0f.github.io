@@ -107,8 +107,26 @@
           <div class="row"><button class="b p" id="f-save" type="button">Save features</button></div><div class="st" id="f-st"></div></div>
       </section>
 
+      <section class="panel" id="p-show">
+        <div class="card" id="sh-listcard"><h2>Showcases</h2><p class="hint">Create your own showcases here. <b>Visible</b> = everyone sees it. <b>Off</b> = listed but greyed out and cannot be opened. <b>Hidden</b> = only you and staff can see it (marked "hidden" on the site). Changes show up on the site within a few seconds.</p>
+          <div class="list" id="sh-list"></div>
+          <div class="row"><button class="b p" id="sh-new" type="button">+ New showcase</button></div><div class="st" id="sh-st"></div></div>
+        <div class="card" id="sh-edit" hidden><h2 id="sh-etitle">New showcase</h2>
+          <label class="lbl" for="sh-title">Title</label><input type="text" id="sh-title" maxlength="80" placeholder="e.g. Calculator Command">
+          <div class="grid2"><div><label class="lbl" for="sh-cat">Category</label><select id="sh-cat"></select><input type="text" id="sh-catnew" maxlength="40" placeholder="New category name" style="margin-top:.4rem" hidden></div>
+          <div><label class="lbl" for="sh-state">Visibility</label><select id="sh-state"><option value="visible">Visible</option><option value="off">Off (greyed out)</option><option value="hidden" selected>Hidden (only staff)</option></select></div></div>
+          <label class="lbl" for="sh-ph">Fill a "coming soon" spot (optional: the greyed-out item is replaced by this showcase)</label><select id="sh-ph"></select>
+          <div class="grid2"><div><label class="lbl" for="sh-content">Content</label><textarea id="sh-content" maxlength="60000" style="min-height:360px" placeholder="Write the showcase here..."></textarea></div>
+          <div><label class="lbl">Preview</label><div class="md" id="sh-prev" style="border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;min-height:360px;max-height:520px;overflow:auto;background:var(--bg)"></div></div></div>
+          <details style="margin-top:.7rem"><summary style="cursor:pointer;color:var(--text-muted);font-size:.85rem">Formatting help</summary>
+            <p class="hint" style="margin-top:.5rem"><code>## Heading</code> &nbsp; <code>**bold**</code> &nbsp; <code>*italic*</code> &nbsp; <code>`code`</code> &nbsp; <code>- list item</code> (indent 2 spaces to nest) &nbsp; <code>1. numbered</code> &nbsp; <code>&gt; note box</code> &nbsp; <code>-# small grey text</code> &nbsp; <code>---</code> line<br>
+            <code>[text](https://link)</code> link (https only) &nbsp; <code>![alt](https://image-url)</code> or an image file already in the site repo like <code>![alt](my-image.png)</code><br>
+            Code block: put three backticks on their own line before and after the code. HTML is not allowed (it is shown as plain text).</p></details>
+          <div class="row"><button class="b p" id="sh-save" type="button">Save showcase</button><button class="b" id="sh-cancel" type="button">Cancel</button></div><div class="st" id="sh-est"></div></div>
+      </section>
+
       <section class="panel" id="p-tut">
-        <div class="card"><h2>Tutorials</h2><p class="hint">Switch a tutorial off to hide it from visitors (it shows greyed out and cannot be opened).</p>
+        <div class="card"><h2>Built-in tutorials</h2><p class="hint"><b>Visible</b> = everyone. <b>Off</b> = listed but greyed out and cannot be opened. <b>Hidden</b> = not shown to visitors at all (you and staff still see it, marked "hidden"). Your own showcases are managed in the Showcases tab.</p>
           <div class="list" id="t-list"></div>
           <div class="row"><button class="b p" id="t-save" type="button">Save tutorials</button></div><div class="st" id="t-st"></div></div>
       </section>
@@ -193,7 +211,9 @@
         // tutorials
         var cats = {}; d.tutorials.forEach(function (t) { (cats[t.cat] = cats[t.cat] || []).push(t); });
         var h = '';
-        Object.keys(cats).forEach(function (c) { h += '<div style="margin:.6rem 0 .2rem;color:var(--text-muted);font-size:.8rem;text-transform:uppercase">' + esc(c) + '</div>'; cats[c].forEach(function (t) { h += '<label class="item"><input type="checkbox" data-t="' + esc(t.id) + '"' + (cfg.disabled.indexOf(t.id) < 0 ? ' checked' : '') + (t.live ? '' : ' disabled') + '><span class="grow">' + esc(t.name) + '</span>' + (t.live ? '' : '<span class="tag">coming soon</span>') + '</label>'; }); });
+        Object.keys(cats).forEach(function (c) { h += '<div style="margin:.6rem 0 .2rem;color:var(--text-muted);font-size:.8rem;text-transform:uppercase">' + esc(c) + '</div>'; cats[c].forEach(function (t) {
+          var v = (cfg.hidden || []).indexOf(t.id) > -1 ? 'hidden' : cfg.disabled.indexOf(t.id) > -1 ? 'off' : 'visible';
+          h += '<div class="item"><span class="grow">' + esc(t.name) + '</span>' + (t.live ? '<select data-t="' + esc(t.id) + '" style="width:auto"><option value="visible"' + (v === 'visible' ? ' selected' : '') + '>Visible</option><option value="off"' + (v === 'off' ? ' selected' : '') + '>Off</option><option value="hidden"' + (v === 'hidden' ? ' selected' : '') + '>Hidden</option></select>' : '<span class="tag">coming soon</span>') + '</div>'; }); });
         $('t-list').innerHTML = h;
         // staff
         $('st-list').innerHTML = d.staff.length ? d.staff.map(function (s) { return '<div class="item"><span class="grow">' + esc(s.name || 'Unknown (has not logged in yet)') + ' <small>' + esc(s.id) + '</small></span><button class="b d" data-rm="' + esc(s.id) + '" type="button">Remove</button></div>'; }).join('') : '<p class="hint">No staff yet.</p>';
@@ -213,10 +233,11 @@
         A = r.json; $('gate').hidden = true; $('app').hidden = false;
         $('who').textContent = 'Signed in as ' + (Site.state.auth.user.global_name || Site.state.auth.user.username) + ' \u00b7 ' + A.role + (A.storage ? '' : ' \u00b7 storage is NOT connected: changes cannot be saved');
         var tabs = [['announce', 'Banner & notification'], ['tickets', 'Tickets']];
-        if (A.role === 'owner') tabs = [['announce', 'Banner & notification'], ['site', 'Site & features'], ['tut', 'Tutorials'], ['staff', 'Staff'], ['login', 'Login message'], ['tickets', 'Tickets']];
+        if (A.role === 'owner') tabs = [['announce', 'Banner & notification'], ['site', 'Site & features'], ['show', 'Showcases'], ['tut', 'Built-in tutorials'], ['staff', 'Staff'], ['login', 'Login message'], ['tickets', 'Tickets']];
         $('tabs').innerHTML = tabs.map(function (t) { return '<button class="tab" data-p="' + t[0] + '" type="button">' + t[1] + '</button>'; }).join('');
         $('tabs').querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.p); }); });
         fillAll(A);
+        if (A.role === 'owner') shLoad();
         show(sessionStorage.getItem('admin_tab') && tabs.some(function (t) { return t[0] === sessionStorage.getItem('admin_tab'); }) ? sessionStorage.getItem('admin_tab') : 'announce');
       }
       function show(p) {
@@ -229,13 +250,69 @@
       $('n-save').addEventListener('click', function () { save({ notification: { enabled: $('n-on').checked, title: $('n-title').value, text: $('n-text').value, publish: $('n-new').checked } }, 'n-st'); });
       $('s-save').addEventListener('click', function () { save({ siteEnabled: $('s-on').checked, maintenanceMessage: $('s-msg').value }, 's-st'); });
       $('f-save').addEventListener('click', function () { var f = {}; document.querySelectorAll('[data-f]').forEach(function (c) { f[c.dataset.f] = c.checked; }); save({ features: f, links: { kite: $('k-link').value } }, 'f-st'); });
-      $('t-save').addEventListener('click', function () { var d = []; document.querySelectorAll('[data-t]').forEach(function (c) { if (!c.checked) d.push(c.dataset.t); }); save({ disabled: d }, 't-st'); });
+      $('t-save').addEventListener('click', function () { var d = [], h = []; document.querySelectorAll('[data-t]').forEach(function (c) { if (c.value === 'off') d.push(c.dataset.t); else if (c.value === 'hidden') h.push(c.dataset.t); }); save({ disabled: d, hidden: h }, 't-st'); });
       $('st-add').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'staffAdd', id: $('st-id').value.trim() }); if (r.ok) { $('st-id').value = ''; st('st-st', 'Added.', true); var s = await Site.api('admin', { action: 'state' }); if (s.ok) fillAll(s.json); } else st('st-st', r.json.error, false); });
       $('l-save').addEventListener('click', function () { save({ loginMessage: { text: $('l-text').value, thumbnail: $('l-thumb').checked, accent: /^#[0-9a-f]{6}$/i.test($('l-acc').value) ? $('l-acc').value : '', dropdown: { enabled: $('l-dd').checked, placeholder: $('l-ph').value } } }, 'l-st'); });
       $('l-reset').addEventListener('click', function () { fillLogin(A.defaultLogin); });
       ['l-text', 'l-thumb', 'l-dd', 'l-ph', 'l-acc'].forEach(function (i) { $(i).addEventListener('input', preview); $(i).addEventListener('change', preview); });
       $('l-accp').addEventListener('input', function () { $('l-acc').value = $('l-accp').value; preview(); });
       $('tk-refresh').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'tickets', status: 'open' }); if (r.ok) tickets(r.json.tickets); });
+
+
+      // ---------- showcases ----------
+      var SH = [], SHMETA = { categories: [], placeholders: [] }, editing = null;
+      function shState(id, msg, ok) { st(id, msg, ok); }
+      async function shLoad() {
+        var r = await Site.api('admin', { action: 'showcaseList' });
+        if (!r.ok) { shState('sh-st', r.json.error || 'Could not load showcases.', false); return; }
+        SH = r.json.showcases; SHMETA = { categories: r.json.categories, placeholders: r.json.placeholders };
+        shList();
+      }
+      function shList() {
+        $('sh-list').innerHTML = SH.length ? SH.map(function (s) {
+          return '<div class="item"><span class="grow"><b>' + esc(s.title) + '</b> <span class="tag">' + esc(s.category) + '</span>' + (s.placeholder ? ' <span class="tag">fills a coming-soon spot</span>' : '') + '<br><small>' + esc(s.id) + '</small></span>' +
+            '<select data-st="' + esc(s.id) + '" style="width:auto"><option value="visible"' + (s.state === 'visible' ? ' selected' : '') + '>Visible</option><option value="off"' + (s.state === 'off' ? ' selected' : '') + '>Off</option><option value="hidden"' + (s.state === 'hidden' ? ' selected' : '') + '>Hidden</option></select>' +
+            '<button class="b" data-ed="' + esc(s.id) + '" type="button">Edit</button><button class="b d" data-del="' + esc(s.id) + '" type="button">Delete</button></div>'; }).join('')
+          : '<p class="hint" style="margin:0">No showcases yet. Press "New showcase" to make one.</p>';
+        $('sh-list').querySelectorAll('[data-st]').forEach(function (e) { e.addEventListener('change', async function () {
+          var s = SH.filter(function (x) { return x.id === e.dataset.st; })[0]; if (!s) return;
+          var r = await Site.api('admin', { action: 'showcaseSave', id: s.id, showcase: Object.assign({}, s, { state: e.value }) });
+          if (r.ok) { s.state = e.value; shState('sh-st', '"' + s.title + '" is now ' + e.value + '.', true); } else { shState('sh-st', r.json.error || 'Could not save.', false); shList(); }
+        }); });
+        $('sh-list').querySelectorAll('[data-ed]').forEach(function (e) { e.addEventListener('click', function () { shEdit(SH.filter(function (x) { return x.id === e.dataset.ed; })[0]); }); });
+        $('sh-list').querySelectorAll('[data-del]').forEach(function (e) { e.addEventListener('click', async function () {
+          var s = SH.filter(function (x) { return x.id === e.dataset.del; })[0]; if (!s || !confirm('Delete "' + s.title + '"? This also removes its difficulty ratings and cannot be undone.')) return;
+          var r = await Site.api('admin', { action: 'showcaseDelete', id: s.id });
+          if (r.ok) { shState('sh-st', 'Deleted.', true); shLoad(); } else shState('sh-st', r.json.error || 'Could not delete.', false);
+        }); });
+      }
+      function shEdit(s) {
+        editing = s || null; $('sh-edit').hidden = false;
+        $('sh-etitle').textContent = s ? 'Edit showcase' : 'New showcase';
+        var cats = SHMETA.categories.slice(); if (s && cats.indexOf(s.category) < 0) cats.push(s.category);
+        $('sh-cat').innerHTML = cats.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') + '<option value="__new">New category...</option>';
+        var used = {}; SH.forEach(function (x) { if (x.placeholder && (!s || x.id !== s.id)) used[x.placeholder] = 1; });
+        $('sh-ph').innerHTML = '<option value="">None (add as a new item)</option>' + SHMETA.placeholders.filter(function (p) { return !used[p.id]; }).map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.name) + ' (' + esc(p.cat) + ')</option>'; }).join('');
+        $('sh-title').value = s ? s.title : ''; $('sh-cat').value = s ? s.category : cats[0]; $('sh-catnew').hidden = true; $('sh-catnew').value = '';
+        $('sh-state').value = s ? s.state : 'hidden'; $('sh-ph').value = s ? s.placeholder || '' : ''; $('sh-content').value = s ? s.content : '';
+        shPrev(); $('sh-est').textContent = ''; $('sh-edit').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function shPrev() { $('sh-prev').innerHTML = Site.md($('sh-content').value) || '<p class="md-sub">The preview appears here.</p>'; }
+      $('sh-new').addEventListener('click', function () { shEdit(null); });
+      $('sh-cancel').addEventListener('click', function () { $('sh-edit').hidden = true; editing = null; });
+      $('sh-content').addEventListener('input', shPrev);
+      $('sh-cat').addEventListener('change', function () { $('sh-catnew').hidden = $('sh-cat').value !== '__new'; });
+      $('sh-ph').addEventListener('change', function () {
+        var p = SHMETA.placeholders.filter(function (x) { return x.id === $('sh-ph').value; })[0];
+        if (p) { $('sh-cat').value = p.cat; $('sh-catnew').hidden = true; if (!$('sh-title').value) $('sh-title').value = p.name; }
+      });
+      $('sh-save').addEventListener('click', async function () {
+        var cat = $('sh-cat').value === '__new' ? $('sh-catnew').value.trim() : $('sh-cat').value;
+        var btn = $('sh-save'); btn.disabled = true; shState('sh-est', 'Saving...');
+        var r = await Site.api('admin', { action: 'showcaseSave', id: editing ? editing.id : undefined, showcase: { title: $('sh-title').value, category: cat, state: $('sh-state').value, placeholder: $('sh-ph').value, content: $('sh-content').value } });
+        btn.disabled = false;
+        if (r.ok) { shState('sh-est', 'Saved.', true); editing = r.json.showcase; await shLoad(); $('sh-etitle').textContent = 'Edit showcase'; } else shState('sh-est', r.json.error || 'Could not save.', false);
+      });
 
       $('gate-login').addEventListener('click', function () { Site.login({ returnTo: 'admin.html' }); });
       Site.init({ header: "#nav-right", promptLogin: false }).then(function () {
