@@ -152,6 +152,15 @@
           <div class="row"><button class="b p" id="l-save" type="button">Save login message</button><button class="b" id="l-reset" type="button">Reset to default</button></div><div class="st" id="l-st"></div></div>
       </section>
 
+      <section class="panel" id="p-logs">
+        <div class="card"><h2>Where logs go</h2><p class="hint">For each kind of log choose <b>Built-in logs</b> (the bot: a thread per user for logins, the support channel with Reply/Close buttons for tickets), a <b>Webhook trigger</b> (any https URL: a Discord webhook gets a message, any other URL gets the data as JSON), or <b>Both</b>. Webhooks cannot show working buttons or dropdowns, and webhook-only support requests will not appear in the Tickets tab.</p>
+          <div id="lg-rows"></div>
+          <div class="row"><button class="b p" id="lg-save" type="button">Save log settings</button></div><div class="st" id="lg-st"></div></div>
+        <div class="card"><h2>Discord connection check</h2><p class="hint">If buttons or dropdowns say "interaction failed", Discord is not reaching the bot. This checks the setup and can set the Interactions Endpoint URL for you.</p>
+          <div class="row"><button class="b" id="dc-check" type="button">Run check</button><button class="b p" id="dc-fix" type="button">Set the endpoint URL for me</button></div>
+          <div class="st" id="dc-st"></div><div class="list" id="dc-out"></div></div>
+      </section>
+
       <section class="panel" id="p-tickets">
         <div class="card"><h2>Open support tickets</h2><p class="hint">Tickets are opened and answered on Discord only (the Reply and Close buttons in the support channel). This list is just a view.</p>
           <div class="list" id="tk-list"></div><div class="row"><button class="b" id="tk-refresh" type="button">Refresh</button></div></div>
@@ -233,11 +242,11 @@
         A = r.json; $('gate').hidden = true; $('app').hidden = false;
         $('who').textContent = 'Signed in as ' + (Site.state.auth.user.global_name || Site.state.auth.user.username) + ' \u00b7 ' + A.role + (A.storage ? '' : ' \u00b7 storage is NOT connected: changes cannot be saved');
         var tabs = [['announce', 'Banner & notification'], ['tickets', 'Tickets']];
-        if (A.role === 'owner') tabs = [['announce', 'Banner & notification'], ['site', 'Site & features'], ['show', 'Showcases'], ['tut', 'Built-in tutorials'], ['staff', 'Staff'], ['login', 'Login message'], ['tickets', 'Tickets']];
+        if (A.role === 'owner') tabs = [['announce', 'Banner & notification'], ['site', 'Site & features'], ['show', 'Showcases'], ['tut', 'Built-in tutorials'], ['staff', 'Staff'], ['login', 'Login message'], ['logs', 'Logs & Discord'], ['tickets', 'Tickets']];
         $('tabs').innerHTML = tabs.map(function (t) { return '<button class="tab" data-p="' + t[0] + '" type="button">' + t[1] + '</button>'; }).join('');
         $('tabs').querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.p); }); });
         fillAll(A);
-        if (A.role === 'owner') shLoad();
+        if (A.role === 'owner') { shLoad(); lgFill(); }
         show(sessionStorage.getItem('admin_tab') && tabs.some(function (t) { return t[0] === sessionStorage.getItem('admin_tab'); }) ? sessionStorage.getItem('admin_tab') : 'announce');
       }
       function show(p) {
@@ -258,6 +267,51 @@
       $('l-accp').addEventListener('input', function () { $('l-acc').value = $('l-accp').value; preview(); });
       $('tk-refresh').addEventListener('click', async function () { var r = await Site.api('admin', { action: 'tickets', status: 'open' }); if (r.ok) tickets(r.json.tickets); });
 
+
+      // ---------- logs & discord ----------
+      var LG = [['login', 'Login logs'], ['support', 'Support requests']];
+      function lgFill() {
+        var l = (cfg && cfg.logging) || {};
+        $('lg-rows').innerHTML = LG.map(function (e) {
+          var v = l[e[0]] || { mode: 'builtin', url: '' };
+          return '<div class="item" style="display:block"><b>' + e[1] + '</b>' +
+            '<label class="lbl">Send to</label><select data-lm="' + e[0] + '"><option value="builtin">Built-in logs</option><option value="webhook">Webhook trigger</option><option value="both">Both</option></select>' +
+            '<label class="lbl">Webhook trigger URL</label><input type="text" data-lu="' + e[0] + '" maxlength="500" placeholder="https://discord.com/api/webhooks/..." value="' + esc(v.url || '') + '">' +
+            '<div class="row"><button class="b" type="button" data-lt="' + e[0] + '">Send test</button><label class="chk" style="margin:0"><input type="checkbox" data-lc="' + e[0] + '"> Remove saved URL</label></div><div class="st" data-ls="' + e[0] + '"></div></div>';
+        }).join('');
+        LG.forEach(function (e) { document.querySelector('[data-lm="' + e[0] + '"]').value = ((l[e[0]] || {}).mode) || 'builtin'; });
+        document.querySelectorAll('[data-lt]').forEach(function (b) { b.addEventListener('click', async function () {
+          var ev = b.dataset.lt, box = document.querySelector('[data-ls="' + ev + '"]'); box.textContent = 'Sending...'; box.className = 'st';
+          var r = await Site.api('admin', { action: 'testHook', event: ev, url: document.querySelector('[data-lu="' + ev + '"]').value.trim() });
+          box.textContent = r.ok ? 'Test sent.' : (r.json.error || 'Failed.'); box.className = 'st ' + (r.ok ? 'ok' : 'err');
+        }); });
+      }
+      $('lg-save').addEventListener('click', async function () {
+        var o = {};
+        LG.forEach(function (e) { o[e[0]] = { mode: document.querySelector('[data-lm="' + e[0] + '"]').value, url: document.querySelector('[data-lu="' + e[0] + '"]').value.trim(), clear: document.querySelector('[data-lc="' + e[0] + '"]').checked }; });
+        if (await save({ logging: o }, 'lg-st')) lgFill();
+      });
+      function dcShow(j) {
+        if (!j.tokenSet) { $('dc-out').innerHTML = '<div class="item"><span class="grow">The bot token is not available to the server (DISCORD_BOT_TOKEN is missing for production).</span></div>'; return; }
+        var rows = [];
+        if (j.app.error) rows.push(['Bot token', false, 'Discord rejected the bot token (' + j.app.error + ').']);
+        else {
+          rows.push(['Bot token', true, 'Working (application "' + j.app.name + '").']);
+          rows.push(['Interactions Endpoint URL', j.app.endpoint === j.expectedEndpoint, j.app.endpoint ? (j.app.endpoint === j.expectedEndpoint ? 'Set correctly.' : 'Set to a different URL: ' + j.app.endpoint) : 'Not set. Buttons and dropdowns cannot work until it is.']);
+          rows.push(['Public key', true, j.app.keyMatches ? 'Matches.' : 'Environment key differs, but the bot\u2019s real key is used automatically.']);
+        }
+        var ch = function (n, c) { rows.push([n, !!(c && c.ok), !c ? 'Not configured.' : c.ok ? '#' + c.name + (c.type === 15 || c.type === 16 ? ' (forum: needs Create Posts)' : ' (needs Create Public Threads)') : 'The bot cannot see it (' + c.status + '). Give it View Channel, Send Messages and thread permissions there.']); };
+        ch('Logs channel', j.logsChannel); ch('Support channel', j.modmailChannel);
+        $('dc-out').innerHTML = rows.map(function (r) { return '<div class="item"><span class="grow"><b>' + (r[1] ? '\u2705 ' : '\u274c ') + esc(r[0]) + '</b><br><small>' + esc(r[2]) + '</small></span></div>'; }).join('');
+      }
+      async function dc(action) {
+        st('dc-st', 'Working...');
+        var r = await Site.api('admin', { action: action });
+        if (!r.ok) { st('dc-st', r.json.error || 'Failed.', false); return; }
+        st('dc-st', action === 'discordFix' ? 'Endpoint URL set.' : 'Done.', true); dcShow(r.json);
+      }
+      $('dc-check').addEventListener('click', function () { dc('discordCheck'); });
+      $('dc-fix').addEventListener('click', function () { dc('discordFix'); });
 
       // ---------- showcases ----------
       var SH = [], SHMETA = { categories: [], placeholders: [] }, editing = null;

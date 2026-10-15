@@ -6,6 +6,10 @@ const { loadConfig, saveConfig, sanitizePatch, EMBED_VARS, DEFAULT_LOGIN_MESSAGE
 const { TUTORIALS } = require('./_catalog');
 const { listTickets } = require('./_tickets');
 const sc = require('./_showcases');
+const logs = require('./_logs');
+const bot = require('./_bot');
+
+const ENDPOINT = 'https://kite-login-notify-sanfranrps.vercel.app/api/interactions';
 
 const ID = /^\d{5,25}$/;
 
@@ -24,7 +28,7 @@ module.exports = async (req, res) => {
         const profs = staff.length ? await db.cmd('MGET', ...staff.map((id) => 'user:' + id)) : [];
         const staffList = staff.map((id, i) => { let n = ''; try { n = JSON.parse(profs[i]).display || ''; } catch (e) {} return { id, name: n }; });
         const tickets = db.ready() ? await listTickets('open', 50) : [];
-        return res.status(200).json({ role, ownerId: OWNER_ID, storage: db.ready(), config: cfg, staff: staffList, tickets, tutorials: TUTORIALS, vars: EMBED_VARS, defaultLogin: DEFAULT_LOGIN_MESSAGE, loginOptions: LOGIN_OPTIONS.map((o) => o.label) });
+        return res.status(200).json({ role, ownerId: OWNER_ID, storage: db.ready(), config: role === 'owner' ? cfg : Object.assign({}, cfg, { logging: undefined }), staff: staffList, tickets, tutorials: TUTORIALS, vars: EMBED_VARS, defaultLogin: DEFAULT_LOGIN_MESSAGE, loginOptions: LOGIN_OPTIONS.map((o) => o.label) });
       }
       case 'save': {
         if (!db.ready()) return res.status(503).json({ error: 'Storage is not set up yet.' });
@@ -72,6 +76,36 @@ module.exports = async (req, res) => {
         if (!sc.ID.test(String(b.id || ''))) return res.status(400).json({ error: 'Bad id.' });
         await sc.remove(b.id);
         return res.status(200).json({ ok: true });
+      }
+      case 'testHook': {
+        if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can do that.' });
+        const ev = logs.EVENTS.includes(b.event) ? b.event : 'login';
+        const url = logs.safeUrl(b.url) || logs.urlOf(await loadConfig(true), ev);
+        if (!url) return res.status(400).json({ error: 'Enter a valid https webhook URL first.' });
+        const r = await logs.sendWebhook(url, {
+          event: 'test', data: { note: 'Test from the Kite Tutorials admin panel', for: ev },
+          discord: [{ flags: 32768, components: [{ type: 17, components: [{ type: 10, content: '**Webhook trigger test**\nThis is a test message from the Kite Tutorials admin panel (' + ev + ' logs).' }] }] }],
+        });
+        return r.ok ? res.status(200).json({ ok: true }) : res.status(502).json({ error: 'The webhook answered with an error (' + (r.status || 'no response') + '). Check the URL.' });
+      }
+      case 'discordCheck':
+      case 'discordFix': {
+        if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can do that.' });
+        if (!process.env.DISCORD_BOT_TOKEN) return res.status(200).json({ tokenSet: false });
+        if (b.action === 'discordFix') {
+          const f = await bot.call('PATCH', '/applications/@me', { interactions_endpoint_url: ENDPOINT });
+          if (!f.ok) return res.status(502).json({ error: 'Discord refused to set it (' + f.status + '): ' + ((f.json && f.json.message) || 'unknown') + (f.json && f.json.errors ? ' ' + JSON.stringify(f.json.errors).slice(0, 300) : '') });
+        }
+        const app = await bot.call('GET', '/applications/@me');
+        const logsCh = await bot.call('GET', '/channels/' + (require('./_shared').logsChannelId()));
+        const mail = process.env.DISCORD_MODMAIL_CHANNEL_ID ? await bot.call('GET', '/channels/' + process.env.DISCORD_MODMAIL_CHANNEL_ID) : null;
+        const chInfo = (c) => (c ? (c.ok ? { ok: true, name: c.json.name, type: c.json.type } : { ok: false, status: c.status }) : null);
+        return res.status(200).json({
+          tokenSet: true,
+          app: app.ok ? { name: app.json.name, endpoint: app.json.interactions_endpoint_url || '', keyMatches: !!process.env.DISCORD_PUBLIC_KEY && app.json.verify_key === process.env.DISCORD_PUBLIC_KEY } : { error: app.status },
+          expectedEndpoint: ENDPOINT,
+          logsChannel: chInfo(logsCh), modmailChannel: chInfo(mail),
+        });
       }
       case 'tickets': {
         const list = db.ready() ? await listTickets(b.status === 'all' ? 'all' : 'open', 100) : [];

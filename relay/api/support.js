@@ -9,6 +9,7 @@ const { clip, handleCommon, displayName, avatarUrl, postEmbeds } = require('./_s
 const { authenticate, getProfile } = require('./_auth');
 const { loadConfig } = require('./_config');
 const { saveTicket } = require('./_tickets');
+const logs = require('./_logs');
 
 const CATEGORIES = ['Bug report', 'Question', 'Tutorial request', 'Other'];
 const recent = new Map();
@@ -45,7 +46,16 @@ module.exports = async (req, res) => {
   const email = prof && prof.shareEmail === false ? null : me.email || null;
   const t = { category, subject, message };
 
+  const useBuiltin = logs.wants(cfg, 'support', 'builtin');
+  const useHook = logs.wants(cfg, 'support', 'webhook');
   try {
+    let hook = null;
+    if (useHook) {
+      const em = emb.ticketMessage(me, t, { name, email }).embeds;
+      hook = await logs.sendWebhook(logs.urlOf(cfg, 'support'), { event: 'support', discord: [{ embeds: em }], data: { userId: me.id, username: me.username, name, category, subject, message, email } });
+      if (!hook.ok) console.error('support webhook trigger failed', hook.status);
+      if (!useBuiltin) return hook.ok ? res.status(200).json({ ok: true, dm: false }) : fail();
+    }
     if (bot.configured()) {
       const post = await bot.postToChannel(emb.ticketMessage(me, t, { name, email }));
       if (!post.ok || !post.json || !post.json.id) return fail();

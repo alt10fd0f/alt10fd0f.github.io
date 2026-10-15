@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Say Command | ALT10fd0f</title><link rel="icon" type="image/png" sizes="128x128" href="favicon.png?v=3"><link rel="shortcut icon" href="favicon.ico?v=3"><link rel="apple-touch-icon" href="favicon.png?v=3"><style>:root{--bg:#1b1b1d;--bg2:#242526;--bg3:#2a2b2d;--text:#e3e3e3;--muted:#a0a0a0;--sec:#c4c4c4;--accent:#94CEC4;--border:#3a3b3d;--sw:240px;--nh:60px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}.navbar{position:fixed;top:0;left:0;right:0;height:var(--nh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;z-index:100}.navbar-brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--text);font-weight:600}.navbar-brand img{width:28px;height:28px;border-radius:50%}.layout{display:flex;margin-top:var(--nh)}.sidebar{position:fixed;top:var(--nh);left:0;width:var(--sw);height:calc(100vh - var(--nh));border-right:1px solid var(--border);padding:1rem 0}.sidebar-item{display:block;padding:.45rem 1.25rem;color:var(--sec);text-decoration:none;font-size:.9rem}.sidebar-item:hover{color:var(--accent)}.main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;max-width:900px}.breadcrumb{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem}.breadcrumb a{color:var(--muted);text-decoration:none}h1{font-size:2rem;margin-bottom:1rem}p,li{margin-bottom:.55rem;color:var(--sec)}strong{color:var(--text)}ul{margin:.5rem 0 1rem 1.3rem}code{background:var(--bg3);padding:.15rem .4rem;border-radius:4px;font-size:.88em;font-family:monospace;color:#e8b4b8}.btn{display:inline-flex;padding:.5rem 1rem;border-radius:8px;border:1px solid var(--accent);background:rgba(148,206,196,.15);color:var(--accent);font-size:.9rem;text-decoration:none;margin:.6rem 0 1rem}.note{background:rgba(148,206,196,.08);border-left:4px solid var(--accent);padding:1rem 1.15rem;border-radius:0 8px 8px 0;margin:1.2rem 0}table{border-collapse:collapse;margin:.6rem 0 1.2rem;width:100%;max-width:520px}th,td{border:1px solid var(--border);padding:.45rem .8rem;text-align:left;color:var(--sec)}th{background:var(--bg3);color:var(--text)}.sub{font-size:.85rem;color:var(--muted);margin:-.3rem 0 .8rem}h2{font-size:1.35rem;margin:1.8rem 0 .4rem}.step-list{list-style:none;margin-left:0}.step-list>li{position:relative;padding-left:1.4rem;margin-bottom:.75rem}.step-list>li::before{content:"•";position:absolute;left:.25rem;color:var(--accent)}.footer{margin-left:var(--sw);padding:2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem}@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main,.footer{margin-left:0}.menu-toggle{display:block}}</style>  <script src="embed.js"></script>
+</head><body>
+<nav class="navbar"><button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<a href="index.html" class="navbar-brand"><img src="logo.png" width="28" height="28" alt="logo"><span>ALT10fd0f</span></a></nav>
+<div class="layout"><aside class="sidebar"><a href="index.html" class="sidebar-item">← All Tutorials</a></aside>
+<main class="main">
+<div class="breadcrumb"><a href="index.html">🏠</a> › Say Command</div>
+<h1>Say Command</h1>
+<p><em>To make your bot say any message you'd like please follow what I have down below.</em></p>
+<h2>Basic Setup For The Command</h2>
+
+<h2>Step 1</h2>
+<p class="sub">The argument block</p>
+<ul class="step-list">
+<li>Get a argument block from the <strong>Option Blocks</strong> section.</li>
+<li>Connect it to the top of your command block.</li>
+<li>Set the argument type to text.</li>
+<li>Then set the argument to be required.</li>
+</ul>
+<img src="say-argument.png" alt="The command argument block set to Text and required" style="max-width:100%;height:auto;border:1px solid var(--border);border-radius:10px;margin:.6rem 0 1.2rem;display:block">
+<h2>Step 2</h2>
+<p class="sub">Sending the message</p>
+<ul class="step-list">
+<li>Grab a "create response message" block and attach it directly under the command block. (This will be the response message saying that the message has been sent)</li>
+<li>Type in the text box the following sentence "<code>We've sent the message.</code>". (Able to be whatever you'd like.)</li>
+<li>Make the response private by scrolling down till you see the switch, Then click it.</li>
+</ul>
+<img src="say-response.png" alt="The create response message block with the text We've sent the message." style="max-width:100%;height:auto;border:1px solid var(--border);border-radius:10px;margin:.6rem 0 1.2rem;display:block">
+<ul class="step-list">
+<li>Put a "create channel message" block under the response one.</li>
+<li>Put <code>{{channel.id}}</code> in the target channel section.</li>
+<li>Put <code>{{arg('message')}}</code> in the text part of the channel message.</li>
+<li>Turn on role pings from the switch underneath.</li>
+</ul>
+<img src="say-channel.png" alt="The create channel message block with the channel id and message argument" style="max-width:100%;height:auto;border:1px solid var(--border);border-radius:10px;margin:.6rem 0 1.2rem;display:block">
+<p>And boom, Save your command and your ready to go. This is a currently working message command for any bot of your liking. Keep in mind though, this command has no rank lock meaning that any user can use this command.</p>
+<div class="note"><strong>Recommend putting a rank lock on it</strong></div>
+</main></div>
+<footer class="footer">Tutorials by ALT10fd0f · <a href="https://discord.gg/zXu5YWqX7c" style="color:var(--accent)">Discord</a></footer>
+</body></html>

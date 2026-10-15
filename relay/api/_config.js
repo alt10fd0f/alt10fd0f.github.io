@@ -4,6 +4,7 @@
 const db = require('./_db');
 const { ALL_IDS } = require('./_catalog');
 const { clip } = require('./_shared');
+const logs = require('./_logs');
 
 const EMBED_VARS = [
   'display', 'username', 'id', 'mention', 'email', 'created', 'createdAgo', 'locale', 'mfa', 'nitro',
@@ -28,6 +29,7 @@ const DEFAULT_CONFIG = {
   features: { favorites: true, ratings: true, support: true, loginPrompt: true },
   loginMessage: DEFAULT_LOGIN_MESSAGE,
   links: { kite: '' },
+  logging: logs.DEFAULT_LOGGING,
 };
 
 const FEATURE_KEYS = Object.keys(DEFAULT_CONFIG.features);
@@ -82,6 +84,7 @@ function sanitizePatch(patch, current, role) {
       for (const k of FEATURE_KEYS) out.features[k] = bool(f[k], current.features ? current.features[k] !== false : true);
     }
     if ('links' in patch) out.links = { kite: isHttps((patch.links || {}).kite || '') ? str(patch.links.kite, 300) : '' };
+    if ('logging' in patch) out.logging = logs.sanitizeLogging(patch.logging, current.logging);
     if ('loginMessage' in patch) out.loginMessage = sanitizeLogin(patch.loginMessage);
   }
   return out;
@@ -102,6 +105,7 @@ function merge(stored) {
     disabled: Array.isArray(stored.disabled) ? stored.disabled : [],
     hidden: Array.isArray(stored.hidden) ? stored.hidden : [],
     loginMessage: sanitizeLogin(stored.loginMessage || DEFAULT_LOGIN_MESSAGE),
+    logging: logs.sanitizeLogging(stored.logging, null),
   };
 }
 

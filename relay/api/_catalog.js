@@ -1,9 +1,9 @@
 // The tutorials on the site. "live" ones have a page; the others are placeholders ("coming soon").
 const TUTORIALS = [
-  { id: 'calculator', name: 'Calculator Command', cat: 'Basic Commands', live: false },
+  { id: 'calculator', name: 'Calculator Command', cat: 'Basic Commands', live: true },
   { id: 'userinfo', name: 'User Info Command', cat: 'Basic Commands', live: false },
   { id: 'dm', name: 'Dm Command', cat: 'Basic Commands', live: false },
-  { id: 'say', name: 'Say Command', cat: 'Basic Commands', live: false },
+  { id: 'say', name: 'Say Command', cat: 'Basic Commands', live: true },
   { id: 'prefix', name: 'Prefix Commands', cat: 'Basic Commands', live: true },
   { id: 'password', name: 'Password Commands', cat: 'Basic Commands', live: false },
   { id: 'ranklock', name: 'Rank/Role Lock Commands', cat: 'Basic Commands', live: false },

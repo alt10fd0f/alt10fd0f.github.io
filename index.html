@@ -175,10 +175,10 @@
       <div class="sidebar-section">
         <div class="sidebar-category open" onclick="toggleCategory(this)"><span>Basic Commands</span><span class="arrow">▶</span></div>
         <div class="sidebar-sub open">
-          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Calculator Command</a>
+          <a href="#calculator" class="sidebar-item">Calculator Command</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">User Info Command</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Dm Command</a>
-          <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Say Command</a>
+          <a href="#say" class="sidebar-item">Say Command</a>
           <a href="#prefix" class="sidebar-item">Prefix Commands</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Password Commands</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Rank/Role Lock Commands</a>
@@ -261,10 +261,10 @@
       <p id="search-empty" style="display:none;color:var(--text-muted)">No tutorials match your search.</p>
       <h3 id="basic-commands" class="category-heading" data-category="basic commands">Basic Commands</h3>
       <div class="tutorial-grid">
-        <a href="#" class="tutorial-card" id="calculator"><span class="num">01</span><span class="name">Calculator Command</span></a>
+        <a href="#calculator" class="tutorial-card" id="calculator"><span class="num">01</span><span class="name">Calculator Command</span></a>
         <a href="#" class="tutorial-card" id="userinfo"><span class="num">02</span><span class="name">User Info Command</span></a>
         <a href="#" class="tutorial-card" id="dm"><span class="num">03</span><span class="name">Dm Command</span></a>
-        <a href="#" class="tutorial-card" id="say"><span class="num">06</span><span class="name">Say Command</span></a>
+        <a href="#say" class="tutorial-card" id="say"><span class="num">06</span><span class="name">Say Command</span></a>
         <a href="#prefix" class="tutorial-card" id="prefix"><span class="num">07</span><span class="name">Prefix Commands</span></a>
         <a href="#" class="tutorial-card" id="password"><span class="num">08</span><span class="name">Password Commands</span></a>
         <a href="#" class="tutorial-card" id="ranklock"><span class="num">09</span><span class="name">Rank/Role Lock Commands</span></a>
@@ -437,7 +437,7 @@
     const viewHome = document.getElementById('view-home');
     const viewTickets = document.getElementById('view-tickets');
     const tocEl = document.querySelector('.toc');
-    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'] };
+    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'], calculator: ['calculator.html', 'Calculator Command'], say: ['say.html', 'Say Command'] };
     const viewFrame = document.getElementById('view-frame');
     const viewCustom = document.getElementById('view-custom');
     const frameEl = document.getElementById('tut-frame');

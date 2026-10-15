@@ -18,15 +18,27 @@ const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
 const ephemeral = (content) => ({ type: 4, data: { content, flags: EPHEMERAL, allowed_mentions: { parse: [] } } });
 
-function verify(raw, sigHex, ts) {
+function verifyWith(keyHex, raw, sigHex, ts) {
   try {
-    const keyHex = process.env.DISCORD_PUBLIC_KEY || '';
-    if (!/^[0-9a-f]{64}$/i.test(keyHex) || !/^[0-9a-f]{128}$/i.test(sigHex)) return false;
+    if (!/^[0-9a-f]{64}$/i.test(keyHex || '') || !/^[0-9a-f]{128}$/i.test(sigHex)) return false;
     const key = crypto.createPublicKey({ key: Buffer.concat([SPKI_PREFIX, Buffer.from(keyHex, 'hex')]), format: 'der', type: 'spki' });
     return crypto.verify(null, Buffer.from(ts + raw), key, Buffer.from(sigHex, 'hex'));
   } catch (e) {
     return false;
   }
+}
+
+// The env key is tried first. If it is missing or wrong, the bot's own application key is fetched from Discord
+// (authoritative for this bot) so a mistyped DISCORD_PUBLIC_KEY can no longer break every button.
+let appKey = null;
+async function verify(raw, sigHex, ts) {
+  if (verifyWith(process.env.DISCORD_PUBLIC_KEY, raw, sigHex, ts)) return true;
+  if (!process.env.DISCORD_BOT_TOKEN) return false;
+  if (!appKey) {
+    const r = await bot.call('GET', '/applications/@me');
+    if (r.ok && r.json && r.json.verify_key) appKey = r.json.verify_key;
+  }
+  return verifyWith(appKey, raw, sigHex, ts);
 }
 
 const recent = new Map(); // userId -> timestamps, best-effort per warm instance
@@ -137,7 +149,7 @@ export default {
     const raw = await request.text();
     const sig = request.headers.get('x-signature-ed25519') || '';
     const ts = request.headers.get('x-signature-timestamp') || '';
-    if (!ts || !verify(raw, sig, ts)) return new Response('invalid request signature', { status: 401 });
+    if (!ts || !(await verify(raw, sig, ts))) return new Response('invalid request signature', { status: 401 });
 
     let it;
     try { it = JSON.parse(raw); } catch (e) { return new Response('bad request', { status: 400 }); }
