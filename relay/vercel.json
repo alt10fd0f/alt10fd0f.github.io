@@ -1,6 +1,7 @@
 {
   "functions": {
     "api/notify.js": { "maxDuration": 30 },
-    "api/support.js": { "maxDuration": 20 }
+    "api/support.js": { "maxDuration": 20 },
+    "api/submit.js": { "maxDuration": 20 }
   }
 }

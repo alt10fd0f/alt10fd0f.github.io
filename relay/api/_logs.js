@@ -3,9 +3,9 @@
 
 const { sleep } = require('./_shared');
 
-const EVENTS = ['login', 'support'];
+const EVENTS = ['login', 'support', 'showcase'];
 const MODES = ['builtin', 'webhook', 'both'];
-const DEFAULT_LOGGING = { login: { mode: 'builtin', url: '' }, support: { mode: 'builtin', url: '' } };
+const DEFAULT_LOGGING = { login: { mode: 'builtin', url: '' }, support: { mode: 'builtin', url: '' }, showcase: { mode: 'builtin', url: '' } };
 
 const DISCORD_HOOK = /^https:\/\/(?:(?:canary|ptb)\.)?(?:discord|discordapp)\.com\/api(?:\/v\d+)?\/webhooks\/\d+\/[\w-]+$/i;
 

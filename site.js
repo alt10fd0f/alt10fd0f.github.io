@@ -178,6 +178,41 @@
     $('sp-status').textContent = ''; $('o-support').classList.add('show'); $('sp-sub').focus();
   }
 
+  // showcase submission form (goes to the owner's webhook trigger / staff channel)
+  function buildSubmit() {
+    var cats = ['Basic Commands', 'Games', 'Setup Guides', 'Panels & Systems', 'APIs & Integrations', 'Other'];
+    var o = overlay('o-submit',
+      '<h2>Submit a showcase</h2><p class="status" id="sb-as" style="margin:0 0 .3rem"></p>' +
+      '<form id="sb-form"><label class="lbl" for="sb-title">Title</label><input id="sb-title" type="text" minlength="3" maxlength="80" required autocomplete="off" placeholder="e.g. Welcome message with buttons">' +
+      '<label class="lbl" for="sb-cat">Category</label><select id="sb-cat" required>' + cats.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') + '</select>' +
+      '<label class="lbl" for="sb-link">Link to your showcase (optional)</label><input id="sb-link" type="url" maxlength="300" placeholder="https://discord.com/channels/..." autocomplete="off">' +
+      '<label class="lbl" for="sb-text">Your showcase</label><textarea id="sb-text" rows="8" minlength="30" maxlength="6000" required placeholder="Explain what it does and the steps to build it. Share codes are not needed."></textarea>' +
+      '<div class="sup-count"><span id="sb-count">0</span>/6000</div>' +
+      '<p class="legal">Your submission is sent to the site owner. Your Discord username and ID and, unless you turned it off in your account panel, your email are included so I can contact you. By submitting you allow me to review it and, if I like it, publish it on this site. Only submit your own work.</p>' +
+      '<div class="sup-actions"><button type="button" class="auth-skip" id="sb-cancel">Cancel</button><button type="submit" class="login-btn" id="sb-send">Submit showcase</button></div>' +
+      '<div class="status" id="sb-status" role="status"></div></form>', 'sup-card');
+    $('sb-cancel').addEventListener('click', function () { o.classList.remove('show'); });
+    $('sb-text').addEventListener('input', function (e) { $('sb-count').textContent = e.target.value.length; });
+    $('sb-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var st = $('sb-status'), btn = $('sb-send');
+      if (!S.auth) { st.className = 'status err'; st.textContent = 'Your login expired. Please log in again.'; return; }
+      btn.disabled = true; st.className = 'status'; st.textContent = 'Sending...';
+      var r = await api('submit', { title: $('sb-title').value, category: $('sb-cat').value, link: $('sb-link').value, content: $('sb-text').value });
+      btn.disabled = false;
+      if (r.ok) {
+        st.className = 'status ok'; st.textContent = 'Thank you! Your showcase was submitted.';
+        $('sb-form').reset(); $('sb-count').textContent = '0';
+        setTimeout(function () { o.classList.remove('show'); }, 2400);
+      } else { st.className = 'status err'; st.textContent = r.json.error || 'Something went wrong. Please try again.'; }
+    });
+  }
+  function openSubmit() {
+    if (!requireLogin('Log in to submit a showcase.', 'submit')) return;
+    var u = S.auth.user; $('sb-as').textContent = 'Submitting as ' + nameOf(u) + ' (@' + u.username + ')';
+    $('sb-status').textContent = ''; $('o-submit').classList.add('show'); $('sb-title').focus();
+  }
+
   // user panel
   function buildUser() {
     var o = overlay('o-user', '<div id="u-body"></div>', 'up-card');
@@ -260,7 +295,7 @@
     S.headerEl = opts.header ? document.querySelector(opts.header) : null;
     S.auth = authRead();
     lsSet('discord_auth', null);
-    buildChrome(); buildLogin(); buildSupport(); buildUser();
+    buildChrome(); buildLogin(); buildSupport(); buildSubmit(); buildUser();
     renderHeader();
     if (await handleReturn()) return;
     S.auth = authRead();
@@ -270,8 +305,10 @@
     if (S.auth) {
       var after = ssGet('after_login'); ssSet('after_login', null);
       if (after === 'support') openSupport();
+      if (after === 'submit') openSubmit();
     } else if (opts.promptLogin !== false && !ssGet('login_dismissed') && (!S.cfg || S.cfg.features.loginPrompt !== false)) openLogin();
     var sb = $('support-open'); if (sb) sb.addEventListener('click', openSupport);
+    var sub = $('submit-open'); if (sub) sub.addEventListener('click', openSubmit);
     var hint = $('support-hint'); var paintHint = function () { if (hint) hint.textContent = S.auth ? 'Submitting as ' + nameOf(S.auth.user) + '.' : 'You need to be logged in with Discord to submit a request.'; };
     on(paintHint); paintHint();
     on(function () { paintChrome(); });
@@ -332,7 +369,7 @@
   }
 
   window.Site = {
-    state: S, apiBase: API, md: md, init: init, on: on, api: api, login: login, logout: logout, openLogin: openLogin, requireLogin: requireLogin, openSupport: openSupport,
+    state: S, apiBase: API, md: md, init: init, on: on, api: api, login: login, logout: logout, openLogin: openLogin, requireLogin: requireLogin, openSupport: openSupport, openSubmit: openSubmit,
     isStaff: isStaff, esc: esc, emit: emit, setTheme: setTheme, reloadPublic: loadPublic, reloadMe: loadMe, avatarOf: avatarOf, OWNER_ID: OWNER_ID,
   };
 })();

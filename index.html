@@ -74,6 +74,7 @@
     .support-box { margin-top: 1.2rem; }
     .support-btn { background: var(--accent); color: #12302b; border: none; border-radius: 8px; padding: 0.6rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; }
     .support-btn:hover { filter: brightness(1.1); }
+    @media (max-width: 520px) { #submit-open { margin: .5rem 0 0 0 !important; } }
     .support-hint { margin: 0.5rem 0 0 !important; font-size: 0.85rem; color: var(--text-muted) !important; }
     .sup-card { text-align: left; max-width: 480px; max-height: 92vh; overflow-y: auto; }
     .sup-card label { display: block; font-size: 0.85rem; color: var(--text-muted); margin: 0.8rem 0 0.3rem; }
@@ -304,6 +305,7 @@
       <p><a href="https://discord.com/users/989152479222579260" style="color:var(--accent)" target="_blank">Contact me on Discord</a></p>
       <div class="support-box">
         <button class="support-btn" id="support-open" type="button">Submit support request</button>
+        <button class="support-btn" id="submit-open" type="button" style="margin-left:.5rem">Submit showcase</button>
         <p class="support-hint" id="support-hint">You need to be logged in with Discord to submit a request.</p>
       </div>
     </div>
