@@ -69,7 +69,7 @@ module.exports = async (req, res) => {
         if (!dbOn) return res.status(200).json({ ok: true, deleted: 0 });
         const p = await getProfile(me.id);
         await db.pipe([
-          ['DEL', 'user:' + me.id], ['DEL', 'fav:' + me.id],
+          ['DEL', 'user:' + me.id], ['DEL', 'report:' + me.id], ['DEL', 'fav:' + me.id],
           ...ALL_IDS.concat((await sc.all()).map((s) => s.id)).map((id) => ['HDEL', 'rating:' + id, me.id]),
         ]);
         const tickets = await deleteUserTickets(me.id);

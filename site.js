@@ -131,7 +131,7 @@
     overlay('o-login',
       '<h2>Welcome to Kite Tutorials</h2>' +
       '<p id="l-note" class="auth-note"></p>' +
-      '<p>Log in with Discord so we know who you are. When you log in, the site owner is sent your Discord username, avatar, email address, basic account details (locale, account age, 2FA and Nitro status), whether you are in the Kite support server, and your connected accounts. The server connection is used only to check whether you are in the Kite support server. Nothing else is collected.</p>' +
+      '<p>Log in with Discord so we know who you are. When you log in, the site owner is sent your Discord username, avatar, email address, basic account details (locale, account age, 2FA and Nitro status), the list of servers you are in (and whether you are in the Kite support server), and your connected accounts. A copy of your server list, connected accounts and these details is kept so the site owner can view them in your login report, and is deleted if you request data deletion. Nothing else is collected.</p>' +
       '<button class="login-btn" id="l-go" type="button">Login with Discord</button>' +
       '<p class="legal">By logging in you agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a> and the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</p>' +
       '<div style="text-align:center"><button class="auth-skip" id="l-skip" type="button">Not now</button></div>', 'center');

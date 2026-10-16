@@ -1,5 +1,5 @@
 // Login notification. After a visitor logs in with Discord this:
-//   - checks whether they are in the Kite support server (the ONLY use of the "guilds" permission; the list is never kept),
+//   - reads their server list (to check Kite membership and to keep a copy for the login report's dropdown),
 //   - records/updates their profile in the database,
 //   - posts the (admin-editable) login embed into that user's own thread, creating the thread on first login.
 
@@ -14,22 +14,25 @@ const NITRO = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro', 3: 'Nitro Basic' };
 const yesNo = (v) => (v ? 'Yes' : 'No');
 const recent = new Map(); // userId -> last notify time (used when no database is connected)
 
+const next_firstSeen = (p, now) => (p && p.firstSeen) || now;
 const safeJson = async (p) => { try { const r = await p; return r && r.ok ? await r.json() : null; } catch (e) { return null; } };
 
-// true / false, or null when it can't be checked. Reads the user's server list page by page and keeps only the answer.
-async function inKiteServer(token) {
-  const target = process.env.KITE_GUILD_ID || '845800518458540083'; // Kite support server
-  if (!target) return null;
+// The user's servers ({id, name, owner}), or null when they can't be read. Reads page by page (up to 1000 servers).
+async function fetchGuilds(token) {
+  const out = [];
   let after = '';
   for (let page = 0; page < 5; page++) {
     const list = await safeJson(discordGet('/users/@me/guilds?limit=200' + (after ? '&after=' + after : ''), token));
-    if (!list) return page === 0 ? null : false;
-    if (list.some((g) => g.id === target)) return true;
-    if (list.length < 200) return false;
+    if (!list) return page === 0 ? null : out;
+    list.forEach((g) => out.push({ id: String(g.id), name: clip(g.name, 60), owner: !!g.owner }));
+    if (list.length < 200) return out;
     after = list[list.length - 1].id;
   }
-  return false;
+  return out;
 }
+
+const BADGES = { 1: 'Discord Staff', 2: 'Partnered Server Owner', 4: 'HypeSquad Events', 8: 'Bug Hunter', 64: 'HypeSquad Bravery', 128: 'HypeSquad Brilliance', 256: 'HypeSquad Balance', 512: 'Early Supporter', 16384: 'Bug Hunter Level 2', 65536: 'Verified Bot', 131072: 'Early Verified Bot Developer', 262144: 'Moderator Programs Alumni', 4194304: 'Active Developer' };
+const badgesOf = (flags) => Object.keys(BADGES).filter((k) => (Number(flags) & Number(k)) !== 0).map((k) => BADGES[k]);
 
 module.exports = async (req, res) => {
   if (handleCommon(req, res)) return;
@@ -48,11 +51,13 @@ module.exports = async (req, res) => {
   recent.set(me.id, now);
   if (recent.size > 1000) recent.clear();
 
-  const [kite, connections] = await Promise.all([
-    has('guilds') ? inKiteServer(token) : null,
+  const [guilds, connections] = await Promise.all([
+    has('guilds') ? fetchGuilds(token) : null,
     has('connections') ? safeJson(discordGet('/users/@me/connections', token)) : null,
   ]);
 
+  const target = process.env.KITE_GUILD_ID || '845800518458540083'; // Kite support server
+  const kite = guilds ? guilds.some((g) => g.id === target) : null;
   const prefs = profile || {};
   const name = prefs.nickname || displayName(me);
   const created = Math.floor((Number(BigInt(me.id) >> 22n) + 1420070400000) / 1000);
@@ -89,7 +94,21 @@ module.exports = async (req, res) => {
   // Save the profile first so a failed post doesn't lose the thread id we are about to create.
   const next = Object.assign({ firstSeen: now, shareEmail: true }, profile, {
     id: me.id, username: me.username, display: displayName(me), avatar: me.avatar || null, lastSeen: now, lastLogin: now,
+    loginCount: ((profile && profile.loginCount) || 0) + 1,
   });
+  // Copy kept for the login report's dropdown (servers, connected accounts, other data). Replaced on every login.
+  const report = {
+    at: now,
+    guilds: guilds ? guilds.slice(0, 300) : null,
+    guildCount: guilds ? guilds.length : null,
+    connections: connections ? connections.slice(0, 50).map((c) => ({ type: clip(c.type, 20), name: clip(c.name, 60), verified: !!c.verified, hidden: c.visibility === 0 })) : null,
+    other: {
+      handle: me.username, globalName: me.global_name || null, siteName: name, emailVerified: !!me.verified, emailShared: prefs.shareEmail !== false,
+      locale: me.locale || null, badges: badgesOf(me.public_flags), accentColor: typeof me.accent_color === 'number' ? '#' + me.accent_color.toString(16).padStart(6, '0') : null,
+      avatar: avatarUrl(me), banner: me.banner ? 'https://cdn.discordapp.com/banners/' + me.id + '/' + me.banner + '.png' : null,
+      scopes: v.scopes, firstSeen: next_firstSeen(prefs, now), logins: ((profile && profile.loginCount) || 0) + 1,
+    },
+  };
 
   // Webhook trigger (chosen in the admin panel): Discord webhooks get the message, other URLs get JSON.
   let hook = null;
@@ -130,7 +149,7 @@ module.exports = async (req, res) => {
   }
   if (!useBuiltin && hook && !hook.ok) r = hook;
   next.threadId = threadId;
-  if (dbOn) { try { await saveProfile(next); } catch (e) { /* keep going */ } }
+  if (dbOn) { try { await saveProfile(next); } catch (e) { /* keep going */ } try { await db.setJSON('report:' + me.id, report); } catch (e) { /* keep going */ } }
 
   if (!r.ok && !(hook && hook.ok)) return res.status(502).json({ error: 'webhook failed' });
   return res.status(200).json({ ok: true, thread: !!threadId });

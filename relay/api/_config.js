@@ -146,6 +146,9 @@ const LOGIN_OPTIONS = [
   { label: 'Mention user', value: 'mention', description: 'Shows the mention text' },
   { label: 'Account age', value: 'age', description: 'When the Discord account was created' },
   { label: 'Profile link', value: 'link', description: 'Link to their Discord profile' },
+  { label: 'Servers', value: 'servers', description: 'The servers they are in' },
+  { label: 'Connected accounts', value: 'connections', description: 'Accounts linked to their Discord' },
+  { label: 'Other data', value: 'other', description: 'Badges, locale, login history and more' },
 ];
 
 const container = (parts, accent) => {
