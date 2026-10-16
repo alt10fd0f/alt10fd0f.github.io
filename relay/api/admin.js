@@ -50,10 +50,13 @@ module.exports = async (req, res) => {
         // Staff may read everything (including hidden showcases) so they can preview; only the owner can change them.
         if (!db.ready()) return res.status(200).json({ showcases: [] });
         if (b.action === 'showcaseGet') {
+          if (sc.EDITABLE.includes(String(b.id))) { const o = await sc.getOverride(String(b.id)); return o ? res.status(200).json({ showcase: o }) : res.status(404).json({ error: 'not found' }); }
           const s = await sc.get(String(b.id || ''));
           return s ? res.status(200).json({ showcase: s }) : res.status(404).json({ error: 'not found' });
         }
-        return res.status(200).json({ showcases: await sc.all(), categories: sc.CATEGORIES, placeholders: TUTORIALS.filter((t) => sc.PLACEHOLDERS.includes(t.id)).map((t) => ({ id: t.id, name: t.name, cat: t.cat })) });
+        const ov = await sc.overrides();
+        const builtins = TUTORIALS.filter((t) => sc.EDITABLE.includes(t.id)).map((t) => ({ id: t.id, name: t.name, cat: t.cat, edited: !!ov[t.id], updated: ov[t.id] ? ov[t.id].updated : 0 }));
+        return res.status(200).json({ builtins, showcases: await sc.all(), categories: sc.CATEGORIES, placeholders: TUTORIALS.filter((t) => sc.PLACEHOLDERS.includes(t.id)).map((t) => ({ id: t.id, name: t.name, cat: t.cat })) });
       }
       case 'showcaseSave': {
         if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can edit showcases.' });
@@ -69,6 +72,26 @@ module.exports = async (req, res) => {
         }
         await sc.save(r.showcase);
         return res.status(200).json({ ok: true, showcase: r.showcase });
+      }
+      case 'overrideGet': {
+        const o = await sc.getOverride(String(b.id || ''));
+        return res.status(200).json({ override: o });
+      }
+      case 'overrideSave': {
+        if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can edit tutorials.' });
+        if (!db.ready()) return res.status(503).json({ error: 'Storage is not set up yet.' });
+        if (!sc.EDITABLE.includes(String(b.id || ''))) return res.status(400).json({ error: 'That tutorial cannot be edited.' });
+        const r = sc.cleanOverride(b.id, b.page);
+        if (r.error) return res.status(400).json({ error: r.error });
+        await sc.saveOverride(r.override);
+        return res.status(200).json({ ok: true, override: r.override });
+      }
+      case 'overrideDelete': {
+        if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can restore tutorials.' });
+        if (!db.ready()) return res.status(503).json({ error: 'Storage is not set up yet.' });
+        if (!sc.EDITABLE.includes(String(b.id || ''))) return res.status(400).json({ error: 'Bad id.' });
+        await sc.removeOverride(b.id);
+        return res.status(200).json({ ok: true });
       }
       case 'showcaseDelete': {
         if (role !== 'owner') return res.status(403).json({ error: 'Only the owner can delete showcases.' });

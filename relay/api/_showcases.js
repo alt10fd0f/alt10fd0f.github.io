@@ -52,7 +52,36 @@ async function remove(id) {
   await db.pipe([['HDEL', 'showcases', id], ['DEL', 'rating:' + id]]);
 }
 
+// ---- Edited copies of the built-in tutorials ----
+// A built-in tutorial is a static page. Saving an edit stores replacement text (same markdown as custom showcases) under the
+// built-in's id; the site then shows that text instead of the static page. Deleting it restores the original page.
+const EDITABLE = ['reminder', 'fakequote', 'modal', 'buttons', 'dropdown', 'application', 'timestamps', 'cookie', 'membercount', 'prefix', 'roblox-lookup', 'calculator', 'say']
+  .filter((id) => TUTORIALS.some((t) => t.id === id && t.live));
+
+async function overrides() {
+  if (!db.ready()) return {};
+  const h = (await db.cmd('HGETALL', 'overrides')) || [];
+  const out = {};
+  for (let i = 0; i < h.length; i += 2) { try { if (EDITABLE.includes(h[i])) out[h[i]] = JSON.parse(h[i + 1]); } catch (e) { /* skip broken row */ } }
+  return out;
+}
+async function getOverride(id) {
+  if (!db.ready() || !EDITABLE.includes(id)) return null;
+  const v = await db.cmd('HGET', 'overrides', id);
+  try { return v ? JSON.parse(v) : null; } catch (e) { return null; }
+}
+function cleanOverride(id, input) {
+  input = input && typeof input === 'object' ? input : {};
+  const title = clip(String(input.title || '').replace(/\s+/g, ' ').trim(), 80);
+  if (title.length < 2) return { error: 'Give the page a title.' };
+  const content = String(input.content || '').replace(/\u0000/g, '').slice(0, 60000);
+  if (!content.trim()) return { error: 'The page has no content.' };
+  return { override: { id, title, content, updated: Date.now() } };
+}
+const saveOverride = (o) => db.cmd('HSET', 'overrides', o.id, JSON.stringify(o));
+const removeOverride = (id) => db.cmd('HDEL', 'overrides', id);
+
 // What visitors need to build the sidebar/cards: no content.
 const meta = (s) => ({ id: s.id, title: s.title, category: s.category, placeholder: s.placeholder || '', state: s.state });
 
-module.exports = { STATES, CATEGORIES, PLACEHOLDERS, ID, all, get, exists, clean, save, remove, meta };
+module.exports = { EDITABLE, overrides, getOverride, cleanOverride, saveOverride, removeOverride, STATES, CATEGORIES, PLACEHOLDERS, ID, all, get, exists, clean, save, remove, meta };

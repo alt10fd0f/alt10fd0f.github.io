@@ -11,6 +11,13 @@ module.exports = async (req, res) => {
   const q = req.query || {};
   if (q.showcase) {
     res.setHeader('Cache-Control', 'no-store');
+    if (sc.EDITABLE.includes(String(q.showcase))) { // edited copy of a built-in tutorial
+      const cfg0 = await loadConfig();
+      const o = await sc.getOverride(String(q.showcase));
+      if (!o || (cfg0.hidden || []).includes(o.id)) return res.status(404).json({ error: 'not found' });
+      if ((cfg0.disabled || []).includes(o.id)) return res.status(403).json({ error: 'off' });
+      return res.status(200).json({ id: o.id, title: o.title, content: o.content, updated: o.updated });
+    }
     const s = await sc.get(String(q.showcase));
     if (!s || s.state === 'hidden') return res.status(404).json({ error: 'not found' });
     if (s.state === 'off') return res.status(403).json({ error: 'off' });
@@ -25,6 +32,7 @@ module.exports = async (req, res) => {
     try { list = await sc.all(); } catch (e) { console.error('showcases failed', String(e && e.message || e)); }
     const visible = list.filter((s) => s.state !== 'hidden');
     view.showcases = visible.map(sc.meta);
+    try { view.overrides = Object.keys(await sc.overrides()); } catch (e) { view.overrides = []; }
     // Custom showcases feed the same "off" / "hidden" lists as the built-in ones.
     view.disabled = [...new Set(view.disabled.concat(list.filter((s) => s.state === 'off').map((s) => s.id)))];
     view.hidden = [...new Set(view.hidden.concat(list.filter((s) => s.state === 'hidden').map((s) => s.id)))];
@@ -36,6 +44,6 @@ module.exports = async (req, res) => {
         ratings[id] = { count: vals.length, avg: vals.length ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : 0 };
       });
     } catch (e) { console.error('ratings failed', String(e && e.message || e)); }
-  } else view.showcases = [];
+  } else { view.showcases = []; view.overrides = []; }
   res.status(200).json({ config: view, ratings, storage: db.ready() && !storageError(), storageError: storageError() });
 };

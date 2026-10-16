@@ -157,7 +157,7 @@ pre code{background:none;padding:0;color:var(--sec)}
 <li>Add two buttons labeled <strong>"Close, Close with reason"</strong>.</li>
 <li>Under the close button add a response message:
 <pre><code>{{user}} has selected to delete the ticket without reason.
--# Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></pre>
+-# Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</code></pre>
 </li>
 <li>Then add a wait block for 15 seconds under.</li>
 <li>Under the wait block add a delete channel block set to <code>{{channel.id}}</code>.</li>
@@ -169,7 +169,7 @@ pre code{background:none;padding:0;color:var(--sec)}
 <li>Under add a response message saying:
 <pre><code>{{user}} has selected to delete the ticket with reason.
 ``{{input('closereason')}}``
--# Ticket will be deleted in <t:{{now().Unix() + 15}}:R></code></pre>
+-# Ticket will be deleted in &lt;t:{{now().Unix() + 15}}:R&gt;</code></pre>
 </li>
 <li>Add a wait block below for 15 seconds.</li>
 <li>Then add a delete channel block set to <code>{{channel.id}}</code>.</li>

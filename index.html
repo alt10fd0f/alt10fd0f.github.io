@@ -455,15 +455,21 @@
     function route() {
       const id = decodeURIComponent(location.hash.slice(1));
       const isTicket = TICKET_IDS.includes(id);
-      const frame = Object.prototype.hasOwnProperty.call(FRAMES, id) ? FRAMES[id] : null;
-      const isCustom = /^c-[a-z0-9-]+$/.test(id);
+      const frame0 = Object.prototype.hasOwnProperty.call(FRAMES, id) ? FRAMES[id] : null;
+      // A built-in tutorial the owner edited in the admin panel is shown from the saved text instead of the static page.
+      const cfg0 = Site.state && Site.state.cfg;
+      const edited = !!(frame0 && cfg0 && (cfg0.overrides || []).indexOf(id) >= 0);
+      const waiting = !!(frame0 && !cfg0 && !route.gaveUp); // wait briefly for the site data so an edited page doesn't flash the old one
+      if (waiting) setTimeout(() => { route.gaveUp = true; route(); }, 3500);
+      const frame = edited ? null : frame0;
+      const isCustom = /^c-[a-z0-9-]+$/.test(id) || edited;
       viewCustom.hidden = !isCustom;
       viewHome.hidden = isTicket || !!frame || isCustom;
       viewTickets.hidden = !isTicket;
       viewFrame.hidden = !frame;
       if (tocEl) tocEl.style.display = (isTicket || frame || isCustom) ? 'none' : '';
-      document.title = isTicket ? 'Tickets With Kite | ALT10fd0f' : frame ? frame[1] + ' | ALT10fd0f' : 'Kite Tutorials | ALT10fd0f';
-      if (frame) {
+      document.title = isTicket ? 'Tickets With Kite | ALT10fd0f' : (frame || frame0) ? (frame || frame0)[1] + ' | ALT10fd0f' : 'Kite Tutorials | ALT10fd0f';
+      if (frame && !waiting) {
         const src = frame[0] + '?embed=1';
         if (frameEl.getAttribute('src') !== src) { frameEl.style.height = '60vh'; frameEl.setAttribute('src', src); }
       }
@@ -485,6 +491,8 @@
     window.addEventListener('hashchange', route);
     route();
     Site.init({ header: '#nav-right' });
+    let ovSig = null;
+    Site.on(() => { const c = Site.state && Site.state.cfg; if (!c) return; const sg = JSON.stringify(c.overrides || []); if (sg !== ovSig) { const first = ovSig === null; ovSig = sg; if (!first || FRAMES[decodeURIComponent(location.hash.slice(1))]) route(); } });
     function flashBtn(btn) {
       const orig = btn.textContent;
       btn.textContent = 'Copied!';

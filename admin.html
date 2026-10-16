@@ -111,18 +111,20 @@
         <div class="card" id="sh-listcard"><h2>Showcases</h2><p class="hint">Create your own showcases here. <b>Visible</b> = everyone sees it. <b>Off</b> = listed but greyed out and cannot be opened. <b>Hidden</b> = only you and staff can see it (marked "hidden" on the site). Changes show up on the site within a few seconds.</p>
           <div class="list" id="sh-list"></div>
           <div class="row"><button class="b p" id="sh-new" type="button">+ New showcase</button></div><div class="st" id="sh-st"></div></div>
+        <div class="card" id="sh-bicard"><h2>Built-in tutorials</h2><p class="hint">The original tutorials can be edited too. Pressing <b>Edit</b> opens the current text of the page in the editor (turned into the same simple formatting as your own showcases). Saving replaces the page on the site with your version. <b>Restore original</b> brings the original page back. Show/hide/off for these is still in the "Built-in tutorials" tab.</p>
+          <div class="list" id="sh-bilist"></div><div class="st" id="sh-bist"></div></div>
         <div class="card" id="sh-edit" hidden><h2 id="sh-etitle">New showcase</h2>
           <label class="lbl" for="sh-title">Title</label><input type="text" id="sh-title" maxlength="80" placeholder="e.g. Calculator Command">
-          <div class="grid2"><div><label class="lbl" for="sh-cat">Category</label><select id="sh-cat"></select><input type="text" id="sh-catnew" maxlength="40" placeholder="New category name" style="margin-top:.4rem" hidden></div>
+          <div id="sh-meta"><div class="grid2"><div><label class="lbl" for="sh-cat">Category</label><select id="sh-cat"></select><input type="text" id="sh-catnew" maxlength="40" placeholder="New category name" style="margin-top:.4rem" hidden></div>
           <div><label class="lbl" for="sh-state">Visibility</label><select id="sh-state"><option value="visible">Visible</option><option value="off">Off (greyed out)</option><option value="hidden" selected>Hidden (only staff)</option></select></div></div>
-          <label class="lbl" for="sh-ph">Fill a "coming soon" spot (optional: the greyed-out item is replaced by this showcase)</label><select id="sh-ph"></select>
+          <label class="lbl" for="sh-ph">Fill a "coming soon" spot (optional: the greyed-out item is replaced by this showcase)</label><select id="sh-ph"></select></div>
           <div class="grid2"><div><label class="lbl" for="sh-content">Content</label><textarea id="sh-content" maxlength="60000" style="min-height:360px" placeholder="Write the showcase here..."></textarea></div>
           <div><label class="lbl">Preview</label><div class="md" id="sh-prev" style="border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;min-height:360px;max-height:520px;overflow:auto;background:var(--bg)"></div></div></div>
           <details style="margin-top:.7rem"><summary style="cursor:pointer;color:var(--text-muted);font-size:.85rem">Formatting help</summary>
             <p class="hint" style="margin-top:.5rem"><code>## Heading</code> &nbsp; <code>**bold**</code> &nbsp; <code>*italic*</code> &nbsp; <code>`code`</code> &nbsp; <code>- list item</code> (indent 2 spaces to nest) &nbsp; <code>1. numbered</code> &nbsp; <code>&gt; note box</code> &nbsp; <code>-# small grey text</code> &nbsp; <code>---</code> line<br>
             <code>[text](https://link)</code> link (https only) &nbsp; <code>![alt](https://image-url)</code> or an image file already in the site repo like <code>![alt](my-image.png)</code><br>
             Code block: put three backticks on their own line before and after the code. HTML is not allowed (it is shown as plain text).</p></details>
-          <div class="row"><button class="b p" id="sh-save" type="button">Save showcase</button><button class="b" id="sh-cancel" type="button">Cancel</button></div><div class="st" id="sh-est"></div></div>
+          <div class="row"><button class="b p" id="sh-save" type="button">Save showcase</button><button class="b" id="sh-cancel" type="button">Cancel</button><button class="b" id="sh-reset" type="button" hidden>Reload original text</button></div><div class="st" id="sh-est"></div></div>
       </section>
 
       <section class="panel" id="p-tut">
@@ -314,11 +316,12 @@
       $('dc-fix').addEventListener('click', function () { dc('discordFix'); });
 
       // ---------- showcases ----------
-      var SH = [], SHMETA = { categories: [], placeholders: [] }, editing = null;
+      var SH = [], SHMETA = { categories: [], placeholders: [] }, editing = null, BI = [], biCur = null;
       function shState(id, msg, ok) { st(id, msg, ok); }
       async function shLoad() {
         var r = await Site.api('admin', { action: 'showcaseList' });
         if (!r.ok) { shState('sh-st', r.json.error || 'Could not load showcases.', false); return; }
+        BI = r.json.builtins || []; biList();
         SH = r.json.showcases; SHMETA = { categories: r.json.categories, placeholders: r.json.placeholders };
         shList();
       }
@@ -340,7 +343,128 @@
           if (r.ok) { shState('sh-st', 'Deleted.', true); shLoad(); } else shState('sh-st', r.json.error || 'Could not delete.', false);
         }); });
       }
+
+      // ---- Built-in tutorials: edit / restore ----
+      var BI_FILE = { reminder: 'reminder.html', fakequote: 'fakequote.html', modal: 'modal.html', buttons: 'buttons-data.html', dropdown: 'dropdown.html', application: 'application.html', timestamps: 'timestamps.html', cookie: 'cookie-api.html', membercount: 'membercount.html', prefix: 'prefix.html', 'roblox-lookup': 'roblox-lookup.html', calculator: 'calculator.html', say: 'say.html' };
+      function biList() {
+        $('sh-bilist').innerHTML = BI.map(function (b) {
+          return '<div class="item"><span class="grow"><b>' + esc(b.name) + '</b> <span class="tag">' + esc(b.cat) + '</span>' + (b.edited ? ' <span class="tag">edited</span>' : '') + '</span>' +
+            '<button class="b" data-bie="' + esc(b.id) + '" type="button">Edit</button>' + (b.edited ? '<button class="b d" data-bir="' + esc(b.id) + '" type="button">Restore original</button>' : '') + '</div>'; }).join('');
+        $('sh-bilist').querySelectorAll('[data-bie]').forEach(function (e) { e.addEventListener('click', function () { biEdit(BI.filter(function (x) { return x.id === e.dataset.bie; })[0]); }); });
+        $('sh-bilist').querySelectorAll('[data-bir]').forEach(function (e) { e.addEventListener('click', async function () {
+          var b = BI.filter(function (x) { return x.id === e.dataset.bir; })[0];
+          if (!b || !confirm('Restore the original "' + b.name + '" page? Your edited version will be deleted.')) return;
+          var r = await Site.api('admin', { action: 'overrideDelete', id: b.id });
+          if (r.ok) { shState('sh-bist', 'Restored the original page.', true); if (biCur && biCur.id === b.id) { $('sh-edit').hidden = true; biCur = null; } shLoad(); } else shState('sh-bist', r.json.error || 'Could not restore.', false);
+        }); });
+      }
+      // Turns the markup of an original tutorial page into the simple formatting the editor uses.
+      function htmlToMd(root) {
+        function wrap(x, m) { var a = /^\s*/.exec(x)[0], z = /\s*$/.exec(x)[0], c = x.trim(); return c ? a + m + c + m + z : x; }
+        function inl(n) {
+          var o = '';
+          n.childNodes.forEach(function (c) {
+            if (c.nodeType === 3) { o += c.textContent.replace(/\s+/g, ' '); return; }
+            if (c.nodeType !== 1) return;
+            var t = c.tagName.toLowerCase();
+            if (t === 'br') { o += '\n'; return; }
+            if (t === 'code' || /\bts-code\b/.test(String(c.className || ''))) { o += '`' + c.textContent + '`'; return; }
+            if (t === 'img') { var u = c.getAttribute('src') || ''; o += /^(https:\/\/|[\w][\w./-]*\.(png|jpe?g|gif|webp|svg))/i.test(u) ? '![' + (c.getAttribute('alt') || '') + '](' + u + ')' : ''; return; }
+            if (t === 'script' || t === 'style' || t === 'button') return;
+            var x = inl(c);
+            if (t === 'strong' || t === 'b') o += wrap(x, '**');
+            else if (t === 'em' || t === 'i') o += wrap(x, '*');
+            else if (t === 'a') { var h = c.getAttribute('href') || ''; o += /^https:\/\//i.test(h) && x.trim() ? '[' + x.trim() + '](' + h + ')' : x; }
+            else o += x;
+          });
+          return o;
+        }
+        var BLOCK = 'p,ul,ol,pre,table,div,h1,h2,h3,img';
+        function fence(pre, ind) { var code = pre.textContent.replace(/\n+$/, ''); return [ind + '```'].concat(code.split('\n').map(function (l) { return ind + l; }), [ind + '```']); }
+        function list(el, depth, out) {
+          var ind = '  '.repeat(depth), n = 0, ordered = el.tagName.toLowerCase() === 'ol';
+          Array.prototype.forEach.call(el.children, function (li) {
+            if (li.tagName.toLowerCase() !== 'li') return;
+            n++; var buf = document.createElement('div'), first = true;
+            function flush() {
+              var t = inl(buf).replace(/[ \t]+\n/g, '\n').trim(); buf = document.createElement('div'); if (!t) return;
+              var parts = t.split(/\n+/);
+              parts.forEach(function (ln, i) { if (first && i === 0) out.push(ind + (ordered ? n + '. ' : '- ') + ln); else out.push(ind + '  ' + ln); });
+              first = false;
+            }
+            li.childNodes.forEach(function (c) {
+              var t = c.nodeType === 1 ? c.tagName.toLowerCase() : '';
+              if (t === 'ul' || t === 'ol') { flush(); if (first) { out.push(ind + (ordered ? n + '. ' : '- ')); first = false; } list(c, depth + 1, out); }
+              else if (t === 'pre') { flush(); if (first) { out.push(ind + (ordered ? n + '. ' : '- ')); first = false; } fence(c, ind + '  ').forEach(function (l) { out.push(l); }); }
+              else buf.appendChild(c.cloneNode(true));
+            });
+            flush();
+          });
+        }
+        function blocks(parent, out) {
+          parent.childNodes.forEach(function (c) {
+            if (c.nodeType === 3) { var tx = c.textContent.replace(/\s+/g, ' ').trim(); if (tx) out.push('', tx, ''); return; }
+            if (c.nodeType !== 1) return;
+            var t = c.tagName.toLowerCase(), cl = String(c.className || '');
+            if (/breadcrumb/.test(cl) || t === 'script' || t === 'style' || t === 'button' || t === 'h1') return;
+            if (t === 'h2' || t === 'h3') out.push('', (t === 'h2' ? '## ' : '### ') + inl(c).trim(), '');
+            else if (t === 'p' && /\bsub\b/.test(cl)) out.push('', '-# ' + inl(c).trim(), '');
+            else if (t === 'p') out.push('', inl(c).trim().replace(/\n+/g, '\n'), '');
+            else if (t === 'ul' || t === 'ol') { out.push(''); list(c, 0, out); out.push(''); }
+            else if (t === 'pre') { out.push(''); fence(c, '').forEach(function (l) { out.push(l); }); out.push(''); }
+            else if (t === 'img' || t === 'a') out.push('', inl({ childNodes: [c] }), '');
+            else if (t === 'table') {
+              out.push('');
+              Array.prototype.forEach.call(c.querySelectorAll('tr'), function (tr) {
+                var cells = Array.prototype.map.call(tr.children, function (td) { return inl(td).trim(); });
+                var hd = tr.querySelector('th'); out.push('- ' + (hd ? cells.map(function (x) { return '**' + x + '**'; }) : cells).join(' — '));
+              });
+              out.push('');
+            }
+            else if (/\bnote\b/.test(cl)) { var inner = []; blocks(c, inner); out.push(''); inner.join('\n').split('\n').forEach(function (l) { if (l.trim()) out.push('> ' + l); }); out.push(''); }
+            else if (!c.querySelector(BLOCK)) { var tt = inl(c).trim(); if (tt) out.push('', tt, ''); }
+            else blocks(c, out);
+          });
+        }
+        var out = []; blocks(root, out);
+        return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+      }
+      // The page is loaded in a hidden frame so any text its own script fills in (like the timestamp codes) is included.
+      function biDoc(file) {
+        return new Promise(function (ok) {
+          var f = document.createElement('iframe'); f.style.cssText = 'position:absolute;left:-9999px;width:900px;height:600px;border:0'; f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1;
+          var done = false; function fin(d) { if (done) return; done = true; setTimeout(function () { f.remove(); }, 0); ok(d); }
+          f.onload = function () { setTimeout(function () { try { fin(f.contentDocument && f.contentDocument.querySelector('main') ? f.contentDocument : null); } catch (e) { fin(null); } }, 300); };
+          setTimeout(function () { fin(null); }, 8000);
+          f.src = file + (file.indexOf('?') < 0 ? '?plain=1' : ''); document.body.appendChild(f);
+        });
+      }
+      async function biOriginal(b) {
+        try {
+          var doc = await biDoc(BI_FILE[b.id]);
+          if (!doc) { var res = await fetch(BI_FILE[b.id], { cache: 'no-store' }); if (!res.ok) throw 0; doc = new DOMParser().parseFromString(await res.text(), 'text/html'); }
+          var main = doc.querySelector('main') || doc.body, h1 = main.querySelector('h1'), out = { title: h1 ? h1.textContent.trim() : b.name, content: '' };
+          out.content = htmlToMd(main); return out;
+        } catch (e) { return null; }
+      }
+      async function biEdit(b) {
+        if (!b) return;
+        biCur = b; editing = null; $('sh-edit').hidden = false; $('sh-meta').hidden = true; $('sh-reset').hidden = false;
+        $('sh-etitle').textContent = 'Edit built-in: ' + b.name; $('sh-est').textContent = 'Loading...';
+        var o = null; if (b.edited) { var r0 = await Site.api('admin', { action: 'overrideGet', id: b.id }); if (r0.ok) o = r0.json.override; }
+        var base = o || await biOriginal(b);
+        if (!base) { $('sh-est').textContent = ''; shState('sh-est', 'Could not load the page text. Try again.', false); return; }
+        $('sh-title').value = base.title; $('sh-content').value = base.content; shPrev(); $('sh-est').textContent = '';
+        $('sh-edit').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      $('sh-reset').addEventListener('click', async function () {
+        if (!biCur || !confirm('Replace what is in the editor with the text of the original page?')) return;
+        var base = await biOriginal(biCur); if (!base) { shState('sh-est', 'Could not load the original.', false); return; }
+        $('sh-title').value = base.title; $('sh-content').value = base.content; shPrev();
+      });
+
       function shEdit(s) {
+        biCur = null; $('sh-meta').hidden = false; $('sh-reset').hidden = true;
         editing = s || null; $('sh-edit').hidden = false;
         $('sh-etitle').textContent = s ? 'Edit showcase' : 'New showcase';
         var cats = SHMETA.categories.slice(); if (s && cats.indexOf(s.category) < 0) cats.push(s.category);
@@ -353,7 +477,7 @@
       }
       function shPrev() { $('sh-prev').innerHTML = Site.md($('sh-content').value) || '<p class="md-sub">The preview appears here.</p>'; }
       $('sh-new').addEventListener('click', function () { shEdit(null); });
-      $('sh-cancel').addEventListener('click', function () { $('sh-edit').hidden = true; editing = null; });
+      $('sh-cancel').addEventListener('click', function () { $('sh-edit').hidden = true; editing = null; biCur = null; });
       $('sh-content').addEventListener('input', shPrev);
       $('sh-cat').addEventListener('change', function () { $('sh-catnew').hidden = $('sh-cat').value !== '__new'; });
       $('sh-ph').addEventListener('change', function () {
@@ -361,6 +485,13 @@
         if (p) { $('sh-cat').value = p.cat; $('sh-catnew').hidden = true; if (!$('sh-title').value) $('sh-title').value = p.name; }
       });
       $('sh-save').addEventListener('click', async function () {
+        if (biCur) {
+          var bb = $('sh-save'); bb.disabled = true; shState('sh-est', 'Saving...');
+          var rb = await Site.api('admin', { action: 'overrideSave', id: biCur.id, page: { title: $('sh-title').value, content: $('sh-content').value } });
+          bb.disabled = false;
+          if (rb.ok) { shState('sh-est', 'Saved. The site now shows your version.', true); await shLoad(); biCur = BI.filter(function (x) { return x.id === rb.json.override.id; })[0] || biCur; } else shState('sh-est', rb.json.error || 'Could not save.', false);
+          return;
+        }
         var cat = $('sh-cat').value === '__new' ? $('sh-catnew').value.trim() : $('sh-cat').value;
         var btn = $('sh-save'); btn.disabled = true; shState('sh-est', 'Saving...');
         var r = await Site.api('admin', { action: 'showcaseSave', id: editing ? editing.id : undefined, showcase: { title: $('sh-title').value, category: cat, state: $('sh-state').value, placeholder: $('sh-ph').value, content: $('sh-content').value } });

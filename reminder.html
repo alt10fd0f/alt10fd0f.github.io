@@ -78,7 +78,7 @@ let seconds_list = map(parts,
 );
 let total_seconds = sum(seconds_list);
 let future_time = now().Unix() + total_seconds;
-let timestamp = "<t:" + string(future_time) + ":R>";
+let timestamp = "&lt;t:" + string(future_time) + ":R&gt;";
 {
   "timestamp": timestamp,
   "seconds": total_seconds

@@ -300,9 +300,10 @@
     function closeLists(to) { while (stack.length > to) out.push('</li></' + stack.pop().tag + '>'); }
     while (i < lines.length) {
       var ln = lines[i], m;
-      if (/^```/.test(ln)) {
-        flushPara(); closeLists(0); var buf = []; i++;
-        while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      if (/^\s*```/.test(ln)) {
+        var fi = /^\s*/.exec(ln)[0].length; // a fence indented under a list item stays inside that item
+        flushPara(); if (!(fi && stack.length)) closeLists(0); var buf = []; i++;
+        while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(fi ? lines[i].slice(Math.min(fi, /^\s*/.exec(lines[i])[0].length)) : lines[i]); i++; }
         i++; out.push('<pre><code>' + E(buf.join('\n')) + '</code></pre>'); continue;
       }
       if ((m = /^(\s*)([-*]|\d+\.)\s+(.*)$/.exec(ln)) && !/^-#\s/.test(ln)) {
