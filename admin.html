@@ -111,7 +111,7 @@
         <div class="card" id="sh-listcard"><h2>Showcases</h2><p class="hint">Create your own showcases here. <b>Visible</b> = everyone sees it. <b>Off</b> = listed but greyed out and cannot be opened. <b>Hidden</b> = only you and staff can see it (marked "hidden" on the site). Changes show up on the site within a few seconds.</p>
           <div class="list" id="sh-list"></div>
           <div class="row"><button class="b p" id="sh-new" type="button">+ New showcase</button></div><div class="st" id="sh-st"></div></div>
-        <div class="card" id="sh-bicard"><h2>Built-in tutorials</h2><p class="hint">The original tutorials can be edited too. Pressing <b>Edit</b> opens the current text of the page in the editor (turned into the same simple formatting as your own showcases). Saving replaces the page on the site with your version. <b>Restore original</b> brings the original page back. Show/hide/off for these is still in the "Built-in tutorials" tab.</p>
+        <div class="card" id="sh-bicard"><h2>Built-in tutorials &amp; blank spots</h2><p class="hint">The original tutorials can be edited too. Pressing <b>Edit</b> opens the current text of the page in the editor (turned into the same simple formatting as your own showcases). Saving replaces the page on the site with your version. <b>Restore original</b> brings the original page back. Show/hide/off for these is still in the "Built-in tutorials" tab.</p>
           <div class="list" id="sh-bilist"></div><div class="st" id="sh-bist"></div></div>
         <div class="card" id="sh-edit" hidden><h2 id="sh-etitle">New showcase</h2>
           <label class="lbl" for="sh-title">Title</label><input type="text" id="sh-title" maxlength="80" placeholder="e.g. Calculator Command">
@@ -321,8 +321,8 @@
       async function shLoad() {
         var r = await Site.api('admin', { action: 'showcaseList' });
         if (!r.ok) { shState('sh-st', r.json.error || 'Could not load showcases.', false); return; }
-        BI = r.json.builtins || []; biList();
-        SH = r.json.showcases; SHMETA = { categories: r.json.categories, placeholders: r.json.placeholders };
+        BI = r.json.builtins || [];
+        SH = r.json.showcases; SHMETA = { categories: r.json.categories, placeholders: r.json.placeholders }; biList();
         shList();
       }
       function shList() {
@@ -349,7 +349,17 @@
       function biList() {
         $('sh-bilist').innerHTML = BI.map(function (b) {
           return '<div class="item"><span class="grow"><b>' + esc(b.name) + '</b> <span class="tag">' + esc(b.cat) + '</span>' + (b.edited ? ' <span class="tag">edited</span>' : '') + '</span>' +
-            '<button class="b" data-bie="' + esc(b.id) + '" type="button">Edit</button>' + (b.edited ? '<button class="b d" data-bir="' + esc(b.id) + '" type="button">Restore original</button>' : '') + '</div>'; }).join('');
+            '<button class="b" data-bie="' + esc(b.id) + '" type="button">Edit</button>' + (b.edited ? '<button class="b d" data-bir="' + esc(b.id) + '" type="button">Restore original</button>' : '') + '</div>'; }).join('') +
+          (SHMETA.placeholders.length ? '<p class="hint" style="margin:.9rem 0 .4rem"><b>Blank "coming soon" spots</b> - write the tutorial for one and it takes that spot. It starts as Hidden so you can finish it first; set it to Visible in the list above when it is ready.</p>' + SHMETA.placeholders.map(function (p) {
+            var mine = SH.filter(function (x) { return x.placeholder === p.id; })[0];
+            return '<div class="item"><span class="grow"><b>' + esc(p.name) + '</b> <span class="tag">' + esc(p.cat) + '</span> <span class="tag">' + (mine ? 'written (' + esc(mine.state) + ')' : 'coming soon') + '</span></span>' +
+              '<button class="b" data-phw="' + esc(p.id) + '" type="button">' + (mine ? 'Edit' : 'Write it') + '</button></div>'; }).join('') : '');
+        $('sh-bilist').querySelectorAll('[data-phw]').forEach(function (e) { e.addEventListener('click', function () {
+          var mine = SH.filter(function (x) { return x.placeholder === e.dataset.phw; })[0];
+          if (mine) { shEdit(mine); return; }
+          shEdit(null); var p = SHMETA.placeholders.filter(function (x) { return x.id === e.dataset.phw; })[0];
+          if (p) { $('sh-ph').value = p.id; $('sh-cat').value = p.cat; $('sh-title').value = p.name; $('sh-state').value = 'hidden'; }
+        }); });
         $('sh-bilist').querySelectorAll('[data-bie]').forEach(function (e) { e.addEventListener('click', function () { biEdit(BI.filter(function (x) { return x.id === e.dataset.bie; })[0]); }); });
         $('sh-bilist').querySelectorAll('[data-bir]').forEach(function (e) { e.addEventListener('click', async function () {
           var b = BI.filter(function (x) { return x.id === e.dataset.bir; })[0];
