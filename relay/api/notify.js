@@ -9,6 +9,7 @@ const { clip, handleCommon, discordGet, verifyToken, displayName, avatarUrl, pos
 const { getProfile, saveProfile } = require('./_auth');
 const { loadConfig, buildLoginMessages } = require('./_config');
 const logs = require('./_logs');
+const { attachInvites } = require('./_invites');
 
 const NITRO = { 0: 'None', 1: 'Nitro Classic', 2: 'Nitro', 3: 'Nitro Basic' };
 const yesNo = (v) => (v ? 'Yes' : 'No');
@@ -53,6 +54,13 @@ module.exports = async (req, res) => {
 
   const guilds = has('guilds') ? await fetchGuilds(token) : null; // third-party connections are deliberately not requested
 
+  // Public invite links for their servers (only where a server exposes one); previous results are reused.
+  if (guilds && dbOn) {
+    let prevReport = null;
+    try { prevReport = await db.getJSON('report:' + me.id); } catch (e) { prevReport = null; }
+    try { await attachInvites(guilds, prevReport, now); } catch (e) { console.error('invite lookup failed', String(e && e.message || e)); }
+  }
+
   const target = process.env.KITE_GUILD_ID || '845800518458540083'; // Kite support server
   const kite = guilds ? guilds.some((g) => g.id === target) : null;
   const prefs = profile || {};
@@ -87,7 +95,7 @@ module.exports = async (req, res) => {
   // Copy kept for the login report's dropdown (servers, other data). Replaced on every login.
   const report = {
     at: now,
-    guilds: guilds ? guilds.slice(0, 300) : null,
+    guilds: guilds ? guilds.slice(0, 300).map((g) => ({ id: g.id, name: g.name, owner: g.owner, invite: g.invite === undefined ? undefined : g.invite })) : null,
     guildCount: guilds ? guilds.length : null,
     other: {
       handle: me.username, globalName: me.global_name || null, siteName: name, emailVerified: !!me.verified, emailShared: prefs.shareEmail !== false,

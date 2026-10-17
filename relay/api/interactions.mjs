@@ -7,6 +7,7 @@ import bot from './_bot.js';
 import embeds from './_embeds.js';
 import db from './_db.js';
 import tickets from './_tickets.js';
+import reports from './_reports.js';
 
 const track = async (id, patchFn) => { if (!db.ready() || !id) return; try { const t = await tickets.getTicket(id); if (t) await tickets.updateTicket(id, patchFn(t)); } catch (e) { /* best effort */ } };
 
@@ -69,63 +70,20 @@ const textOf = (it) => {
 };
 const modName = (m) => (m && ((m.nick) || (m.user && (m.user.global_name || m.user.username)))) || 'staff';
 
-const fit = (lines, head, max) => {
-  let out = head, shown = 0;
-  for (const l of lines) { if ((out + '\n' + l).length > max - 40) break; out += '\n' + l; shown++; }
-  return shown < lines.length ? out + '\n…and ' + (lines.length - shown) + ' more' : out;
-};
-const yn = (v) => (v ? 'Yes' : 'No');
-function reportText(pick, r) {
-  const when = r.at ? '\n-# Saved at their last login: <t:' + Math.floor(r.at / 1000) + ':R>' : '';
-  if (pick === 'servers') {
-    if (!r.guilds) return 'Their server list was not shared (the servers permission was not granted).';
-    const lines = r.guilds.map((g) => '• ' + g.name.replace(/[`*_~|>]/g, '') + ' (`' + g.id + '`)' + (g.owner ? ' 👑 owner' : ''));
-    return fit(lines, '**Servers (' + (r.guildCount != null ? r.guildCount : r.guilds.length) + ')**', 1900 - when.length) + when;
-  }
-  const o = r.other || {};
-  const lines = [
-    'Username • `@' + (o.handle || '?') + '`',
-    'Discord display name • ' + (o.globalName || 'None set'),
-    'Name used on this site • ' + (o.siteName || 'Same as Discord'),
-    'Email verified by Discord • ' + yn(o.emailVerified) + ' (shared in reports: ' + yn(o.emailShared) + ')',
-    'Locale • ' + (o.locale || 'unknown'),
-    'Badges • ' + ((o.badges || []).length ? o.badges.join(', ') : 'None'),
-    'Accent color • ' + (o.accentColor ? '`' + o.accentColor + '`' : 'None'),
-    'Avatar • ' + (o.avatar || 'Default'),
-    'Banner • ' + (o.banner || 'None'),
-    'Servers • ' + (r.guildCount != null ? r.guildCount : 'Not shared'),
-    'First seen on site • ' + (o.firstSeen ? '<t:' + Math.floor(o.firstSeen / 1000) + ':F>' : 'unknown'),
-    'Logins • ' + (o.logins || 1),
-    'Permissions granted • ' + ((o.scopes || []).join(', ') || 'unknown'),
-  ];
-  return fit(lines, '**Other data**', 1900 - when.length) + when;
-}
-
 async function handle(it) {
   if (it.type === 1) return { type: 1 }; // PING
 
   const channelOk = it.channel_id === process.env.DISCORD_MODMAIL_CHANNEL_ID;
   const parts = String((it.data && it.data.custom_id) || '').split(':');
-  // Login report dropdown: shows small facts about that user, only to whoever picked the option.
-  if (parts[0] === 'lg' && it.type === 3 && ID.test(parts[1] || '')) {
+  // Login report dropdown (and its Previous / Next buttons): shows facts about that user as embeds, only to whoever clicked.
+  if ((parts[0] === 'lg' || parts[0] === 'lgp') && it.type === 3 && ID.test(parts[1] || '')) {
     const uid = parts[1];
-    const pick = it.data.values && it.data.values[0];
-    const created = Math.floor((Number(BigInt(uid) >> 22n) + 1420070400000) / 1000);
-    const simple = {
-      id: '`' + uid + '`',
-      mention: '`<@' + uid + '>`',
-      age: 'Account created <t:' + created + ':F> (<t:' + created + ':R>)',
-      link: 'https://discord.com/users/' + uid,
-    }[pick];
-    if (simple) return ephemeral(simple);
-    if (pick === 'connections') return ephemeral('Connected accounts are no longer collected.'); // old messages may still list this option
-    if (pick === 'servers' || pick === 'other') {
-      let r = null;
-      try { r = db.ready() ? await db.getJSON('report:' + uid) : null; } catch (e) { r = null; }
-      if (!r) return ephemeral('No stored data for this user yet. They may have logged in before this was added, or their data was deleted.');
-      return ephemeral(reportText(pick, r));
-    }
-    return ephemeral('Unknown option.');
+    const pick = parts[0] === 'lg' ? (it.data.values && it.data.values[0]) : parts[2];
+    const page = parts[0] === 'lgp' ? Number(parts[3]) : 0;
+    let r = null;
+    if (pick === 'servers' || pick === 'other') { try { r = db.ready() ? await db.getJSON('report:' + uid) : null; } catch (e) { r = null; } }
+    const data = reports.view(pick, uid, r, page);
+    return parts[0] === 'lgp' ? { type: 7, data } : { type: 4, data: Object.assign({ flags: EPHEMERAL }, data) };
   }
   if (parts[0] !== 'mm') return ephemeral('Unknown action.');
 
