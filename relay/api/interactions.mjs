@@ -82,12 +82,6 @@ function reportText(pick, r) {
     const lines = r.guilds.map((g) => '• ' + g.name.replace(/[`*_~|>]/g, '') + ' (`' + g.id + '`)' + (g.owner ? ' 👑 owner' : ''));
     return fit(lines, '**Servers (' + (r.guildCount != null ? r.guildCount : r.guilds.length) + ')**', 1900 - when.length) + when;
   }
-  if (pick === 'connections') {
-    if (!r.connections) return 'Their connected accounts were not shared.';
-    if (!r.connections.length) return '**Connected accounts**\nNone' + when;
-    const lines = r.connections.map((c) => '• ' + c.type + ': ' + c.name.replace(/[`*_~|>]/g, '') + (c.verified ? ' (verified)' : '') + (c.hidden ? ' [hidden]' : ''));
-    return fit(lines, '**Connected accounts (' + r.connections.length + ')**', 1900 - when.length) + when;
-  }
   const o = r.other || {};
   const lines = [
     'Username • `@' + (o.handle || '?') + '`',
@@ -99,7 +93,7 @@ function reportText(pick, r) {
     'Accent color • ' + (o.accentColor ? '`' + o.accentColor + '`' : 'None'),
     'Avatar • ' + (o.avatar || 'Default'),
     'Banner • ' + (o.banner || 'None'),
-    'Servers • ' + (r.guildCount != null ? r.guildCount : 'Not shared') + ' · Connected accounts • ' + (r.connections ? r.connections.length : 'Not shared'),
+    'Servers • ' + (r.guildCount != null ? r.guildCount : 'Not shared'),
     'First seen on site • ' + (o.firstSeen ? '<t:' + Math.floor(o.firstSeen / 1000) + ':F>' : 'unknown'),
     'Logins • ' + (o.logins || 1),
     'Permissions granted • ' + ((o.scopes || []).join(', ') || 'unknown'),
@@ -124,7 +118,8 @@ async function handle(it) {
       link: 'https://discord.com/users/' + uid,
     }[pick];
     if (simple) return ephemeral(simple);
-    if (pick === 'servers' || pick === 'connections' || pick === 'other') {
+    if (pick === 'connections') return ephemeral('Connected accounts are no longer collected.'); // old messages may still list this option
+    if (pick === 'servers' || pick === 'other') {
       let r = null;
       try { r = db.ready() ? await db.getJSON('report:' + uid) : null; } catch (e) { r = null; }
       if (!r) return ephemeral('No stored data for this user yet. They may have logged in before this was added, or their data was deleted.');

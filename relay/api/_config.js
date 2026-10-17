@@ -8,12 +8,12 @@ const logs = require('./_logs');
 
 const EMBED_VARS = [
   'display', 'username', 'id', 'mention', 'email', 'created', 'createdAgo', 'locale', 'mfa', 'nitro',
-  'kiteServer', 'connectionCount', 'connections',
+  'kiteServer',
 ];
 
 // The login report is a Components V2 message: one container with the text (+ optional avatar thumbnail) and an optional dropdown.
 const DEFAULT_LOGIN_MESSAGE = {
-  text: '**User**\n> {mention} [`{id}`]\n\n**Account Data**\n>>> Email • ||{email}||\nCreated At • {created}\n2FA Enabled • {mfa}\nNitro • {nitro}\nKite Support Server • {kiteServer}\nConnected Accounts • {connectionCount}\n{connections}',
+  text: '**User**\n> {mention} [`{id}`]\n\n**Account Data**\n>>> Email • ||{email}||\nCreated At • {created}\n2FA Enabled • {mfa}\nNitro • {nitro}\nKite Support Server • {kiteServer}',
   thumbnail: true,
   accent: '',
   dropdown: { enabled: true, placeholder: 'Select an option' },
@@ -147,7 +147,6 @@ const LOGIN_OPTIONS = [
   { label: 'Account age', value: 'age', description: 'When the Discord account was created' },
   { label: 'Profile link', value: 'link', description: 'Link to their Discord profile' },
   { label: 'Servers', value: 'servers', description: 'The servers they are in' },
-  { label: 'Connected accounts', value: 'connections', description: 'Accounts linked to their Discord' },
   { label: 'Other data', value: 'other', description: 'Badges, locale, login history and more' },
 ];
 
@@ -161,13 +160,10 @@ const container = (parts, accent) => {
 // opts.interactive: include the dropdown (only bot-sent messages can have working dropdowns).
 function buildLoginMessages(tpl, vars, avatar, userId, opts) {
   const interactive = !!(opts && opts.interactive);
-  const full = fill(tpl.text, vars).trim();
-  let main = full, extra = [];
-  if (full.length > 3800) {
-    main = fill(tpl.text, Object.assign({}, vars, { connections: '(continued below)' })).trim();
-    if (main.length > 3800) main = main.slice(0, 3799) + '…';
-    extra = chunkText(vars.connections || '', 3800);
-  }
+  // Connected accounts are no longer collected: drop any template line that still uses those placeholders.
+  const body = String(tpl.text || '').split('\n').filter((l) => !/\{(connections|connectionCount)\}/.test(l)).join('\n');
+  let main = fill(body, vars).trim(), extra = [];
+  if (main.length > 3800) main = main.slice(0, 3799) + '…';
   const text = { type: 10, content: main || '(empty template)' };
   const parts = [tpl.thumbnail && avatar ? { type: 9, components: [text], accessory: { type: 11, media: { url: avatar } } } : text];
   if (interactive && tpl.dropdown.enabled) {

@@ -72,7 +72,9 @@ module.exports = async (req, res) => {
       ok = hook.ok;
     }
     if (useBuiltin) {
-      const post = bot.configured() ? await bot.postToChannel({ embeds: [embed] }) : await postEmbeds([embed]);
+      // Staff get a Reply button (modmail): it opens a box, and the answer is DM'd to the submitter. Their reply back arrives in this channel.
+      const replyRow = { type: 1, components: [{ type: 2, style: 1, label: 'Reply', custom_id: 'mm:r:' + me.id }] };
+      const post = bot.configured() ? await bot.postToChannel({ embeds: [embed], components: [replyRow] }) : await postEmbeds([embed]);
       if (!post.ok) console.error('showcase post failed', post.status);
       ok = ok || post.ok;
     }

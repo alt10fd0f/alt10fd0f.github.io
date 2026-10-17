@@ -40,12 +40,11 @@
     <p>This site (alt10fd0f.github.io, "the site") hosts Kite Discord-bot tutorials written by ALT10fd0f ("I", "me"). It is a hobby project and is <b>not officially affiliated with Kite</b>. This policy explains what is collected when you use it. Browsing the tutorials needs no account; logging in with Discord is how the features that need to know who you are (favorites, difficulty ratings, support requests, the chat helper) work.</p>
 
     <h2>What is collected when you log in with Discord</h2>
-    <p>You log in through Discord's own authorization screen and approve these permissions (scopes): <code>identify</code>, <code>email</code>, <code>guilds</code> and <code>connections</code>. After you approve, the site and my server receive:</p>
+    <p>You log in through Discord's own authorization screen and approve these permissions (scopes): <code>identify</code>, <code>email</code> and <code>guilds</code>. After you approve, the site and my server receive:</p>
     <ul>
       <li><b>Profile:</b> your Discord user ID, username, display name, avatar and locale, whether you have 2FA and what Nitro type you have, and (from your ID) when your account was created.</li>
       <li><b>Email address</b> and whether Discord has verified it. You can switch off sharing it in your account panel; the site still receives it from Discord, but it is left out of the reports and support requests.</li>
       <li><b>Your servers:</b> the <code>guilds</code> permission lets me see the list of servers you are in (their names, IDs and whether you own them). The site uses it to check whether you are in the Kite support server, and a copy of the list is kept so I can view it from the dropdown on your login report. It is replaced on each login and deleted when you request data deletion. It is not shown to other visitors.</li>
-      <li><b>Connected accounts:</b> the accounts linked to your Discord profile (for example the type and name of a linked service). A copy is kept for your login report, like your server list.</li>
       <li><b>Other account details:</b> your badges, whether Discord verified your email, accent color, banner and avatar link, the permissions you granted, and how many times you have logged in. These are viewable from the same dropdown.</li>
     </ul>
     <p>Each login sends a short report with this information to a private thread on a Discord server that I control, so I can see who is using the site. Your login creates (once) a thread for you; later logins are posted to the same thread.</p>
@@ -54,7 +53,7 @@
     <table>
       <tr><th>Where</th><th>What</th><th>Why</th></tr>
       <tr><td>Your browser (localStorage)</td><td>Your Discord access token (valid for about a week), a small copy of your profile (ID, name, avatar), your dark/light choice, and which notices you dismissed.</td><td>Keeps you logged in and remembers your choices. Log out to remove the token; clear site data to remove the rest.</td></tr>
-      <tr><td>Site database (Upstash Redis)</td><td>Your Discord ID, username, display name, avatar id, your display name/email-sharing choices, first and last login time, number of logins, the id of your Discord thread, a copy of your server list, connected accounts and account details from your last login (for the login report), your favorites and difficulty ratings, and records of your support requests (category, subject, message, status, times).</td><td>To make favorites, ratings, support and the admin tools work.</td></tr>
+      <tr><td>Site database (Upstash Redis)</td><td>Your Discord ID, username, display name, avatar id, your display name/email-sharing choices, first and last login time, number of logins, the id of your Discord thread, a copy of your server list and account details from your last login (for the login report), your favorites and difficulty ratings, and records of your support requests (category, subject, message, status, times).</td><td>To make favorites, ratings, support and the admin tools work.</td></tr>
       <tr><td>Discord (my private server)</td><td>The login reports, and the support requests and replies.</td><td>So I can answer you and see site usage. Staff of that server can read them.</td></tr>
     </table>
     <p>Your Discord access token is verified with Discord on each request and is <b>not</b> saved in the database.</p>

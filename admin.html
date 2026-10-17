@@ -175,7 +175,7 @@
       var $ = function (id) { return document.getElementById(id); };
       var esc = Site.esc, A = null, cfg = null;
       try { sessionStorage.setItem('login_return', 'admin.html'); } catch (e) {}
-      var SAMPLE = { display: 'Alex', username: 'alex', id: '123456789012345678', mention: '@Alex', email: 'alex@example.com (verified)', created: 'Jan 1, 2020', createdAgo: '6 years ago', locale: 'en-US', mfa: 'Yes', nitro: 'Nitro', kiteServer: 'Member', connectionCount: '2', connections: '• github: alex (verified)\n• twitch: alex' };
+      var SAMPLE = { display: 'Alex', username: 'alex', id: '123456789012345678', mention: '@Alex', email: 'alex@example.com (verified)', created: 'Jan 1, 2020', createdAgo: '6 years ago', locale: 'en-US', mfa: 'Yes', nitro: 'Nitro', kiteServer: 'Member' };
 
       function st(id, msg, ok) { var e = $(id); e.textContent = msg; e.className = 'st' + (ok === true ? ' ok' : ok === false ? ' err' : ''); }
       async function save(patch, id) {

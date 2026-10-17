@@ -51,23 +51,13 @@ module.exports = async (req, res) => {
   recent.set(me.id, now);
   if (recent.size > 1000) recent.clear();
 
-  const [guilds, connections] = await Promise.all([
-    has('guilds') ? fetchGuilds(token) : null,
-    has('connections') ? safeJson(discordGet('/users/@me/connections', token)) : null,
-  ]);
+  const guilds = has('guilds') ? await fetchGuilds(token) : null; // third-party connections are deliberately not requested
 
   const target = process.env.KITE_GUILD_ID || '845800518458540083'; // Kite support server
   const kite = guilds ? guilds.some((g) => g.id === target) : null;
   const prefs = profile || {};
   const name = prefs.nickname || displayName(me);
   const created = Math.floor((Number(BigInt(me.id) >> 22n) + 1420070400000) / 1000);
-  const connLines = (connections || []).map((c) => '• ' + clip(c.type, 20) + ': ' + clip(c.name, 60) + (c.verified ? ' (verified)' : '') + (c.visibility === 0 ? ' [hidden]' : ''));
-  let connText = connLines.length ? connLines.join('\n') : connections ? 'None' : 'Not shared';
-  if (connText.length > 1000) {
-    const cut = connText.slice(0, connText.lastIndexOf('\n', 980));
-    const extra = connLines.length - cut.split('\n').length;
-    connText = cut + '\n…and ' + extra + ' more';
-  }
   const vars = {
     display: clip(name, 80),
     username: clip(me.username, 40),
@@ -80,8 +70,6 @@ module.exports = async (req, res) => {
     mfa: yesNo(me.mfa_enabled),
     nitro: NITRO[me.premium_type] || 'None',
     kiteServer: kite === true ? 'Member' : kite === false ? 'Not a member' : 'Not checked',
-    connectionCount: connections ? String(connections.length) : 'n/a',
-    connections: connText,
   };
 
   const cfg = await loadConfig();
@@ -96,12 +84,11 @@ module.exports = async (req, res) => {
     id: me.id, username: me.username, display: displayName(me), avatar: me.avatar || null, lastSeen: now, lastLogin: now,
     loginCount: ((profile && profile.loginCount) || 0) + 1,
   });
-  // Copy kept for the login report's dropdown (servers, connected accounts, other data). Replaced on every login.
+  // Copy kept for the login report's dropdown (servers, other data). Replaced on every login.
   const report = {
     at: now,
     guilds: guilds ? guilds.slice(0, 300) : null,
     guildCount: guilds ? guilds.length : null,
-    connections: connections ? connections.slice(0, 50).map((c) => ({ type: clip(c.type, 20), name: clip(c.name, 60), verified: !!c.verified, hidden: c.visibility === 0 })) : null,
     other: {
       handle: me.username, globalName: me.global_name || null, siteName: name, emailVerified: !!me.verified, emailShared: prefs.shareEmail !== false,
       locale: me.locale || null, badges: badgesOf(me.public_flags), accentColor: typeof me.accent_color === 'number' ? '#' + me.accent_color.toString(16).padStart(6, '0') : null,
@@ -115,7 +102,7 @@ module.exports = async (req, res) => {
   if (useHook) {
     hook = await logs.sendWebhook(logs.urlOf(cfg, 'login'), {
       event: 'login', discord: plain,
-      data: { id: me.id, username: me.username, display: name, mention: vars.mention, email: vars.email, created: created, mfa: vars.mfa, nitro: vars.nitro, kiteServer: vars.kiteServer, connections: (connections || []).map((c) => ({ type: c.type, name: c.name, verified: !!c.verified })) },
+      data: { id: me.id, username: me.username, display: name, mention: vars.mention, email: vars.email, created: created, mfa: vars.mfa, nitro: vars.nitro, kiteServer: vars.kiteServer },
     });
     if (!hook.ok) console.error('login webhook trigger failed', hook.status);
   }
