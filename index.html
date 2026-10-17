@@ -206,6 +206,7 @@
         <div class="sidebar-sub open">
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">ERLC Session MGMT</a>
           <a href="#application" class="sidebar-item">Application Bot</a>
+          <a href="#giveaway" class="sidebar-item">Timed Giveaway Command</a>
           <a class="sidebar-item disabled" aria-disabled="true" tabindex="-1" title="Coming soon">Discord Moderation Panel</a>
           <div class="sidebar-group">
             <div class="sidebar-item sidebar-toggle" onclick="toggleGroup(this)"><span>Tickets With Kite</span><span class="arrow">▶</span></div>
@@ -288,6 +289,7 @@
       <div class="tutorial-grid">
         <a href="#" class="tutorial-card" id="erlc-session"><span class="num">10</span><span class="name">ERLC Session MGMT panel</span></a>
         <a href="#application" class="tutorial-card" id="application"><span class="num">12</span><span class="name">Application Bot (Appy 1-3)</span></a>
+        <a href="#giveaway" class="tutorial-card" id="giveaway"><span class="num">27</span><span class="name">Timed Giveaway Command</span></a>
         <a href="#" class="tutorial-card" id="moderation"><span class="num">13</span><span class="name">Discord Moderation Panel</span></a>
         <a href="#ticket-open" class="tutorial-card" id="tickets"><span class="num">26</span><span class="name">Tickets With Kite</span></a>
       </div>
@@ -439,7 +441,7 @@
     const viewHome = document.getElementById('view-home');
     const viewTickets = document.getElementById('view-tickets');
     const tocEl = document.querySelector('.toc');
-    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'], calculator: ['calculator.html', 'Calculator Command'], say: ['say.html', 'Say Command'] };
+    const FRAMES = { reminder: ['reminder.html', 'Reminder Command'], fakequote: ['fakequote.html', 'Fake Quote Creator'], modal: ['modal.html', 'Modal / Form Block'], buttons: ['buttons-data.html', 'Data for Buttons'], dropdown: ['dropdown.html', 'Dropdown / Select Menu'], application: ['application.html', 'Application Bot'], timestamps: ['timestamps.html', 'Timestamps with Kite'], cookie: ['cookie-api.html', 'Cookie API Transcripts'], membercount: ['membercount.html', 'Member Count API'], prefix: ['prefix.html', 'Prefix Commands'], 'roblox-lookup': ['roblox-lookup.html', 'Roblox Account Lookup'], calculator: ['calculator.html', 'Calculator Command'], say: ['say.html', 'Say Command'], giveaway: ['giveaway.html', 'Timed Giveaway Command'] };
     const viewFrame = document.getElementById('view-frame');
     const viewCustom = document.getElementById('view-custom');
     const frameEl = document.getElementById('tut-frame');

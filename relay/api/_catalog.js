@@ -17,6 +17,7 @@ const TUTORIALS = [
   { id: 'dropdown', name: 'Dropdown / Select Menu', cat: 'Setup Guides', live: true },
   { id: 'erlc-session', name: 'ERLC Session MGMT', cat: 'Panels & Systems', live: false },
   { id: 'application', name: 'Application Bot', cat: 'Panels & Systems', live: true },
+  { id: 'giveaway', name: 'Timed Giveaway Command', cat: 'Panels & Systems', live: true },
   { id: 'moderation', name: 'Discord Moderation Panel', cat: 'Panels & Systems', live: false },
   { id: 'tickets', name: 'Tickets With Kite', cat: 'Panels & Systems', live: true },
   { id: 'timestamps', name: 'Timestamps with Kite', cat: 'APIs & Integrations', live: true },

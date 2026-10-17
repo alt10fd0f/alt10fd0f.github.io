@@ -55,7 +55,7 @@ async function remove(id) {
 // ---- Edited copies of the built-in tutorials ----
 // A built-in tutorial is a static page. Saving an edit stores replacement text (same markdown as custom showcases) under the
 // built-in's id; the site then shows that text instead of the static page. Deleting it restores the original page.
-const EDITABLE = ['reminder', 'fakequote', 'modal', 'buttons', 'dropdown', 'application', 'timestamps', 'cookie', 'membercount', 'prefix', 'roblox-lookup', 'calculator', 'say']
+const EDITABLE = ['reminder', 'fakequote', 'modal', 'buttons', 'dropdown', 'application', 'timestamps', 'cookie', 'membercount', 'prefix', 'roblox-lookup', 'calculator', 'say', 'giveaway']
   .filter((id) => TUTORIALS.some((t) => t.id === id && t.live));
 
 async function overrides() {
