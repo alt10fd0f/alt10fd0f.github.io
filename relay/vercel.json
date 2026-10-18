@@ -1,8 +1,19 @@
 {
   "functions": {
-    "api/notify.js": { "maxDuration": 30 },
-    "api/support.js": { "maxDuration": 20 },
-    "api/submit.js": { "maxDuration": 20 },
-    "api/dm.js": { "maxDuration": 20 }
+    "api/notify.js": {
+      "maxDuration": 30
+    },
+    "api/support.js": {
+      "maxDuration": 20
+    },
+    "api/submit.js": {
+      "maxDuration": 20
+    },
+    "api/dm.js": {
+      "maxDuration": 20
+    },
+    "api/erlc-log.js": {
+      "maxDuration": 20
+    }
   }
 }
