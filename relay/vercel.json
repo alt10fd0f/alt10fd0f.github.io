@@ -14,6 +14,9 @@
     },
     "api/erlc-log.js": {
       "maxDuration": 20
+    },
+    "api/erlc-events.mjs": {
+      "maxDuration": 20
     }
   }
 }

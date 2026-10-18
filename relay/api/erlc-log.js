@@ -4,29 +4,14 @@
 //   3. deliver the message to webhook_url (Discord webhooks get an embed, any other https URL gets JSON).
 // GET lists a server's stored messages and DELETE frees slots; both take the key in the "server-key" header.
 
-const crypto = require('crypto');
 const db = require('./_db');
 const { clip } = require('./_shared');
 const { safeUrl, sendWebhook } = require('./_logs');
 
 const LIMIT = 5;
 const MAX_LEN = 1500;
-const ERLC = process.env.ERLC_API_BASE || 'https://api.erlc.gg/v2/server';
-const sha = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
-const okKeys = new Map();   // key hash -> time it was verified (5 min cache)
+const { sha, verifyKey } = require('./_erlc');
 const hits = new Map();     // ip -> [timestamps]
-
-async function verifyKey(key) {
-  const h = sha(key);
-  if (Date.now() - (okKeys.get(h) || 0) < 300000) return { ok: true, h };
-  let r;
-  try { r = await fetch(ERLC, { headers: { 'server-key': key, Accept: 'application/json' }, signal: AbortSignal.timeout(5000) }); }
-  catch (e) { return { ok: false, status: 503, error: 'Could not reach the ER:LC API. Try again shortly.' }; }
-  if (r.ok) { okKeys.set(h, Date.now()); if (okKeys.size > 500) okKeys.clear(); return { ok: true, h }; }
-  if (r.status === 429) return { ok: false, status: 503, error: 'The ER:LC API is rate limiting us. Try again shortly.' };
-  if (r.status === 401 || r.status === 403 || r.status === 400) return { ok: false, status: 401, error: 'api_key was rejected by the ER:LC API.' };
-  return { ok: false, status: 502, error: 'The ER:LC API answered ' + r.status + '.' };
-}
 
 const view = (rows) => Object.values(rows || {}).map((v) => { try { return JSON.parse(v); } catch (e) { return null; } })
   .filter(Boolean).sort((a, b) => a.time.localeCompare(b.time));
