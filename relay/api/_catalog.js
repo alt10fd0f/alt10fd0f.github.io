@@ -25,7 +25,7 @@ const TUTORIALS = [
   { id: 'roblox-lookup', name: 'Roblox Account Lookup', cat: 'APIs & Integrations', live: true },
   { id: 'roblox-verify', name: 'Roblox Verification', cat: 'APIs & Integrations', live: false },
   { id: 'membercount', name: 'Member Count API', cat: 'APIs & Integrations', live: true },
-  { id: 'erlc-api', name: 'ERLC API V2', cat: 'APIs & Integrations', live: false },
+  { id: 'erlc-api', name: 'ERLC API V2 (Integrations)', cat: 'APIs & Integrations', live: true },
 ];
 const ALL_IDS = TUTORIALS.map((t) => t.id);
 const LIVE_IDS = TUTORIALS.filter((t) => t.live).map((t) => t.id);
