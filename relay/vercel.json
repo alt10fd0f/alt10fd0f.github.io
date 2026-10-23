@@ -17,6 +17,9 @@
     },
     "api/erlc-events.mjs": {
       "maxDuration": 20
+    },
+    "api/cad.js": {
+      "maxDuration": 20
     }
   }
 }
