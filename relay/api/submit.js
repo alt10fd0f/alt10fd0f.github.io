@@ -3,7 +3,7 @@
 
 const db = require('./_db');
 const bot = require('./_bot');
-const { clip, handleCommon, displayName, avatarUrl, postEmbeds } = require('./_shared');
+const { clip, handleCommon, displayName, postWebhookMessages } = require('./_shared');
 const { authenticate, getProfile } = require('./_auth');
 const { loadConfig } = require('./_config');
 const sc = require('./_showcases');
@@ -45,19 +45,23 @@ module.exports = async (req, res) => {
   const name = (prof && prof.nickname) || displayName(me);
   const email = prof && prof.shareEmail === false ? null : me.email || null;
 
-  const embed = {
-    title: clip('Showcase submission: ' + title, 250),
-    description: clip(content, 3900),
-    color: 0x94cec4,
-    thumbnail: { url: avatarUrl(me) },
-    fields: [
-      { name: 'Category', value: category, inline: true },
-      { name: 'From', value: clip(name, 80) + ' (@' + clip(me.username, 40) + ')', inline: true },
-      { name: 'User ID', value: clip(me.id, 30), inline: true },
-    ].concat(link ? [{ name: 'Link', value: link, inline: false }] : [], [{ name: 'Email', value: email ? clip(email, 200) : 'Not shared', inline: false }]),
-    footer: content.length > 3900 ? { text: 'Text was cut for Discord (' + content.length + ' characters in total).' } : undefined,
-    timestamp: new Date().toISOString(),
-  };
+  // Components V2 message: header + category, quoted text, then link buttons.
+  const header = '-# Submitted by ' + clip(name, 60) + ' (@' + clip(me.username, 40) + ') · ID ' + me.id + (email ? ' · ' + clip(email, 100) : '') + '\n### ' + clip(title, 80) + ' | ' + category;
+  const buttons = [{ type: 2, style: 5, label: clip(name + "'s Profile", 80), url: 'https://discord.com/users/' + me.id }]
+    .concat(link ? [{ type: 2, style: 5, label: 'Showcase Site', url: link }] : []);
+  const message = (extra) => ({
+    flags: 32768,
+    components: [{
+      type: 17, accent_color: 2495106,
+      components: [
+        { type: 10, content: header },
+        { type: 14 },
+        { type: 10, content: '>>> ' + clip(content, 3300) },
+        { type: 14 },
+        { type: 1, components: buttons.concat(extra || []) },
+      ],
+    }],
+  });
 
   const useBuiltin = logs.wants(cfg, 'showcase', 'builtin');
   const useHook = logs.wants(cfg, 'showcase', 'webhook');
@@ -65,7 +69,7 @@ module.exports = async (req, res) => {
     let ok = false;
     if (useHook) {
       const hook = await logs.sendWebhook(logs.urlOf(cfg, 'showcase'), {
-        event: 'showcase', discord: [{ embeds: [embed] }],
+        event: 'showcase', discord: [message()],
         data: { userId: me.id, username: me.username, name, title, category, link, content, email },
       });
       if (!hook.ok) console.error('showcase webhook trigger failed', hook.status);
@@ -73,8 +77,8 @@ module.exports = async (req, res) => {
     }
     if (useBuiltin) {
       // Staff get a Reply button (modmail): it opens a box, and the answer is DM'd to the submitter. Their reply back arrives in this channel.
-      const replyRow = { type: 1, components: [{ type: 2, style: 1, label: 'Reply', custom_id: 'mm:r:' + me.id }] };
-      const post = bot.configured() ? await bot.postToChannel({ embeds: [embed], components: [replyRow] }) : await postEmbeds([embed]);
+      const reply = { type: 2, style: 1, label: 'Reply', custom_id: 'mm:r:' + me.id };
+      const post = bot.configured() ? await bot.postToChannel(message([reply])) : await postWebhookMessages([message()]);
       if (!post.ok) console.error('showcase post failed', post.status);
       ok = ok || post.ok;
     }
