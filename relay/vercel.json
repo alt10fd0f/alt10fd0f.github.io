@@ -20,6 +20,9 @@
     },
     "api/cad.js": {
       "maxDuration": 20
+    },
+    "api/dash.js": {
+      "maxDuration": 20
     }
   }
 }
